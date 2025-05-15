@@ -1,66 +1,107 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url'; // For ES module __dirname equivalent
 import { translations } from './translations.js';
+
+// Get the directory name of the current module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Function to generate resume PDF for a specific language
 function generateResume(language) {
   const t = translations[language];
   
-  // Create a PDF document with Unicode font support
   const doc = new PDFDocument({
     size: 'A4',
-    margins: {
-      top: 50,
-      bottom: 50,
-      left: 50,
-      right: 50
-    },
+    margins: { top: 50, bottom: 50, left: 50, right: 50 },
     info: {
-      Title: t.pdf.title,
-      Author: t.pdf.author,
-      Subject: t.pdf.subject,
-      Keywords: t.pdf.keywords,
+      Title: t.pdf.title, Author: t.pdf.author,
+      Subject: t.pdf.subject, Keywords: t.pdf.keywords,
     },
-    // Explicitly set PDF for UTF-8 compatibility
-    lang: language,
-    pdfVersion: '1.7',
-    tagged: true,
-    displayTitle: true,
-    // Tell PDFKit to interpret all strings as UTF-8
-    autoFirstPage: true
+    lang: language, pdfVersion: '1.7', tagged: true,
+    displayTitle: true, autoFirstPage: true
   });
   
-  // Determine output file name based on language
-  let outputFile = 'public/resume.pdf';
+  // Output path relative to the script's directory, then up to project root, then to public
+  const projectRoot = path.resolve(__dirname); // Assumes script is at project root
+  let outputFile = path.join(projectRoot, 'public', 'resume.pdf');
   if (language === 'ja') {
-    outputFile = 'public/resume-ja.pdf';
+    outputFile = path.join(projectRoot, 'public', 'resume-ja.pdf');
   } else if (language === 'tr') {
-    outputFile = 'public/resume-tr.pdf';
+    outputFile = path.join(projectRoot, 'public', 'resume-tr.pdf');
   }
   
-  // Pipe the PDF document to a file with explicit UTF-8 encoding
-  const stream = fs.createWriteStream(outputFile, { encoding: 'utf8' });
+  const stream = fs.createWriteStream(outputFile); // Removed encoding: 'utf8' as it's for text streams
   doc.pipe(stream);
 
-  // Define colors and styles
   const colors = {
-    primary: '#3B82F6',
-    secondary: '#1E40AF',
-    text: '#1F2937',
-    lightText: '#6B7280',
-    background: '#F9FAFB'
+    primary: '#3B82F6', secondary: '#1E40AF',
+    text: '#1F2937', lightText: '#6B7280', background: '#F9FAFB'
   };
 
-  // Define standard fonts for Unicode support
-  const boldFont = 'Helvetica-Bold';
-  const regularFont = 'Helvetica';
+  // Font paths relative to the script's location, then up to project root, then to public/fonts
+  const fontDir = path.join(projectRoot, 'public', 'fonts');
+  const notoRegularPath = path.join(fontDir, 'NotoSans-Regular.ttf');
+  const notoBoldPath = path.join(fontDir, 'NotoSans-Bold.ttf');
+  const notoJPRegularPath = path.join(fontDir, 'NotoSansJP-Regular.ttf');
+  const notoJPBoldPath = path.join(fontDir, 'NotoSansJP-Bold.ttf');
+
+  let regularFont = 'Helvetica';
+  let boldFont = 'Helvetica-Bold';
+  let customFontSuccessfullySet = false;
+
+  if (language === 'ja') {
+    console.log(`[ja] Attempting to load Japanese fonts...`);
+    try {
+      if (!fs.existsSync(notoJPRegularPath)) throw new Error(`Japanese Regular Font not found: ${notoJPRegularPath}`);
+      if (!fs.existsSync(notoJPBoldPath)) throw new Error(`Japanese Bold Font not found: ${notoJPBoldPath}`);
+      
+      doc.registerFont('NotoSansJP-Regular', notoJPRegularPath);
+      doc.registerFont('NotoSansJP-Bold', notoJPBoldPath);
+      
+      // Try to activate the font to force parsing by fontkit
+      doc.font('NotoSansJP-Regular').text('', 0, 0); // Dummy text to trigger font processing
+      // No need to test bold separately if regular works, or vice-versa, as fontkit error is general
+      
+      regularFont = 'NotoSansJP-Regular';
+      boldFont = 'NotoSansJP-Bold'; // Assume bold is also fine if regular loaded
+      customFontSuccessfullySet = true;
+      console.log(`[ja] Successfully registered and tested Japanese fonts (NotoSansJP).`);
+    } catch (e) {
+      console.error(`[ja] ERROR loading/using Japanese fonts (NotoSansJP): ${e.message}`);
+      console.error(`[ja] This often means the font files at ${notoJPRegularPath} or ${notoJPBoldPath} are corrupted, not valid TTF, or incompatible with the PDF font engine (fontkit).`);
+      console.error("[ja] Falling back to Helvetica for Japanese. Characters will likely be garbled.");
+      // regularFont and boldFont remain Helvetica
+    }
+  } else if (language === 'tr') {
+    console.log(`[tr] Attempting to load NotoSans fonts for Turkish...`);
+    try {
+      if (!fs.existsSync(notoRegularPath)) throw new Error(`Regular Font (NotoSans-Regular) not found: ${notoRegularPath}`);
+      if (!fs.existsSync(notoBoldPath)) throw new Error(`Bold Font (NotoSans-Bold) not found: ${notoBoldPath}`);
+
+      doc.registerFont('NotoSans-Regular', notoRegularPath);
+      doc.registerFont('NotoSans-Bold', notoBoldPath);
+
+      doc.font('NotoSans-Regular').text('', 0, 0); // Dummy text
+
+      regularFont = 'NotoSans-Regular';
+      boldFont = 'NotoSans-Bold';
+      customFontSuccessfullySet = true;
+      console.log(`[tr] Successfully registered and tested NotoSans fonts for Turkish.`);
+    } catch (e) {
+      console.error(`[tr] ERROR loading/using NotoSans fonts for Turkish: ${e.message}`);
+      console.error(`[tr] This often means the font files at ${notoRegularPath} or ${notoBoldPath} are corrupted, not valid TTF, or incompatible with the PDF font engine (fontkit).`);
+      console.error("[tr] Falling back to Helvetica for Turkish. Some characters may be garbled.");
+      // regularFont and boldFont remain Helvetica
+    }
+  }
+  // For 'en', Helvetica is used by default, customFontSuccessfullySet remains false.
   
   // Helper function to ensure UTF-8 text rendering
   const renderText = (text, options = {}) => {
-    // Ensure text is properly encoded as UTF-8
-    const utf8Text = text;
-    return doc.text(utf8Text, Object.assign({
+    // pdfkit handles UTF-8 strings directly when fonts support the characters.
+    return doc.text(text, Object.assign({ // Removed utf8Text variable, direct usage
       characterSpacing: 0,
       wordSpacing: 0,
       lineGap: 0,
@@ -70,7 +111,7 @@ function generateResume(language) {
   // Helper function for section headers with UTF-8 support
   function addSectionHeader(text) {
     doc.fontSize(16)
-       .font('Helvetica-Bold')
+       .font(boldFont) // Use dynamic boldFont
        .fillColor(colors.primary);
     renderText(text, { underline: true });
     doc.moveDown(0.5);
@@ -79,17 +120,17 @@ function generateResume(language) {
   // Helper function for subsection headers with UTF-8 support
   function addSubsectionHeader(title, subtitle, dates) {
     doc.fontSize(12)
-       .font('Helvetica-Bold')
+       .font(boldFont) // Use dynamic boldFont
        .fillColor(colors.text);
     renderText(title, { continued: false });
     
     doc.fontSize(11)
-       .font('Helvetica')
+       .font(regularFont) // Use dynamic regularFont
        .fillColor(colors.primary);
     renderText(subtitle, { continued: false });
     
     doc.fontSize(10)
-       .font('Helvetica')
+       .font(regularFont) // Use dynamic regularFont
        .fillColor(colors.lightText);
     renderText(dates);
     doc.moveDown(0.2);
@@ -97,7 +138,7 @@ function generateResume(language) {
 
   // Header with UTF-8 support
   doc.fontSize(24)
-     .font(boldFont)
+     .font(boldFont) // Already using dynamic boldFont
      .fillColor(colors.primary);
   renderText(t.header.title, { align: 'center' });
   
@@ -283,16 +324,29 @@ function generateResume(language) {
   doc.fontSize(9)
      .font(regularFont)
      .fillColor(colors.lightText);
-  renderText(`${t.pdf.generatedOn} ` + new Date().toLocaleDateString(), 
+  renderText(`${t.pdf.generatedOn} ` + new Date().toLocaleDateString(),
     { align: 'center', lineBreak: false, continued: false, width: doc.page.width - 100, x: 50, y: footerY });
 
   // Finalize the PDF and end the stream
-  doc.end();
-  
-  console.log(`Generated ${outputFile} for language: ${language}`);
+  try {
+    console.log(`[${language}] Attempting to finalize PDF: ${outputFile}`);
+    doc.end();
+  } catch (e) {
+    console.error(`[${language}] Error during doc.end():`, e);
+  }
+
+  stream.on('finish', () => {
+    console.log(`[${language}] Successfully generated and saved: ${outputFile}`);
+  });
+
+  stream.on('error', (err) => {
+    console.error(`[${language}] Error writing PDF to stream for ${outputFile}:`, err);
+  });
 }
 
 // Generate resumes for all languages
+console.log("Starting resume generation process...");
 generateResume('en');
 generateResume('ja');
 generateResume('tr');
+console.log("Resume generation process called for all languages.");
