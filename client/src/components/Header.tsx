@@ -8,23 +8,32 @@ const Header = () => {
 
   const handleDownloadResume = () => {
     // Download the resume based on the selected language
-    let resumePath;
+    let fileName;
     if (language === 'en') {
-      resumePath = '/resume.pdf';
+      fileName = 'resume.pdf';
     } else if (language === 'ja') {
-      resumePath = '/resume-ja.pdf';
+      fileName = 'resume-ja.pdf';
     } else if (language === 'tr') {
-      resumePath = '/resume-tr.pdf';
+      fileName = 'resume-tr.pdf';
+    } else {
+      // Fallback or error handling if needed
+      console.error("Unsupported language for resume download:", language);
+      return;
     }
 
+    // Construct the correct path using Vite's BASE_URL
+    // import.meta.env.BASE_URL will be like "/resume/"
+    // Ensure no double slashes if BASE_URL ends with / and fileName starts with / (though fileName here doesn't)
+    const fullResumePath = `${import.meta.env.BASE_URL}${fileName}`;
+
     // Add a timestamp to prevent caching
-    resumePath = `${resumePath}?t=${Date.now()}`;
+    const pathWithTimestamp = `${fullResumePath}?t=${Date.now()}`;
     
     // For debugging
-    console.log(`Downloading resume for language: ${language}, path: ${resumePath}`);
+    console.log(`Downloading resume for language: ${language}, path: ${pathWithTimestamp}`);
     
     // Open in a new tab
-    window.open(resumePath, '_blank');
+    window.open(pathWithTimestamp, '_blank');
   };
 
   return (
