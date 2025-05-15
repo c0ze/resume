@@ -147,7 +147,13 @@ function generateResume(language) {
     doc.fontSize(16)
        .font(boldFont) // Use dynamic boldFont
        .fillColor(colors.primary);
-    renderText(text, { underline: true });
+    // Explicitly set x for section titles to ensure they obey left margin
+    doc.x = doc.page.margins.left;
+    // We need to ensure y is also correct if previous operations moved it unexpectedly.
+    // However, addSectionHeader is usually called when y is already at a new line.
+    // Let's also pass the width for consistency, though underline might not need it.
+    const sectionTitleWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+    renderText(text, { underline: true, width: sectionTitleWidth });
     doc.moveDown(0.5);
   }
 
@@ -171,42 +177,93 @@ function generateResume(language) {
   }
 
   // Header with UTF-8 support
-  doc.fontSize(24)
-     .font(boldFont) // Already using dynamic boldFont
-     .fillColor(colors.primary);
-  renderText(t.header.title, { align: 'center' });
+  // Revert to using align: 'center' with explicit bounding box based on margins
+  const contentAreaWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
   
-  doc.fontSize(14)
-     .font(regularFont)
-     .fillColor(colors.secondary);
-  renderText(t.header.subtitle, { align: 'center' });
+  // Manually set starting Y position for the entire header block
+  doc.y = doc.page.margins.top;
+
+  doc.fontSize(24).font(boldFont).fillColor(colors.primary);
+  // Manual centering for the title by setting doc.x
+  // Re-assign textWidth and centeredX (remove 'let')
+  var textWidth = doc.widthOfString(t.header.title); // Use var or ensure not re-declared if in same block scope
+  var centeredX = (doc.page.width - textWidth) / 2; // Use var or ensure not re-declared
+  doc.x = centeredX;
+  // doc.y is already set from doc.page.margins.top
+  renderText(t.header.title); // Render at current doc.x, doc.y
   doc.moveDown(0.5);
 
-  // Contact Info with UTF-8 support
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(`${t.about.location} ${t.header.location}`, { align: 'center' });
-  renderText('Email: me@arda.karaduman.web.tr', { align: 'center' });
-  renderText(`${t.header.website}: arda.karaduman.web.tr`, { align: 'center' });
+  doc.fontSize(14).font(regularFont).fillColor(colors.secondary);
+  // Manual centering for the subtitle by setting doc.x
+  // Re-assign textWidth and centeredX
+  textWidth = doc.widthOfString(t.header.subtitle);
+  centeredX = (doc.page.width - textWidth) / 2;
+  doc.x = centeredX;
+  // doc.y has advanced from the previous renderText and moveDown
+  renderText(t.header.subtitle); // Render at current doc.x, doc.y
+  doc.moveDown(0.5);
+
+  // Contact Info with UTF-8 support (This section is correctly centered with manual doc.x)
+  doc.fontSize(10).font(regularFont).fillColor(colors.text);
+  let contactLine = `${t.about.location} ${t.header.location}`;
+  // Re-assign textWidth and centeredX (remove 'let' as they were declared with 'var' earlier)
+  textWidth = doc.widthOfString(contactLine);
+  centeredX = (doc.page.width - textWidth) / 2;
+  if (language === 'ja') {
+    console.log(`[ja] Contact Line 1: "${contactLine}"`);
+    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
+  }
+  doc.x = centeredX; // Set doc.x manually
+  doc.y = doc.y;     // Maintain current y
+  renderText(contactLine); // Render text at current doc.x, doc.y
+
+  contactLine = 'Email: me@arda.karaduman.web.tr';
+  textWidth = doc.widthOfString(contactLine); // Re-assign
+  centeredX = (doc.page.width - textWidth) / 2; // Re-assign
+  if (language === 'ja') {
+    console.log(`[ja] Contact Line 2: "${contactLine}"`);
+    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
+  }
+  doc.x = centeredX; // Set doc.x manually
+  doc.y = doc.y;     // Maintain current y (renderText implies a line feed, so y should be ok for next line)
+  renderText(contactLine); // Render text at current doc.x, doc.y
+
+  contactLine = `${t.header.website}: arda.karaduman.web.tr`;
+  textWidth = doc.widthOfString(contactLine); // Re-assign
+  centeredX = (doc.page.width - textWidth) / 2; // Re-assign
+  if (language === 'ja') {
+    console.log(`[ja] Contact Line 3: "${contactLine}"`);
+    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
+  }
+  doc.x = centeredX; // Set doc.x manually
+  doc.y = doc.y;     // Maintain current y
+  renderText(contactLine); // Render text at current doc.x, doc.y
   doc.moveDown(1.5);
 
   // About Me with UTF-8 support
-  addSectionHeader(t.about.title);
+  addSectionHeader(t.about.title); // This title seems to align correctly
+  
   doc.fontSize(11)
      .font(regularFont)
      .fillColor(colors.text);
-  // Explicitly set x and width for paragraphs
   const paragraphWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+
+  // For paragraph1: Set doc.x explicitly, then renderText without x option
+  doc.x = doc.page.margins.left;
+  doc.y = doc.y; // ensure y is maintained if it was moved by addSectionHeader's moveDown
   renderText(t.about.paragraph1, {
-    x: doc.page.margins.left,
-    align: 'justify',
+    // x: doc.page.margins.left, // Rely on current doc.x
+    // align: 'justify', // Still removed for testing
     width: paragraphWidth
   });
   doc.moveDown(0.5);
+
+  // For paragraph2: Set doc.x explicitly, then renderText without x option
+  doc.x = doc.page.margins.left;
+  doc.y = doc.y;
   renderText(t.about.paragraph2, {
-    x: doc.page.margins.left,
-    align: 'justify',
+    // x: doc.page.margins.left, // Rely on current doc.x
+    // align: 'justify', // Still removed for testing
     width: paragraphWidth
   });
   doc.moveDown(1);
@@ -215,12 +272,24 @@ function generateResume(language) {
   doc.fontSize(11)
      .font(boldFont)
      .fillColor(colors.text);
-  renderText(`${t.about.languages}`, { x: doc.page.margins.left, width: paragraphWidth });
+  // For languages title: Set doc.x explicitly
+  doc.x = doc.page.margins.left;
+  doc.y = doc.y;
+  renderText(`${t.about.languages}`, {
+    // x: doc.page.margins.left, // Rely on current doc.x
+    width: paragraphWidth
+  });
   
   doc.fontSize(11)
      .font(regularFont)
      .fillColor(colors.text);
-  renderText(t.about.languagesContent, { x: doc.page.margins.left, width: paragraphWidth });
+  // For languages content: Set doc.x explicitly
+  doc.x = doc.page.margins.left;
+  doc.y = doc.y;
+  renderText(t.about.languagesContent, {
+    // x: doc.page.margins.left, // Rely on current doc.x
+    width: paragraphWidth
+  });
   doc.moveDown(1);
 
   // Work Experience
