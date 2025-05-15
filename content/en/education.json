@@ -1,0 +1,19 @@
+{
+  "title": "Education",
+  "entries": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "institution": "University of Advanced Technology",
+      "period": "Sep 2016 - May 2018",
+      "description": "Focused on Machine Learning and Artificial Intelligence. Thesis on Natural Language Processing.",
+      "additionalInfo": "Graduated with Honors, GPA: 3.9/4.0"
+    },
+    {
+      "degree": "Bachelor of Science in Software Engineering",
+      "institution": "State Engineering College",
+      "period": "Sep 2012 - Jun 2016",
+      "description": "Comprehensive curriculum covering software development principles, data structures, and algorithms.",
+      "additionalInfo": "Dean's List 2015, 2016"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "title": "Work Experience",
+  "jobs": [
+    {
+      "title": "Senior Software Engineer",
+      "company": "Tech Solutions Inc.",
+      "period": "Jan 2022 - Present",
+      "responsibilities": [
+        "Led the development of a new AI-powered analytics platform.",
+        "Designed and implemented scalable microservices.",
+        "Mentored junior developers and conducted code reviews."
+      ]
+    },
+    {
+      "title": "Software Developer",
+      "company": "Innovatech Ltd.",
+      "period": "Jun 2019 - Dec 2021",
+      "responsibilities": [
+        "Developed and maintained features for a large-scale e-commerce application.",
+        "Collaborated with cross-functional teams to deliver high-quality software.",
+        "Participated in the full software development lifecycle."
+      ]
+    },
+    {
+      "title": "Junior Developer",
+      "company": "Web Wizards Co.",
+      "period": "Jul 2018 - May 2019",
+      "responsibilities": [
+        "Assisted in the development of client websites using modern web technologies.",
+        "Contributed to front-end and back-end development tasks.",
+        "Gained experience with version control systems and agile methodologies."
+      ]
+    }
+  ]
+}

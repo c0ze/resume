@@ -1,0 +1,25 @@
+{
+  "title": "Projeler",
+  "entries": [
+    {
+      "title": "Yapay Zeka Destekli Tavsiye Motoru",
+      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
+      "description": "Bir e-ticaret platformu için kişiselleştirilmiş bir tavsiye sistemi geliştirildi ve kullanıcı etkileşimi %25 artırıldı."
+    },
+    {
+      "title": "Gerçek Zamanlı Ortak Çalışma Beyaz Tahtası",
+      "technologies": "Node.js, WebSocket, React, Canvas API",
+      "description": "Birden fazla kullanıcının gerçek zamanlı olarak çizim yapmasına ve fikir paylaşmasına olanak tanıyan web tabanlı bir ortak çalışma beyaz tahta uygulaması oluşturuldu."
+    },
+    {
+      "title": "Sunucusuz Veri İşleme Hattı",
+      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
+      "description": "Büyük hacimli IoT verilerini almak ve işlemek için sunucusuz bir hat tasarlandı ve uygulandı."
+    },
+    {
+      "title": "Portföy Web Sitesi (Bu Proje)",
+      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
+      "description": "Dinamik PDF özgeçmiş oluşturma özelliğine sahip, çok dilli, SSR özellikli bir portföy web sitesi."
+    }
+  ]
+}

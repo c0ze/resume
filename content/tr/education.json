@@ -1,0 +1,19 @@
+{
+  "title": "Eğitim",
+  "entries": [
+    {
+      "degree": "Bilgisayar Bilimleri Yüksek Lisansı",
+      "institution": "İleri Teknoloji Üniversitesi",
+      "period": "Eylül 2016 - Mayıs 2018",
+      "description": "Makine Öğrenimi ve Yapay Zeka odaklı. Doğal Dil İşleme üzerine tez.",
+      "additionalInfo": "Onur derecesiyle mezuniyet, GPA: 3.9/4.0"
+    },
+    {
+      "degree": "Yazılım Mühendisliği Lisansı",
+      "institution": "Devlet Mühendislik Fakültesi",
+      "period": "Eylül 2012 - Haziran 2016",
+      "description": "Yazılım geliştirme ilkelerini, veri yapılarını ve algoritmaları kapsayan kapsamlı müfredat.",
+      "additionalInfo": "Dekanlık Listesi 2015, 2016"
+    }
+  ]
+}

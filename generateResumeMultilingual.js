@@ -2,27 +2,51 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url'; // For ES module __dirname equivalent
-import { translations } from './translations.js';
+// Removed: import { translations } from './translations.js';
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Function to load JSON content for a given language and section
+function loadContent(language, section) {
+  const projectRoot = path.resolve(__dirname); // Assumes script is at project root
+  const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(fileContent);
+  } catch (error) {
+    console.error(`Error loading content file: ${filePath}`, error);
+    return {}; // Return empty object on error to avoid breaking the structure
+  }
+}
+
 // Function to generate resume PDF for a specific language
 function generateResume(language) {
-  const t = translations[language];
-  
+  // Load all content sections for the given language
+  const contentSections = {
+    header: loadContent(language, 'header'),
+    about: loadContent(language, 'about'),
+    experience: loadContent(language, 'experience'),
+    education: loadContent(language, 'education'),
+    skills: loadContent(language, 'skills'),
+    projects: loadContent(language, 'projects'),
+    pdf: loadContent(language, 'pdf_meta') // pdf_meta.json for PDF metadata
+  };
+  const t = contentSections; // Use 't' as before for consistency in the rest of the script
+
   const doc = new PDFDocument({
     size: 'A4',
     margins: { top: 50, bottom: 50, left: 50, right: 50 },
-    info: {
-      Title: t.pdf.title, Author: t.pdf.author,
-      Subject: t.pdf.subject, Keywords: t.pdf.keywords,
+    info: { // Use data from pdf_meta.json
+      Title: t.pdf.title || `Resume - ${language.toUpperCase()}`,
+      Author: t.pdf.author || "Default Author",
+      Subject: t.pdf.subject || `Resume (${language.toUpperCase()})`,
+      Keywords: t.pdf.keywords || "resume, cv",
     },
     lang: language, pdfVersion: '1.7', tagged: true,
     displayTitle: true, autoFirstPage: true
   });
-  
   // Output path relative to the script's directory, then up to project root, then to public
   const projectRoot = path.resolve(__dirname); // Assumes script is at project root
   let outputFile = path.join(projectRoot, 'public', 'resume.pdf');
@@ -189,49 +213,41 @@ function generateResume(language) {
     });
   };
 
-  // Job 1 with UTF-8 support
-  addSubsectionHeader(t.experience.job1.title, t.experience.job1.company, t.experience.job1.period);
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderList(t.experience.job1.responsibilities);
-  doc.moveDown(0.5);
-
-  // Job 2 with UTF-8 support
-  addSubsectionHeader(t.experience.job2.title, t.experience.job2.company, t.experience.job2.period);
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderList(t.experience.job2.responsibilities);
-  doc.moveDown(0.5);
-
-  // Job 3 with UTF-8 support
-  addSubsectionHeader(t.experience.job3.title, t.experience.job3.company, t.experience.job3.period);
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderList(t.experience.job3.responsibilities);
-  doc.moveDown(1);
+  // Iterate over jobs array
+  if (t.experience && Array.isArray(t.experience.jobs)) {
+    t.experience.jobs.forEach(job => {
+      addSubsectionHeader(job.title, job.company, job.period);
+      doc.fontSize(10)
+         .font(regularFont)
+         .fillColor(colors.text);
+      if (Array.isArray(job.responsibilities)) {
+        renderList(job.responsibilities);
+      }
+      doc.moveDown(0.5);
+    });
+  }
+  doc.moveDown(0.5); // Add a bit more space after the last job, was 1 before for job3
 
   // Education
   addSectionHeader(t.education.title);
 
-  // University with UTF-8 support
-  addSubsectionHeader(t.education.university.degree, t.education.university.institution, t.education.university.period);
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.education.university.description);
-  doc.moveDown(0.3);
-  renderText(t.education.university.additionalInfo);
-  doc.moveDown(0.5);
-
-  // High School with UTF-8 support
-  addSubsectionHeader(t.education.highSchool.degree, t.education.highSchool.institution, t.education.highSchool.period);
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.education.highSchool.description);
+  // Iterate over education entries array
+  if (t.education && Array.isArray(t.education.entries)) {
+    t.education.entries.forEach(entry => {
+      addSubsectionHeader(entry.degree, entry.institution, entry.period);
+      doc.fontSize(10)
+         .font(regularFont)
+         .fillColor(colors.text);
+      if (entry.description) {
+        renderText(entry.description);
+        doc.moveDown(0.3);
+      }
+      if (entry.additionalInfo) {
+        renderText(entry.additionalInfo);
+      }
+      doc.moveDown(0.5);
+    });
+  }
   doc.moveDown(1);
 
   // Skills with UTF-8 support
@@ -287,37 +303,20 @@ function generateResume(language) {
   // Projects
   addSectionHeader(t.projects.title);
 
-  // Project 1 with UTF-8 support
-  addSubsectionHeader(t.projects.project1.title, t.projects.project1.technologies, '');
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.projects.project1.description);
-  doc.moveDown(0.5);
-
-  // Project 2 with UTF-8 support
-  addSubsectionHeader(t.projects.project2.title, t.projects.project2.technologies, '');
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.projects.project2.description);
-  doc.moveDown(0.5);
-
-  // Project 3 with UTF-8 support
-  addSubsectionHeader(t.projects.project3.title, t.projects.project3.technologies, '');
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.projects.project3.description);
-  doc.moveDown(0.5);
-
-  // Project 4 with UTF-8 support
-  addSubsectionHeader(t.projects.project4.title, t.projects.project4.technologies, '');
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.projects.project4.description);
-  doc.moveDown(1);
+  // Iterate over projects entries array
+  if (t.projects && Array.isArray(t.projects.entries)) {
+    t.projects.entries.forEach(project => {
+      addSubsectionHeader(project.title, project.technologies, ''); // No date for projects here
+      doc.fontSize(10)
+         .font(regularFont)
+         .fillColor(colors.text);
+      if (project.description) {
+        renderText(project.description);
+      }
+      doc.moveDown(0.5);
+    });
+  }
+  doc.moveDown(0.5); // Add a bit more space after the last project, was 1 before
 
   // Footer with UTF-8 support
   const footerY = doc.page.height - 50;

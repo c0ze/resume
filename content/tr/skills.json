@@ -1,0 +1,17 @@
+{
+  "title": "Yetenekler",
+  "technicalSkillsTitle": "Teknik Yetenekler",
+  "technicalSkills": [
+    "JavaScript/TypeScript - İleri Seviye",
+    "React & Next.js - İleri Seviye",
+    "Python (Django, Flask) - Yetkin",
+    "Node.js (Express) - Yetkin",
+    "SQL & NoSQL Veritabanları (PostgreSQL, MongoDB) - Yetkin",
+    "Docker & Kubernetes - Orta Seviye",
+    "AWS & GCP - Orta Seviye"
+  ],
+  "techStackTitle": "Tercih Edilen Teknoloji Yığını",
+  "techStackItems": "React, Next.js, TypeScript, Python, Node.js, PostgreSQL, Docker",
+  "softSkillsTitle": "Sosyal Beceriler",
+  "softSkillItems": "Problem Çözme, Takım Çalışması, İletişim, Uyum Sağlama, Eleştirel Düşünme, Zaman Yönetimi"
+}

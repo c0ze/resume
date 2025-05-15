@@ -1,0 +1,17 @@
+{
+  "title": "Skills",
+  "technicalSkillsTitle": "Technical Skills",
+  "technicalSkills": [
+    "JavaScript/TypeScript - Advanced",
+    "React & Next.js - Advanced",
+    "Python (Django, Flask) - Proficient",
+    "Node.js (Express) - Proficient",
+    "SQL & NoSQL Databases (PostgreSQL, MongoDB) - Proficient",
+    "Docker & Kubernetes - Intermediate",
+    "AWS & GCP - Intermediate"
+  ],
+  "techStackTitle": "Preferred Tech Stack",
+  "techStackItems": "React, Next.js, TypeScript, Python, Node.js, PostgreSQL, Docker",
+  "softSkillsTitle": "Soft Skills",
+  "softSkillItems": "Problem Solving, Team Collaboration, Communication, Adaptability, Critical Thinking, Time Management"
+}

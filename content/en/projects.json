@@ -1,0 +1,25 @@
+{
+  "title": "Projects",
+  "entries": [
+    {
+      "title": "AI-Powered Recommendation Engine",
+      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
+      "description": "Developed a personalized recommendation system for an e-commerce platform, increasing user engagement by 25%."
+    },
+    {
+      "title": "Real-time Collaborative Whiteboard",
+      "technologies": "Node.js, WebSocket, React, Canvas API",
+      "description": "Built a web-based collaborative whiteboard application allowing multiple users to draw and share ideas in real-time."
+    },
+    {
+      "title": "Serverless Data Processing Pipeline",
+      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
+      "description": "Designed and implemented a serverless pipeline for ingesting and processing large volumes of IoT data."
+    },
+    {
+      "title": "Portfolio Website (This Project)",
+      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
+      "description": "A multilingual, SSR-enabled portfolio website with dynamic PDF resume generation."
+    }
+  ]
+}

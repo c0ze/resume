@@ -1,0 +1,17 @@
+{
+  "title": "スキル",
+  "technicalSkillsTitle": "テクニカルスキル",
+  "technicalSkills": [
+    "JavaScript/TypeScript - 上級",
+    "React & Next.js - 上級",
+    "Python (Django, Flask) - 習熟",
+    "Node.js (Express) - 習熟",
+    "SQL & NoSQLデータベース (PostgreSQL, MongoDB) - 習熟",
+    "Docker & Kubernetes - 中級",
+    "AWS & GCP - 中級"
+  ],
+  "techStackTitle": "優先技術スタック",
+  "techStackItems": "React, Next.js, TypeScript, Python, Node.js, PostgreSQL, Docker",
+  "softSkillsTitle": "ソフトスキル",
+  "softSkillItems": "問題解決能力、チームコラボレーション、コミュニケーション能力、適応性、批判的思考、時間管理能力"
+}

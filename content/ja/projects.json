@@ -1,0 +1,25 @@
+{
+  "title": "プロジェクト",
+  "entries": [
+    {
+      "title": "AI搭載レコメンデーションエンジン",
+      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
+      "description": "Eコマースプラットフォーム向けのパーソナライズされたレコメンデーションシステムを開発し、ユーザーエンゲージメントを25%向上させました。"
+    },
+    {
+      "title": "リアルタイム共同ホワイトボード",
+      "technologies": "Node.js, WebSocket, React, Canvas API",
+      "description": "複数のユーザーがリアルタイムで描画しアイデアを共有できるウェブベースの共同ホワイトボードアプリケーションを構築しました。"
+    },
+    {
+      "title": "サーバーレスデータ処理パイプライン",
+      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
+      "description": "大量のIoTデータを取り込み処理するためのサーバーレスパイプラインを設計・実装しました。"
+    },
+    {
+      "title": "ポートフォリオウェブサイト（このプロジェクト）",
+      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
+      "description": "動的なPDF履歴書生成機能を備えた、多言語対応のSSR対応ポートフォリオウェブサイト。"
+    }
+  ]
+}

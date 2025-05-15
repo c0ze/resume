@@ -1,0 +1,35 @@
+{
+  "title": "İş Deneyimi",
+  "jobs": [
+    {
+      "title": "Kıdemli Yazılım Mühendisi",
+      "company": "Teknoloji Çözümleri A.Ş.",
+      "period": "Ocak 2022 - Halen",
+      "responsibilities": [
+        "Yeni bir yapay zeka destekli analitik platformunun geliştirilmesine liderlik etti.",
+        "Ölçeklenebilir mikro servisler tasarladı ve uyguladı.",
+        "Genç geliştiricilere mentorluk yaptı ve kod incelemeleri gerçekleştirdi."
+      ]
+    },
+    {
+      "title": "Yazılım Geliştirici",
+      "company": "İnovatek Ltd.",
+      "period": "Haziran 2019 - Aralık 2021",
+      "responsibilities": [
+        "Büyük ölçekli bir e-ticaret uygulaması için özellikler geliştirdi ve bakımını yaptı.",
+        "Yüksek kaliteli yazılım sunmak için çapraz fonksiyonlu ekiplerle işbirliği yaptı.",
+        "Tam yazılım geliştirme yaşam döngüsüne katıldı."
+      ]
+    },
+    {
+      "title": "Junior Geliştirici",
+      "company": "Web Sihirbazları Ltd. Şti.",
+      "period": "Temmuz 2018 - Mayıs 2019",
+      "responsibilities": [
+        "Modern web teknolojilerini kullanarak müşteri web sitelerinin geliştirilmesine yardımcı oldu.",
+        "Ön uç ve arka uç geliştirme görevlerine katkıda bulundu.",
+        "Sürüm kontrol sistemleri ve çevik metodolojilerle deneyim kazandı."
+      ]
+    }
+  ]
+}
