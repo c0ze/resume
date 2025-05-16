@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node scripts/build-static.mjs",
-    "preview": "serve dist/client",
+    "preview": "vite preview",
     "check": "tsc",
     "db:push": "drizzle-kit push"
   },

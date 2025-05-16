@@ -87,7 +87,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
       plugins: [...basePlugins, ...clientOnlyPlugins],
       build: {
         // Output to project_root/dist/client
-        outDir: path.resolve(import.meta.dirname, "dist/client"),
+        outDir: path.resolve(import.meta.dirname, "client", "../dist/client"),
         emptyOutDir: true, // Clean the dist/client directory before build
         manifest: true, // Generate manifest.json for preloading links
         ssrManifest: false, // No SSR manifest for client build
