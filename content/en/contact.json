@@ -2,5 +2,11 @@
   "title": "Contact",
   "getInTouch": "Get In Touch",
   "emailMe": "Email Me",
-  "findMeOn": "Find Me On"
+  "findMeOn": "Find Me On",
+  "socialLinks": [
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ardakaraduman/"
+    }
+  ]
 }

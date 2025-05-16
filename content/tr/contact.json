@@ -2,5 +2,11 @@
   "title": "İletişim",
   "getInTouch": "İletişime Geçin",
   "emailMe": "E-posta Gönder",
-  "findMeOn": "Beni Burada Bulun"
+  "findMeOn": "Beni Burada Bulun",
+  "socialLinks": [
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ardakaraduman/"
+    }
+  ]
 }

@@ -69,6 +69,10 @@ export interface Translations {
     getInTouch: string;
     emailMe: string;
     findMeOn: string;
+    socialLinks?: Array<{
+      name: string;
+      url: string;
+    }>;
   };
   footer: {
     copyright: string;
