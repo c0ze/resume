@@ -12,5 +12,7 @@ declare module 'lucide-react' {
   export const MapPinIcon: Icon;
   export const GlobeIcon: Icon;
   export const DownloadIcon: Icon;
+  export const Linkedin: Icon;
+  export const Github: Icon;
   // Add any other icons you're using in your project
 }

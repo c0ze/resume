@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AtSign, MapPinIcon, GlobeIcon, DownloadIcon } from "lucide-react";
+import { AtSign, MapPinIcon, GlobeIcon, DownloadIcon, Linkedin, Github } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 // Removed: import { getTranslation } from "../translations";
 
@@ -138,11 +138,13 @@ const ContactSection = () => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-auto h-12 px-4 rounded-full bg-gray-700 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors text-white"
+                    className="w-12 h-12 rounded-full bg-gray-700 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors text-white"
                     aria-label={link.name}
                   >
-                    {/* Displaying name as text. If you want icons, you'll need a more complex setup e.g. an icon component that maps link.name to an SVG */}
-                    {link.name}
+                    {link.name === 'LinkedIn' && <Linkedin className="h-6 w-6 text-white" />}
+                    {link.name === 'GitHub' && <Github className="h-6 w-6 text-white" />}
+                    {/* Fallback for other links if any, or remove if only these two are expected */}
+                    {link.name !== 'LinkedIn' && link.name !== 'GitHub' && link.name}
                   </a>
                 ))}
               </div>
