@@ -55,11 +55,16 @@ function generateResume(language) {
   const doc = new PDFDocument(pdfDocOptions);
   // Output path relative to the script's directory, then up to project root, then to public
   const projectRoot = path.resolve(__dirname); // Assumes script is at project root
-  let outputFile = path.join(projectRoot, 'public', 'resume.pdf');
-  if (language === 'ja') {
+  let outputFile;
+  if (language === 'en') {
+    outputFile = path.join(projectRoot, 'public', 'resume-en.pdf');
+  } else if (language === 'ja') {
     outputFile = path.join(projectRoot, 'public', 'resume-ja.pdf');
   } else if (language === 'tr') {
     outputFile = path.join(projectRoot, 'public', 'resume-tr.pdf');
+  } else {
+    // Fallback or error for unsupported languages, though current setup only calls for en, ja, tr
+    outputFile = path.join(projectRoot, 'public', `resume-${language}.pdf`);
   }
   
   const stream = fs.createWriteStream(outputFile); // Removed encoding: 'utf8' as it's for text streams
