@@ -233,7 +233,7 @@ function generateResume(language) {
   doc.y = doc.y;     // Maintain current y (renderText implies a line feed, so y should be ok for next line)
   renderText(contactLine); // Render text at current doc.x, doc.y
 
-  contactLine = `${t.header.website}: arda.karaduman.web.tr`;
+  contactLine = `${t.header.website}`;
   textWidth = doc.widthOfString(contactLine); // Re-assign
   centeredX = (doc.page.width - textWidth) / 2; // Re-assign
   if (language === 'ja') {
