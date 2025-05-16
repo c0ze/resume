@@ -210,7 +210,7 @@ function generateResume(language) {
 
   // Contact Info with UTF-8 support (This section is correctly centered with manual doc.x)
   doc.fontSize(10).font(regularFont).fillColor(colors.text);
-  let contactLine = `${t.about.location} ${t.header.location}`;
+  let contactLine = `${t.header.location}`;
   // Re-assign textWidth and centeredX (remove 'let' as they were declared with 'var' earlier)
   textWidth = doc.widthOfString(contactLine);
   centeredX = (doc.page.width - textWidth) / 2;
