@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link } from "wouter"; // Link is imported but not used, can be removed if not needed elsewhere.
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../translations";
+// Removed: import { getTranslation } from "../translations";
 
 const Navigation = () => {
   const [activeSection, setActiveSection] = useState("about");
-  const { language, setLanguage } = useLanguage();
-  const t = getTranslation(language);
+  const { language, setLanguage, translations, loadingTranslations } = useLanguage();
+  // const t = getTranslation(language); // Old way
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +47,28 @@ const Navigation = () => {
       setActiveSection(sectionId);
     }
   };
+
+  if (loadingTranslations || !translations) {
+    // Basic loading state for navigation
+    return (
+      <nav className="sticky top-0 bg-white shadow-md z-10">
+        <div className="container mx-auto px-4 md:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <ul className="flex flex-wrap justify-center md:justify-start space-x-1 md:space-x-6 py-4">
+              {[...Array(6)].map((_, i) => (
+                <li key={i} className="px-3 py-2 rounded bg-gray-200 animate-pulse w-20 h-8"></li>
+              ))}
+            </ul>
+            <div className="pb-4 md:py-4">
+              <div className="px-3 py-2 rounded border border-gray-300 bg-gray-200 animate-pulse w-24 h-10"></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
+
+  const t = translations; // Use translations from context
 
   const sections = [
     { id: "about", label: t.navigation.about },

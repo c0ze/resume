@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../translations";
+// Removed: import { getTranslation } from "../translations";
 
+// Interface can remain the same as it matches the structure within the jobs array
 interface Experience {
   title: string;
   company: string;
@@ -10,30 +11,40 @@ interface Experience {
 }
 
 const ExperienceSection = () => {
-  const { language } = useLanguage();
-  const t = getTranslation(language);
+  const { translations, loadingTranslations } = useLanguage();
+
+  if (loadingTranslations || !translations) {
+    // Basic loading state for ExperienceSection
+    return (
+      <section id="experience" className="mb-12 animate-pulse">
+        <div className="h-8 bg-gray-300 rounded w-1/3 mb-6"></div>
+        {[...Array(2)].map((_, i) => ( // Skeleton for 2 job cards
+          <Card key={i} className="mb-6">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row justify-between mb-4">
+                <div>
+                  <div className="h-6 bg-gray-300 rounded w-3/4 mb-1"></div>
+                  <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                </div>
+                <div className="mt-2 md:mt-0">
+                  <div className="h-7 bg-gray-300 rounded-full w-24"></div>
+                </div>
+              </div>
+              <ul className="list-disc pl-5 space-y-2">
+                <li className="h-4 bg-gray-300 rounded w-full"></li>
+                <li className="h-4 bg-gray-300 rounded w-5/6"></li>
+                <li className="h-4 bg-gray-300 rounded w-full"></li>
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+    );
+  }
   
-  // Get experience data from translations
-  const experiences: Experience[] = [
-    {
-      title: t.experience.job1.title,
-      company: t.experience.job1.company,
-      period: t.experience.job1.period,
-      responsibilities: t.experience.job1.responsibilities
-    },
-    {
-      title: t.experience.job2.title,
-      company: t.experience.job2.company,
-      period: t.experience.job2.period,
-      responsibilities: t.experience.job2.responsibilities
-    },
-    {
-      title: t.experience.job3.title,
-      company: t.experience.job3.company,
-      period: t.experience.job3.period,
-      responsibilities: t.experience.job3.responsibilities
-    }
-  ];
+  const t = translations; // Use translations from context
+  // Get experience data directly from the jobs array in translations
+  const experiences: Experience[] = t.experience.jobs || [];
 
   return (
     <section id="experience" className="mb-12">

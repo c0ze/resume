@@ -1,16 +1,16 @@
 import { AtSign, MapPinIcon, GlobeIcon, DownloadIcon } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../translations";
+// Removed: import { getTranslation } from "../translations";
 
 const Header = () => {
-  const { language } = useLanguage();
-  const t = getTranslation(language);
+  const { language, translations, loadingTranslations } = useLanguage();
+  // const t = getTranslation(language); // Old way
 
   const handleDownloadResume = () => {
     // Download the resume based on the selected language
     let fileName;
     if (language === 'en') {
-      fileName = 'resume.pdf';
+      fileName = 'resume-en.pdf'; // Updated filename
     } else if (language === 'ja') {
       fileName = 'resume-ja.pdf';
     } else if (language === 'tr') {
@@ -36,6 +36,22 @@ const Header = () => {
     window.open(pathWithTimestamp, '_blank');
   };
 
+  if (loadingTranslations || !translations) {
+    // You can return a loading spinner or a skeleton UI here
+    return (
+      <header className="bg-primary text-white py-12 px-4 md:px-8">
+        <div className="container mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  const t = translations; // Use the translations from context
+
   return (
     <header className="bg-primary text-white py-12 px-4 md:px-8">
       <div className="container mx-auto">
@@ -47,8 +63,8 @@ const Header = () => {
           <div className="mt-4 md:mt-0">
             <div className="flex items-center mt-2">
               <AtSign className="h-5 w-5 mr-3" />
-              <button 
-                onClick={() => window.location.href = 'mailto:me@arda.karaduman.web.tr'} 
+              <button
+                onClick={() => window.location.href = `mailto:${t.header.contactViaEmail}`}
                 className="hover:text-blue-300 transition-colors"
               >
                 {t.header.contactViaEmail}
@@ -60,7 +76,7 @@ const Header = () => {
             </div>
             <div className="flex items-center mt-2">
               <GlobeIcon className="h-5 w-5 mr-3" />
-              <a href="https://arda.karaduman.web.tr" target="_blank" rel="noopener noreferrer" className="hover:text-blue-300 transition-colors">
+              <a href={t.header.website.startsWith('http') ? t.header.website : `https://${t.header.website}`} target="_blank" rel="noopener noreferrer" className="hover:text-blue-300 transition-colors">
                 {t.header.website}
               </a>
             </div>

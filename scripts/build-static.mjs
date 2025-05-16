@@ -57,10 +57,14 @@ async function build() {
     await fs.writeFile(templatePath, template); // Overwrite the client's index.html with the rendered one
     console.log(`Rendered HTML saved to ${templatePath}`);
 
+    // NEW: Generate PDF resumes for all languages
+    console.log('Generating PDF resumes...');
+    execSync('node generateResume.js', { stdio: 'inherit', cwd: projectRoot });
+
     // 9. Check for PDF files and create pdf-status.json
     console.log('Checking for PDF files...');
     const pdfFiles = {
-      en: await fs.pathExists(path.join(publicPath, 'resume.pdf')),
+      en: await fs.pathExists(path.join(publicPath, 'resume-en.pdf')),
       ja: await fs.pathExists(path.join(publicPath, 'resume-ja.pdf')),
       tr: await fs.pathExists(path.join(publicPath, 'resume-tr.pdf')),
     };

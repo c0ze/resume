@@ -1,79 +1,67 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+// AspectRatio and projectSvgs are removed as images are not in the new JSON structure for projects
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../translations";
+// Removed: import { getTranslation } from "../translations";
 
-interface Project {
+interface ProjectEntry { // Renamed for clarity
   title: string;
   description: string;
-  technologies: string[];
-  image: string;
+  technologies: string; // Kept as string, will split for display
+  // image?: string; // Image field removed for now
 }
 
-// SVG placeholders as per the requirement to use SVG for vector graphics
-const projectSvgs = [
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none"><rect width="800" height="450" fill="#f1f5f9"/><path d="M400 225 C 433 185, 467 145, 500 145 C 533 145, 567 185, 600 225 C 567 265, 533 305, 500 305 C 467 305, 433 265, 400 225 Z" fill="#cbd5e1"/><path d="M200 225 C 233 185, 267 145, 300 145 C 333 145, 367 185, 400 225 C 367 265, 333 305, 300 305 C 267 305, 233 265, 200 225 Z" fill="#94a3b8"/></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none"><rect width="800" height="450" fill="#f1f5f9"/><circle cx="400" cy="225" r="100" fill="#cbd5e1"/><rect x="280" y="195" width="240" height="60" fill="#94a3b8"/></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none"><rect width="800" height="450" fill="#f1f5f9"/><path d="M300 150 L500 150 L500 300 L300 300 Z" fill="#cbd5e1"/><path d="M350 175 L450 175 L450 275 L350 275 Z" fill="#94a3b8"/></svg>`,
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none"><rect width="800" height="450" fill="#f1f5f9"/><path d="M200 150 L600 150 L600 300 L200 300 Z" fill="#cbd5e1"/><circle cx="270" cy="200" r="30" fill="#94a3b8"/><circle cx="270" cy="250" r="30" fill="#94a3b8"/><rect x="320" y="180" width="250" height="20" fill="#94a3b8"/><rect x="320" y="230" width="250" height="20" fill="#94a3b8"/></svg>`
-];
-
 const ProjectsSection = () => {
-  const { language } = useLanguage();
-  const t = getTranslation(language);
+  const { translations, loadingTranslations } = useLanguage();
 
-  // Get project data from translations
-  const projects: Project[] = [
-    {
-      title: t.projects.project1.title,
-      description: t.projects.project1.description,
-      technologies: t.projects.project1.technologies.split(", "),
-      image: projectSvgs[0]
-    },
-    {
-      title: t.projects.project2.title,
-      description: t.projects.project2.description,
-      technologies: t.projects.project2.technologies.split(", "),
-      image: projectSvgs[1]
-    },
-    {
-      title: t.projects.project3.title,
-      description: t.projects.project3.description,
-      technologies: t.projects.project3.technologies.split(", "),
-      image: projectSvgs[2]
-    },
-    {
-      title: t.projects.project4.title,
-      description: t.projects.project4.description,
-      technologies: t.projects.project4.technologies.split(", "),
-      image: projectSvgs[3]
-    }
-  ];
+  if (loadingTranslations || !translations || !translations.projects) {
+    // Basic loading state for ProjectsSection
+    return (
+      <section id="projects" className="mb-12 animate-pulse">
+        <div className="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(2)].map((_, i) => ( // Skeleton for 2 project cards
+            <Card key={i} className="overflow-hidden">
+              {/* Removed AspectRatio and image placeholder */}
+              <CardContent className="p-6">
+                <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-full mb-1"></div>
+                <div className="h-4 bg-gray-300 rounded w-5/6 mb-4"></div>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="h-6 bg-gray-300 rounded-full w-20"></div>
+                  <div className="h-6 bg-gray-300 rounded-full w-24"></div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  const t = translations; // Use translations from context
+  const projectEntries: ProjectEntry[] = t.projects.entries || [];
 
   return (
     <section id="projects" className="mb-12">
       <h2 className="text-2xl font-bold mb-6 text-primary border-b pb-2">{t.projects.title}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {projects.map((project, index) => (
-          <Card key={index} className="overflow-hidden">
-            <AspectRatio ratio={16 / 9} className="bg-gray-200">
-              <div 
-                dangerouslySetInnerHTML={{ __html: project.image }} 
-                className="w-full h-full flex items-center justify-center"
-              />
-            </AspectRatio>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-              <p className="text-gray-600 mb-4">{project.description}</p>
+        {projectEntries.map((project, index) => (
+          <Card key={index} className="overflow-hidden flex flex-col"> {/* Added flex flex-col for better content structure */}
+            {/* Image/AspectRatio removed */}
+            <CardContent className="p-6 flex-grow"> {/* Added flex-grow */}
+              <h3 className="text-xl font-bold mb-2 text-gray-800 dark:text-gray-100">{project.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">{project.description}</p>
               <div className="flex flex-wrap gap-2 mb-4">
-                {project.technologies.map((tech, idx) => (
-                  <span 
-                    key={idx} 
-                    className="bg-gray-100 rounded-full px-3 py-1 text-xs"
-                  >
-                    {tech}
-                  </span>
+                {(project.technologies || "").split(",").map((tech, idx) => (
+                  tech.trim() && ( // Ensure not to render empty tags
+                    <span
+                      key={idx}
+                      className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full px-3 py-1 text-xs font-medium"
+                    >
+                      {tech.trim()}
+                    </span>
+                  )
                 ))}
               </div>
             </CardContent>

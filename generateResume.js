@@ -1,250 +1,253 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
+import path from 'path';
 
-// Create a PDF document
-const doc = new PDFDocument({
-  size: 'A4',
-  margins: {
-    top: 50,
-    bottom: 50,
-    left: 50,
-    right: 50
-  },
-  info: {
-    Title: 'Arda Karaduman - Resume',
-    Author: 'Arda Karaduman',
-    Subject: 'Resume',
-    Keywords: 'resume, software engineer, web development',
+// Helper function to load JSON data
+function loadContent(lang, fileName) {
+  const filePath = path.join(process.cwd(), 'content', lang, fileName);
+  if (fs.existsSync(filePath)) {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    try {
+      return JSON.parse(fileContent);
+    } catch (e) {
+      console.error(`Error parsing JSON from ${filePath}:`, e);
+      return {};
+    }
   }
-});
+  console.warn(`Warning: File not found - ${filePath}`);
+  return {};
+}
 
-// Pipe the PDF document to a file
-doc.pipe(fs.createWriteStream('public/resume.pdf'));
+async function generatePdfForLang(lang) {
+  console.log(`[${lang}] Starting PDF generation...`);
+  // Load content
+  const headerContent = loadContent(lang, 'header.json');
+  const aboutContent = loadContent(lang, 'about.json');
+  const experienceContent = loadContent(lang, 'experience.json');
+  const educationContent = loadContent(lang, 'education.json');
+  const skillsContent = loadContent(lang, 'skills.json');
+  const projectsContent = loadContent(lang, 'projects.json');
+  const pdfMetaContent = loadContent(lang, 'pdf_meta.json');
 
-// Define colors and styles
-const colors = {
-  primary: '#3B82F6',
-  secondary: '#1E40AF',
-  text: '#1F2937',
-  lightText: '#6B7280',
-  background: '#F9FAFB'
-};
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: { top: 50, bottom: 50, left: 50, right: 50 },
+    info: {
+      Title: pdfMetaContent.title || `Resume - ${headerContent.title || 'Arda Karaduman'}`,
+      Author: pdfMetaContent.author || headerContent.title || 'Arda Karaduman',
+      Subject: pdfMetaContent.subject || `Resume of ${headerContent.title || 'Arda Karaduman'}`,
+      Keywords: pdfMetaContent.keywords || 'resume, cv',
+    },
+    lang: lang,
+    pdfVersion: '1.7',
+    tagged: true,
+    displayTitle: true,
+    autoFirstPage: true,
+    // fontSubsetting: lang === 'ja' ? false : true // Subsetting can be problematic with some CJK fonts
+  });
 
-// Helper function for section headers
-function addSectionHeader(text) {
-  doc.fontSize(16)
-     .font('Helvetica-Bold')
-     .fillColor(colors.primary)
-     .text(text, { underline: true })
+  const outputDir = path.join(process.cwd(), 'public');
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  const outputPath = path.join(outputDir, `resume-${lang}.pdf`);
+  const stream = fs.createWriteStream(outputPath);
+  doc.pipe(stream);
+
+  stream.on('finish', () => {
+    console.log(`[${lang}] Successfully generated and saved: ${outputPath}`);
+  });
+  stream.on('error', (err) => {
+    console.error(`[${lang}] Error writing PDF to stream for ${outputPath}:`, err);
+  });
+
+  const colors = {
+    primary: '#3B82F6',
+    secondary: '#10B981',
+    text: '#1F2937',
+    lightText: '#6B7280',
+  };
+
+  const fontDir = path.join(process.cwd(), 'public', 'fonts');
+  const notoRegularPath = path.join(fontDir, 'NotoSans-Regular.ttf');
+  const notoBoldPath = path.join(fontDir, 'NotoSans-Bold.ttf');
+  const ipaexgPath = path.join(fontDir, 'ipaexg.ttf');
+
+  let regularFont = 'Helvetica';
+  let boldFont = 'Helvetica-Bold';
+
+  try {
+    if (lang === 'ja') {
+      console.log(`[ja] Attempting to load Japanese font (IPAexGothic)...`);
+      if (!fs.existsSync(ipaexgPath)) throw new Error(`Japanese Font (IPAexGothic) not found: ${ipaexgPath}.`);
+      doc.registerFont('CustomFont-Regular', ipaexgPath); // Use generic names for registration
+      doc.registerFont('CustomFont-Bold', ipaexgPath);    // Can use same if no bold variant
+      regularFont = 'CustomFont-Regular';
+      boldFont = 'CustomFont-Bold';
+      console.log(`[ja] Successfully registered Japanese font (IPAexGothic).`);
+    } else { // For 'en', 'tr', and other languages
+      console.log(`[${lang}] Attempting to load NotoSans fonts...`);
+      if (!fs.existsSync(notoRegularPath)) throw new Error(`Regular Font (NotoSans-Regular) not found: ${notoRegularPath}`);
+      if (!fs.existsSync(notoBoldPath)) throw new Error(`Bold Font (NotoSans-Bold) not found: ${notoBoldPath}`);
+      doc.registerFont('CustomFont-Regular', notoRegularPath);
+      doc.registerFont('CustomFont-Bold', notoBoldPath);
+      regularFont = 'CustomFont-Regular';
+      boldFont = 'CustomFont-Bold';
+      console.log(`[${lang}] Successfully registered NotoSans fonts.`);
+    }
+    // Test font by setting it (optional, but can catch early errors)
+    doc.font(regularFont).text('', 0, 0); 
+  } catch (e) {
+    console.error(`[${lang}] ERROR loading/using custom font: ${e.message}`);
+    console.error(`[${lang}] Falling back to Helvetica. Characters may be garbled for non-Latin scripts.`);
+    // regularFont and boldFont remain Helvetica
+  }
+  
+  doc.font(regularFont); // Set default document font
+
+  function addSectionHeader(text) {
+    doc.fontSize(16).font(boldFont).fillColor(colors.primary)
+       .text(text, { underline: false })
+       .moveDown(0.5);
+    doc.strokeColor(colors.primary).lineWidth(0.5)
+       .moveTo(doc.x, doc.y - 5)
+       .lineTo(doc.page.width - doc.page.margins.right, doc.y - 5)
+       .stroke().moveDown(0.75);
+  }
+
+  function addSubsectionHeader(title, subtitle, dates) {
+    const currentY = doc.y;
+    doc.fontSize(12).font(boldFont).fillColor(colors.text)
+       .text(title || '', doc.page.margins.left, currentY, { width: doc.page.width - doc.page.margins.left - doc.page.margins.right - (dates ? 100 : 0) });
+    if (dates) {
+      doc.fontSize(10).font(regularFont).fillColor(colors.lightText)
+         .text(dates, doc.page.width - doc.page.margins.right - 90, currentY, { align: 'right', width: 90 });
+    }
+    doc.moveDown(0.1);
+    if (subtitle) {
+      doc.fontSize(11).font(regularFont).fillColor(colors.secondary)
+         .text(subtitle, { continued: false });
+      doc.moveDown(0.3);
+    } else {
+      doc.moveDown(0.3);
+    }
+  }
+
+  // --- Start PDF Content ---
+  doc.font(regularFont); // Ensure default font is set for the language
+
+  // Header
+  doc.fontSize(24).font(boldFont).fillColor(colors.primary)
+     .text(headerContent.title || 'Arda Karaduman', { align: 'center' });
+  doc.fontSize(14).font(regularFont).fillColor(colors.secondary)
+     .text(headerContent.subtitle || 'Software Developer', { align: 'center' })
      .moveDown(0.5);
+
+  const contactInfo = [
+    headerContent.location || 'Location not specified',
+    `Email: ${headerContent.contactViaEmail || 'Email not specified'}`,
+    `Website: ${headerContent.website || 'Website not specified'}`
+  ].join('  •  ');
+  doc.fontSize(9).font(regularFont).fillColor(colors.text)
+     .text(contactInfo, { align: 'center' })
+     .moveDown(1.5);
+
+  // About Me
+  addSectionHeader(aboutContent.title || 'About Me');
+  doc.font(regularFont).fontSize(10).fillColor(colors.text); // Set font for body
+  doc.text(aboutContent.paragraph1 || '', { align: 'justify', lineGap: 2 }).moveDown(0.5);
+  if (aboutContent.paragraph2) {
+    doc.text(aboutContent.paragraph2, { align: 'justify', lineGap: 2 }).moveDown(1);
+  } else {
+    doc.moveDown(1);
+  }
+  if (aboutContent.languages && aboutContent.languagesContent) {
+    doc.font(boldFont).fontSize(10).text(`${aboutContent.languages} `, { continued: true });
+    doc.font(regularFont).fontSize(10).text(aboutContent.languagesContent).moveDown(1);
+  }
+
+  // Work Experience
+  addSectionHeader(experienceContent.title || 'Work Experience');
+  if (experienceContent.jobs && Array.isArray(experienceContent.jobs)) {
+    experienceContent.jobs.forEach(job => {
+      doc.font(regularFont); // Ensure correct font for subsection
+      addSubsectionHeader(job.title, job.company, job.period);
+      if (job.responsibilities && Array.isArray(job.responsibilities)) {
+        doc.fontSize(10).font(regularFont).fillColor(colors.text)
+           .list(job.responsibilities, { bulletRadius: 1.5, textIndent: 10, lineGap: 2, paragraphGap: 3 });
+      }
+      doc.moveDown(0.75);
+    });
+  }
+
+  // Education
+  addSectionHeader(educationContent.title || 'Education');
+  if (educationContent.entries && Array.isArray(educationContent.entries)) {
+    educationContent.entries.forEach(entry => {
+      doc.font(regularFont);
+      addSubsectionHeader(entry.degree, entry.institution, entry.period);
+      doc.fontSize(10).font(regularFont).fillColor(colors.text);
+      if (entry.description) {
+        doc.text(entry.description, { lineGap: 2 }).moveDown(0.3);
+      }
+      if (entry.additionalInfo) {
+        const additionalInfoLines = entry.additionalInfo.split('\n').map(line => line.trim()).filter(line => line);
+        if (additionalInfoLines.length > 0) {
+          doc.list(additionalInfoLines.map(line => line.startsWith('- ') ? line.substring(2).trim() : line.trim()), 
+                     { bulletRadius: 1.5, textIndent: 10, lineGap: 2, paragraphGap: 3 });
+        }
+      }
+      doc.moveDown(0.75);
+    });
+  }
+
+  // Skills
+  addSectionHeader(skillsContent.title || 'Skills');
+  if (skillsContent.technicalSkillsTitle && skillsContent.technicalSkills && Array.isArray(skillsContent.technicalSkills)) {
+    doc.fontSize(11).font(boldFont).fillColor(colors.text)
+       .text(skillsContent.technicalSkillsTitle).moveDown(0.2);
+    doc.fontSize(10).font(regularFont).fillColor(colors.text)
+       .list(skillsContent.technicalSkills, { bulletRadius: 1.5, textIndent: 10, columns: 2, columnGap: 15, lineGap: 2, paragraphGap: 3 });
+    doc.moveDown(1);
+  }
+
+  // Projects
+  addSectionHeader(projectsContent.title || 'Projects');
+  if (projectsContent.entries && Array.isArray(projectsContent.entries)) {
+    projectsContent.entries.forEach(project => {
+      doc.font(regularFont);
+      addSubsectionHeader(project.title, project.technologies, '');
+      doc.fontSize(10).font(regularFont).fillColor(colors.text)
+         .text(project.description || '', { lineGap: 2 })
+         .moveDown(0.75);
+    });
+  }
+
+  // Footer
+  const footerY = doc.page.height - 40;
+  const generatedOnText = pdfMetaContent.generatedOn || (lang === 'ja' ? '作成日:' : (lang === 'tr' ? 'Oluşturulma Tarihi:' : 'Generated on:'));
+  doc.fontSize(8).font(regularFont).fillColor(colors.lightText)
+     .text(`${generatedOnText} ${new Date().toLocaleDateString(lang === 'ja' ? 'ja-JP' : lang === 'tr' ? 'tr-TR' : 'en-US')}`,
+           doc.page.margins.left, footerY, 
+           { align: 'center', width: doc.page.width - doc.page.margins.left - doc.page.margins.right });
+  // --- End PDF Content ---
+
+  try {
+    console.log(`[${lang}] Attempting to finalize PDF: ${outputPath}`);
+    doc.end();
+  } catch (e) {
+    console.error(`[${lang}] Error during doc.end():`, e);
+  }
 }
 
-// Helper function for subsection headers
-function addSubsectionHeader(title, subtitle, dates) {
-  doc.fontSize(12)
-     .font('Helvetica-Bold')
-     .fillColor(colors.text)
-     .text(title, { continued: false });
-  
-  doc.fontSize(11)
-     .font('Helvetica')
-     .fillColor(colors.primary)
-     .text(subtitle, { continued: false });
-  
-  doc.fontSize(10)
-     .font('Helvetica')
-     .fillColor(colors.lightText)
-     .text(dates)
-     .moveDown(0.2);
+async function main() {
+  const languages = ['en', 'tr', 'ja'];
+  for (const lang of languages) {
+    await generatePdfForLang(lang);
+  }
 }
 
-// Header - Name and Title
-doc.fontSize(24)
-   .font('Helvetica-Bold')
-   .fillColor(colors.primary)
-   .text('Arda Karaduman', { align: 'center' })
-   .fontSize(14)
-   .font('Helvetica')
-   .fillColor(colors.secondary)
-   .text('Full Stack Developer', { align: 'center' })
-   .moveDown(0.5);
-
-// Contact Info
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Location: Tokyo, Japan', { align: 'center' })
-   .text('Email: me@arda.karaduman.web.tr', { align: 'center' })
-   .text('Website: arda.karaduman.web.tr', { align: 'center' })
-   .moveDown(1.5);
-
-// About Me
-addSectionHeader('About Me');
-doc.fontSize(11)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('I am a passionate and versatile software engineer with expertise in web development, particularly with React and JavaScript/TypeScript. With a strong background in building user-focused applications, I excel at creating clean, efficient code and innovative solutions to complex problems.', { align: 'justify' })
-   .moveDown(0.5);
-doc.text('My experience spans from front-end development to back-end services, with a particular focus on creating responsive, accessible, and performance-optimized web applications. I\'m constantly exploring new technologies and methodologies to improve my craft and deliver better results.', { align: 'justify' })
-   .moveDown(1);
-
-// Languages
-doc.fontSize(11)
-   .font('Helvetica-Bold')
-   .fillColor(colors.text)
-   .text('Languages:')
-   .fontSize(11)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Turkish (Native), English (Fluent), Japanese (Daily Conversation)')
-   .moveDown(1);
-
-// Work Experience
-addSectionHeader('Work Experience');
-
-// Job 1
-addSubsectionHeader('Senior Software Engineer', 'Trendyol', '2021 - Present');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text);
-doc.list([
-  'Led front-end development for the e-commerce platform serving millions of daily users',
-  'Implemented performance optimizations that reduced page load times by 30%',
-  'Collaborated with cross-functional teams to deliver feature-rich web applications',
-  'Mentored junior developers and established best practices for the front-end team'
-], { bulletRadius: 2, textIndent: 10 });
-doc.moveDown(0.5);
-
-// Job 2
-addSubsectionHeader('Frontend Developer', 'Getir', '2019 - 2021');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text);
-doc.list([
-  'Developed and maintained user interfaces for the fast-delivery application',
-  'Built responsive web applications using React and TypeScript',
-  'Participated in architectural decisions for frontend infrastructure',
-  'Improved application accessibility and user experience'
-], { bulletRadius: 2, textIndent: 10 });
-doc.moveDown(0.5);
-
-// Job 3
-addSubsectionHeader('Software Developer', 'Teknasyon', '2017 - 2019');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text);
-doc.list([
-  'Contributed to mobile applications and web services development',
-  'Implemented RESTful APIs using Node.js and Express',
-  'Collaborated with UX/UI designers to implement intuitive user interfaces',
-  'Participated in code reviews and testing implementation'
-], { bulletRadius: 2, textIndent: 10 });
-doc.moveDown(1);
-
-// Education
-addSectionHeader('Education');
-
-// University
-addSubsectionHeader('Computer Engineering', 'Istanbul Technical University', '2013 - 2017');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Bachelor\'s Degree with focus on software development, algorithms, and data structures.')
-   .moveDown(0.3);
-doc.text('Notable coursework: Web Programming, Database Systems, Software Engineering, Computer Networks')
-   .moveDown(0.5);
-
-// High School
-addSubsectionHeader('Science High School', 'Istanbul Erkek Lisesi', '2009 - 2013');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Graduated with high honors, focusing on mathematics and science.')
-   .moveDown(1);
-
-// Skills
-addSectionHeader('Skills');
-
-// Technical Skills
-doc.fontSize(11)
-   .font('Helvetica-Bold')
-   .fillColor(colors.text)
-   .text('Technical Skills:')
-   .fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text);
-doc.list([
-  'JavaScript/TypeScript - Advanced',
-  'React - Advanced',
-  'HTML5/CSS3 - Advanced',
-  'Node.js - Proficient',
-  'Redux - Proficient'
-], { bulletRadius: 2, textIndent: 10 });
-doc.moveDown(0.5);
-
-// Tech Stack
-doc.fontSize(11)
-   .font('Helvetica-Bold')
-   .fillColor(colors.text)
-   .text('Tech Stack:')
-   .fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Next.js, Express, GraphQL, MongoDB, PostgreSQL, Docker, AWS, Git')
-   .moveDown(0.5);
-
-// Soft Skills
-doc.fontSize(11)
-   .font('Helvetica-Bold')
-   .fillColor(colors.text)
-   .text('Soft Skills:')
-   .fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Team Leadership, Problem Solving, Communication, Agile Methodologies, Mentoring, Project Management')
-   .moveDown(1);
-
-// Projects
-addSectionHeader('Featured Projects');
-
-// Project 1
-addSubsectionHeader('E-commerce Performance Optimization', 'React, Next.js, Performance', '');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Implemented critical rendering path optimizations, resulting in a 30% improvement in load time and 20% increase in conversion rates.')
-   .moveDown(0.5);
-
-// Project 2
-addSubsectionHeader('Analytics Dashboard', 'React, D3.js, REST API', '');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Designed and built a real-time analytics dashboard using React and D3.js, providing actionable insights for business stakeholders.')
-   .moveDown(0.5);
-
-// Project 3
-addSubsectionHeader('Team Collaboration Tool', 'Node.js, Socket.io, MongoDB', '');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Built a real-time collaboration tool with WebSockets for team communication, task management, and document sharing.')
-   .moveDown(0.5);
-
-// Project 4
-addSubsectionHeader('Mobile App Integration', 'Express, GraphQL, React Native', '');
-doc.fontSize(10)
-   .font('Helvetica')
-   .fillColor(colors.text)
-   .text('Developed a cross-platform API system to integrate web services with mobile applications, enabling seamless data synchronization.')
-   .moveDown(1);
-
-// Footer
-const footerY = doc.page.height - 50;
-doc.fontSize(9)
-   .font('Helvetica')
-   .fillColor(colors.lightText)
-   .text('This resume was generated on ' + new Date().toLocaleDateString(), 50, footerY, { align: 'center' });
-
-// Finalize the PDF and end the stream
-doc.end();
+main().catch(error => {
+  console.error("Error generating PDFs:", error);
+  process.exit(1);
+});

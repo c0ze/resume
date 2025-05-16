@@ -1,41 +1,54 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "../contexts/LanguageContext";
-import { getTranslation } from "../translations";
+// Removed: import { getTranslation } from "../translations";
 
-interface Education {
+// Interface can remain the same as it matches the structure within the entries array
+interface EducationEntry { // Renamed for clarity, as it's an entry from the 'entries' array
   degree: string;
   institution: string;
   period: string;
-  description: string;
+  description?: string; // description is optional in the new structure
   additionalInfo?: string;
 }
 
 const EducationSection = () => {
-  const { language } = useLanguage();
-  const t = getTranslation(language);
+  const { translations, loadingTranslations } = useLanguage();
 
-  // Get education data from translations
-  const educations: Education[] = [
-    {
-      degree: t.education.university.degree,
-      institution: t.education.university.institution,
-      period: t.education.university.period,
-      description: t.education.university.description,
-      additionalInfo: t.education.university.additionalInfo
-    },
-    {
-      degree: t.education.highSchool.degree,
-      institution: t.education.highSchool.institution,
-      period: t.education.highSchool.period,
-      description: t.education.highSchool.description
-    }
-  ];
+  if (loadingTranslations || !translations) {
+    // Basic loading state for EducationSection
+    return (
+      <section id="education" className="mb-12 animate-pulse">
+        <div className="h-8 bg-gray-300 rounded w-1/3 mb-6"></div>
+        {[...Array(1)].map((_, i) => ( // Skeleton for 1 education card
+          <Card key={i} className="mb-6">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row justify-between mb-4">
+                <div>
+                  <div className="h-6 bg-gray-300 rounded w-3/4 mb-1"></div>
+                  <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                </div>
+                <div className="mt-2 md:mt-0">
+                  <div className="h-7 bg-gray-300 rounded-full w-24"></div>
+                </div>
+              </div>
+              <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+    );
+  }
+
+  const t = translations; // Use translations from context
+  // Get education data directly from the entries array in translations
+  const educationEntries: EducationEntry[] = t.education.entries || [];
 
   return (
     <section id="education" className="mb-12">
       <h2 className="text-2xl font-bold mb-6 text-primary border-b pb-2">{t.education.title}</h2>
       
-      {educations.map((edu, index) => (
+      {educationEntries.map((edu, index) => (
         <Card key={index} className="mb-6">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row justify-between mb-4">
