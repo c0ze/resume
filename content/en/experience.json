@@ -2,33 +2,118 @@
   "title": "Work Experience",
   "jobs": [
     {
-      "title": "Senior Software Engineer",
-      "company": "Tech Solutions Inc.",
-      "period": "Jan 2022 - Present",
+      "title": "Systems Architect",
+      "company": "Veltra (Tokyo, Remote)",
+      "period": "January 2024 - Present",
       "responsibilities": [
-        "Led the development of a new AI-powered analytics platform.",
-        "Designed and implemented scalable microservices.",
-        "Mentored junior developers and conducted code reviews."
+        "General application and infrastructure architecture and planning",
+        "Migration from monolithic PHP app to microservices architecture",
+        "Develop and encourage policies for Logging, Security, Authentication/Authorization, Code Coverage, Linting",
+        "Perform as bridge engineer between Overseas teams"
       ]
     },
     {
-      "title": "Software Developer",
-      "company": "Innovatech Ltd.",
-      "period": "Jun 2019 - Dec 2021",
+      "title": "Senior Developer",
+      "company": "Gaussy (Tokyo, Remote)",
+      "period": "February 2020 - December 2023",
       "responsibilities": [
-        "Developed and maintained features for a large-scale e-commerce application.",
-        "Collaborated with cross-functional teams to deliver high-quality software.",
-        "Participated in the full software development lifecycle."
+        "Back-end development for Warex project (Golang)",
+        "Manage backend development using Gorm, Echo, MySQL",
+        "3rd party service integration with Hubspot, Mailgun, Bugsnag",
+        "Integration with Goose Migrations and Testify Suite",
+        "Some frontend development using Vue js (Admin site)",
+        "Ruby on Rails, React development"
       ]
     },
     {
-      "title": "Junior Developer",
-      "company": "Web Wizards Co.",
-      "period": "Jul 2018 - May 2019",
+      "title": "Senior Developer",
+      "company": "Robotfund (Tokyo, Hybrid)",
+      "period": "March 2018 - February 2020",
       "responsibilities": [
-        "Assisted in the development of client websites using modern web technologies.",
-        "Contributed to front-end and back-end development tasks.",
-        "Gained experience with version control systems and agile methodologies."
+        "Fullstack development of LINE fund information platform 'トークン'",
+        "API development (Ruby on Rails)",
+        "LINE API integration (Integrate with LINE Chat API)",
+        "Reuters API integration (Daily fetching and processing of fund related data)",
+        "Fullstack development of fund information platform Better World",
+        "Backend/Frontend development using Ruby on rails",
+        "Reuters API integration",
+        "Custom Golang service which compresses and caches audio",
+        "Integrate with text-to-voice service",
+        "Convert customer response to voice and cache so that text-to-voice service isnt used frequently",
+        "Developed using Go, deployed using docker/AWS"
+      ]
+    },
+    {
+      "title": "Senior Development Engineer",
+      "company": "Allm Inc (Tokyo, Onsite)",
+      "period": "December 2014 - March 2018",
+      "responsibilities": [
+        "API / Backend development for content sharing and publishing platform (e.g., Kidint)",
+        "API development using Ruby On Rails",
+        "AWS Integration (S3 assets, SNS notifications)",
+        "Front End Development using Angular",
+        "Social Media Integration and 3rd party login (Facebook, Google)",
+        "Wifi based customer tracking platform for retail BI application (Followup)",
+        "Standalone service development for IoT and peripherals (Go lang service on Raspberry Pi, BLE beacon integration)",
+        "IoT massive deployment & peripheral management",
+        "API development in Go",
+        "API development for triage application JoinTriage",
+        "API development using Grape (Ruby)",
+        "Front End development (Angular 1.x and Bootstrap)",
+        "CI & CD (GitlabCI & Docker)",
+        "AI Research for Healthcare",
+        "Image classification & recognition using deep neural networks",
+        "Data analysis and segmentation using machine learning"
+      ]
+    },
+    {
+      "title": "Developer",
+      "company": "Aiming Inc (Tokyo, Onsite, Contract)",
+      "period": "June 2014 - November 2014",
+      "responsibilities": [
+        "API backend development for MMORPG '剣と魔法のログレス'",
+        "API development using Padrino framework (Ruby)",
+        "Participating in an Agile development environment with tight deadlines",
+        "Experience developing for a game with thousands of daily active users"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "Kii Inc (Tokyo, Onsite)",
+      "period": "August 2012 - May 2014",
+      "responsibilities": [
+        "API usage tracking and logging (3scale, Varnish-Cache, fluentd)",
+        "Payment Integration (via Zuora and Paypal)",
+        "Cloud Code maintenance (node.js)",
+        "Developer Portal development (Ruby on Rails, Backbone.js)",
+        "Various automated tasks (reports, AWS resource tuning in Ruby/Bash with puppet)"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "Mobilous Inc (Tokyo, Onsite)",
+      "period": "August 2011 - July 2012",
+      "responsibilities": [
+        "Lead DevOps/CloudOps: Design and implement scalable EC2 cloud infrastructure with monitoring and auto-scaling. Admin dashboard integration with RoR.",
+        "Minor participation in Glassfish AppServer component (Java on Spring framework)",
+        "Web page automation script with PHP/Selenium"
+      ]
+    },
+    {
+      "title": "Contract Developer",
+      "company": "Ryde Inc (Tokyo, Remote - Part Time)",
+      "period": "July 2021 - July 2022",
+      "responsibilities": [
+        "Backend development for Ryde services (Mobile and Web) using Ruby on Rails, GraphQL",
+        "Some frontend development (Admin site, Ruby on Rails, React)"
+      ]
+    },
+    {
+      "title": "Contract Developer",
+      "company": "Iron.io (US, Remote - Part Time)",
+      "period": "July 2017 - July 2020",
+      "responsibilities": [
+        "Support and maintenance of Open Source serverless platform, Iron Functions"
       ]
     }
   ]

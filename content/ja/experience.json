@@ -2,33 +2,100 @@
   "title": "職務経歴",
   "jobs": [
     {
-      "title": "シニアソフトウェアエンジニア",
-      "company": "テックソリューションズ株式会社",
-      "period": "2022年1月 - 現在",
+      "title": "アーキテクト",
+      "company": "Veltra (東京)",
+      "period": "2024年1月 - 現在",
       "responsibilities": [
-        "新しいAI搭載分析プラットフォームの開発を主導しました。",
-        "スケーラブルなマイクロサービスを設計・実装しました。",
-        "ジュニア開発者の指導とコードレビューを行いました。"
+        "アーキテクチャー設計",
+        "monolithic PHP から microservices に移動",
+        "Logging, Security, Authentication/Authorization, Code Coverage, Lintingのポリシー実行",
+        "海外チームとのコミュニケーション"
       ]
     },
     {
-      "title": "ソフトウェア開発者",
-      "company": "イノバテック株式会社",
-      "period": "2019年6月 - 2021年12月",
+      "title": "開発者",
+      "company": "株式会社Gaussy (東京)",
+      "period": "2020年2月 - 2023年12月",
       "responsibilities": [
-        "大規模なEコマースアプリケーションの機能を開発・保守しました。",
-        "高品質なソフトウェアを提供するために、部門横断的なチームと協力しました。",
-        "完全なソフトウェア開発ライフサイクルに参加しました。"
+        "倉庫管理システム Warex Ai のバックエンドAPI開発（Go）",
+        "Gorm, Echo, MySQLのスタック",
+        "Hubspot, Mailgun, Bugsnagの連携",
+        "Goose MigrationとTestify使用",
+        "Vue jsを使ってフロントエンド開発"
       ]
     },
     {
-      "title": "ジュニア開発者",
-      "company": "ウェブウィザーズ株式会社",
-      "period": "2018年7月 - 2019年5月",
+      "title": "シニアー開発者",
+      "company": "株式会社Robotfund (東京)",
+      "period": "2018年3月 - 2020年2月",
       "responsibilities": [
-        "最新のウェブ技術を使用してクライアントのウェブサイト開発を支援しました。",
-        "フロントエンドとバックエンドの開発タスクに貢献しました。",
-        "バージョン管理システムとアジャイル開発手法の経験を積みました。"
+        "LINEでのファンドの情報アプリ“未来のコツ”の開発",
+        "バックエンドAPI開発（Ruby on Rails）",
+        "LINE APIとReuters API との連携",
+        "アドミンサイトの開発（Ruby on Rails）",
+        "CI／CD連携（AWS）"
+      ]
+    },
+    {
+      "title": "シニアー開発エンジニアー",
+      "company": "株式会社 Allm (東京)",
+      "period": "2014年12月 - 2018年3月",
+      "responsibilities": [
+        "トリアージアプリのAPI開発 (JoinTriage): Grape (Ruby)フレームワークでAPI開発, Angular JS/Coffee Scriptを使ってフロントエンド開発, GitlabCI & Dockerを使用してCIとCD",
+        "教育専用CMS開発 (Kidint): Angular JS/Coffee Scriptを使ってフロントエンド開発, モバイルとウェブ向けのAPI開発, AWSインテグレーション, ソーシャルメディアインテグレーション",
+        "コンシューマーデータ分析向けのBIサービス開発 (Followup): Angular JS/Coffee Scriptを使ってフロントエンド開発, IoT ビーコン展開と管理システム開発(Estimote), Go言語でAPI開発"
+      ]
+    },
+    {
+      "title": "開発者",
+      "company": "株式会社Aiming (東京, 派遣)",
+      "period": "2014年6月 - 2014年11月",
+      "responsibilities": [
+        "オンラインゲーム「幻塔戦記 グリフォン」のバックエンドAPI開発（RubyのPadrinoフレームワーク使用）",
+        "数多いDaUの問題解決",
+        "アジャイル開発"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "株式会社Kii (東京)",
+      "period": "2012年8月 - 2014年4月",
+      "responsibilities": [
+        "API使用の計算とロッギング (3scale, Varnish-Cache, fluentd)",
+        "パイメントのインテグレーション (ZuoraとPaypal使用)",
+        "Cloud Code のメンテナンス (AWSのLambdaのように、クラウドでコード実行するサービス・node.js)",
+        "Developer Portalの 開発・メンテナンス (Ruby on Rails, Backbone.js)",
+        "さまざまの自動タスク (ハイタッチお客さん使用のリポートの作成、Puppet間のゲストのメンテナンスなど)"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "株式会社モビラス (東京)",
+      "period": "2011年8月 - 2012年7月",
+      "responsibilities": [
+        "AWS上で自動的にインスタンスフレームワーク（使用したAWSサービスはEC2,SES,Route53,S3,IAM。インスタンス側にはRubyのSinatraを使用）",
+        "インスタンスのASになるGlassfishのメンテナンス",
+        "PHPとSeleniumを使用してオートメーション"
+      ]
+    },
+    {
+      "title": "開発者",
+      "company": "株式会社Ryde (東京, パート)",
+      "period": "2021年7月 - 2022年7月",
+      "responsibilities": [
+        "RydeモバイルアプリのGraphQLバックエンド開発",
+        "バックエンドAPI開発（Ruby on Rails）",
+        "フロントエンドとの連携（React js／GraphQL）",
+        "アドミンサイトの開発（Ruby on Rails）"
+      ]
+    },
+    {
+      "title": "開発者",
+      "company": "Iron Io (東京, パート)",
+      "period": "2017年7月 - 2020年7月",
+      "responsibilities": [
+        "IronFunctionsというAWS Lambdaみたいクラウドコードプロダクトのメンテ",
+        "一部IronFunction開発（Go）"
       ]
     }
   ]

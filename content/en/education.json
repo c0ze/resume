@@ -2,18 +2,18 @@
   "title": "Education",
   "entries": [
     {
-      "degree": "Master of Science in Computer Science",
-      "institution": "University of Advanced Technology",
-      "period": "Sep 2016 - May 2018",
-      "description": "Focused on Machine Learning and Artificial Intelligence. Thesis on Natural Language Processing.",
-      "additionalInfo": "Graduated with Honors, GPA: 3.9/4.0"
+      "degree": "Master of Science",
+      "institution": "Keio University",
+      "period": "2006 - 2008",
+      "description": "Obtained the Master's degree in Computer Science. Studied for Ph.D. between 2008-2011. Research Area: Embedded Processor Design and Optimization.",
+      "additionalInfo": "Selected Papers:\n- 2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))\n- 2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)\n- 2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Germany, 2009)"
     },
     {
-      "degree": "Bachelor of Science in Software Engineering",
-      "institution": "State Engineering College",
-      "period": "Sep 2012 - Jun 2016",
-      "description": "Comprehensive curriculum covering software development principles, data structures, and algorithms.",
-      "additionalInfo": "Dean's List 2015, 2016"
+      "degree": "Bachelor of Science",
+      "institution": "Istanbul Bilgi University",
+      "period": "2000 - 2004",
+      "description": "",
+      "additionalInfo": ""
     }
   ]
 }

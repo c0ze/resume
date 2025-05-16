@@ -2,16 +2,15 @@
   "title": "Skills",
   "technicalSkillsTitle": "Technical Skills",
   "technicalSkills": [
-    "JavaScript/TypeScript - Advanced",
-    "React & Next.js - Advanced",
-    "Python (Django, Flask) - Proficient",
-    "Node.js (Express) - Proficient",
-    "SQL & NoSQL Databases (PostgreSQL, MongoDB) - Proficient",
-    "Docker & Kubernetes - Intermediate",
-    "AWS & GCP - Intermediate"
-  ],
-  "techStackTitle": "Preferred Tech Stack",
-  "techStackItems": "React, Next.js, TypeScript, Python, Node.js, PostgreSQL, Docker",
-  "softSkillsTitle": "Soft Skills",
-  "softSkillItems": "Problem Solving, Team Collaboration, Communication, Adaptability, Critical Thinking, Time Management"
+    "Mainly proficient in Ruby and Go",
+    "Debian & Emacs user. Very comfortable in unix environments and writing bash scripts",
+    "Extensive knowledge of AWS resources. Hands on experience with EC2, S3, Dynamo, SES, IAM, Route53",
+    "Early adopter of Continuous Integration and Continuous Deployment",
+    "Experience with TDD, BDD, Agile and GitHub driven development",
+    "Front End development experience with React, Vue. Some Node.js experience",
+    "Vibe coding skills, can get lots of work done in short time. Always cautious though.",
+    "Functional programming background",
+    "Experience writing Legacy languages such as, Java, C, PHP",
+    "Experience in designing and implementing Restful and GraphQL APIs for both Web and Mobile"
+  ]
 }

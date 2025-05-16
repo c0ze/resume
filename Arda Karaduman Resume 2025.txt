@@ -1,0 +1,162 @@
+
+
+
+Arda Karaduman
+
+Chofu, Tokyo 
+
+akaraduman@gmail.com
+http://arda.karaduman.web.tr
+
+Born 15/04/1978
+Permanent Resident of Japan
+
+Spoken languages:
+Turkish (Native), 
+English (Near Native), Japanese (Business)
+SUMMARY
+A Pragmatic Programmer living In Japan since 2004. I like programming, tinkering, hacking. Checking new languages, frameworks, trying new ideas.
+
+SKILLS
+    • Mainly proficient in Ruby and Go
+    • Debian & Emacs user. Very comfortable in unix environments and writing bash scripts
+    • Extensive knowledge of AWS resources. Hands on experience with EC2, S3, Dynamo, SES, IAM, Route53
+    • Early adopter of Continuous Integration and Continuous Deployment. 
+    • Experience with TDD, BDD, Agile and GitHub driven development
+    • Front End development experience with React, Vue. Some Node.js experience
+    • Vibe coding skills, can get lots of work done in short time. Always cautious though.
+    • Functional programming background
+    • Experience writing Legacy languages such as, Java, C, PHP
+    • Experience in designing and implementing Restful and GraphQL APIs for both Web and Mobile
+
+
+
+
+
+
+
+
+
+EXPERIENCE - Full Time
+
+Systems Architect, Veltra
+Tokyo (Remote) — January 2024 - Present
+
+Responsibilities
+    • General application and infrastructure architecture and planning
+    • Migration from monolithic PHP app to microservices architecture
+    • Develop and encourage policies for Logging, Security, Authentication/Authorization, Code Coverage, Linting
+    • Perform as bridge engineer between Overseas teams
+Senior Developer, Gaussy
+Tokyo (Remote) — February 2020 - December 2023
+
+Projects
+    • Back-end development for Warex project (Golang)
+        ? Manage backend development using Gorm, Echo, MySQL
+        ? 3rd party service integration with Hubspot, Mailgun, Bugsnag
+        ? Integration with Goose Migrations and Testify Suite
+    • Some frontend development using Vue js (Admin site)
+    • Ruby on Rails, React)
+Senior Developer, Robotfund
+Tokyo (Hybrid) — March 2018 - February 2020
+
+Projects
+    • Fullstack development of LINE fund information platform “?????”
+        ? API development (Ruby on Rails)
+        ? LINE API integration (Integrate with LINE Chat API)
+        ? Reuters API integration (Daily fetching and processing of fund related data)
+    • Fullstack development of fund information platform Better World
+        ? Backend/Frontend development using Ruby on rails
+        ? Reuters API integration
+    • Custom Golang service which compresses and caches audio
+        ? Integrate with text-to-voice service
+        ? Convert customer response to voice and cache so that text-to-voice service isnt used frequently
+        ? Developed using Go, deployed using docker/AWS
+Senior Development Engineer, Allm Inc
+Tokyo (Onsite) — December 2014 - March 2018
+
+Roles
+    • API / Backend development for content sharing and publishing platform (to see an example application which uses our platform, check Kidint)
+        ? API development using Ruby On Rails
+        ? AWS Integration (S3 assets, SNS notifications)
+        ? Front End Development using Angular
+        ? Social Media Integration and 3rd party login (Facebook, Google)
+    • Wifi based customer tracking platform for retail BI application (Followup).
+        ? Standalone service development for IoT and peripherals (Go lang service which runs on raspberry pi, integration with BLE beacons)
+        ? IoT massive deployment & peripheral management
+        ? API development in Go
+    • API development for triage application JoinTriage
+        ? API development using Grape (Ruby)
+        ? Front End development (Angular 1.x and Bootstrap)
+        ? CI & CD (GitlabCI & Docker)
+    • AI Research for Healthcare
+        ? Image classification & recognition using deep neural networks
+        ? Data analysis and segmentation using machine learning
+
+Developer, Aiming Inc
+Tokyo (Onsite, Contract) — June 2014 - November 2014
+
+Developing the API backend for a popular MMORPG for mobile systems. ???? ?????
+Roles
+    • API development using Padrino framework (Ruby)
+    • Participating in an Agile development environment within a dynamic team with tight deadlines for difficult problems/enhancements
+    • Experience developing for a hit game with thousands of daily active users and hundreds of thousands of total registered users
+
+Dev Ops, Kii Inc
+Tokyo (Onsite) — August 2012 - May 2014
+
+Assumed various tasks to bring Kii Cloud up to spec with its competitors, (Parse, Kinvey, StackMob at the time). Kii Cloud is a multi region mBaas with special focus on the Asian market.
+
+Accomplishments
+    • API usage tracking and logging (3scale, Varnish-Cache, fluentd)
+    • Payment Integration (via Zuora and Paypal)
+    • Cloud Code maintenance (node.js)
+    • Developer Portal development (Ruby on Rails, Backbone.js)
+    • Various automated tasks (reports for high touch customers, special requests to tune AWS resources, etc. written in Ruby / Bash deployed with puppet)
+
+
+
+
+
+Dev Ops, Mobilous Inc
+Tokyo (Onsite) — August 2011 - July 2012
+
+Assumed lead DevOps/CloudOps position in Mobilous. Mobilous is a indie venture set to create the easiest way to create Mobile apps with a web based drag and drop interface, and build and publish them in multiple app stores.
+Accomplishments
+    • Design and implement flexible and scalable EC2 cloud infrastructure A complex structure where we can monitor health, service status, workload of our client instances, which is able to create new instances on demand and distribute workload by user request. Admin dashboard integration with RoR.
+    • Minor participation in Glassfish AppServer component, which is responsible for interfacing client PostGres DB to user application. (Java on Spring framework)
+    • Some web page automation script with PHP/Selenium. (Automatic entry of some forms)
+
+
+EXPERIENCE Contract / Part Time
+Contract Developer, Ryde Inc
+Tokyo (Remote - Part Time) July 2021 - July 2022
+
+Roles
+    • Backend development for Ryde services. Mobile and Web. (Ruby on rails, Graphql)
+    • Some frontend development (Admin site, Ruby on Rails, React)
+Contract Developer, Iron.io
+US (Remote, Part Time) July 2017 - July 2020
+
+Roles
+    • Support and maintenance of Open Source serverless platform, Iron Functions
+
+
+
+EDUCATION
+Istanbul Bilgi University
+Bachelor of Science — 2000-2004
+
+Keio University
+Master of Science — 2006-2008
+Obtained the masters degree from Keio University in Computer Science in 2008. Studied for Ph D in between 2008-2011 
+Research Area - Embedded Processor Design and Optimization
+
+Selected Papers
+    • 2011: Cache Implementation for Echo Instructions on an Embedded Processor
+IPSJ Transactions on System LSI Design Methodology(TSLDM7)
+    • 2009: Code Compression with Split Echo Instructions
+IEICE Transactions on Information and Systems
+    • 2009: Embedded World Conference, Nuremberg Germany, 2009
+Design and Implementation of Echo Instructions for Embedded Processors
+

@@ -2,16 +2,15 @@
   "title": "Yetenekler",
   "technicalSkillsTitle": "Teknik Yetenekler",
   "technicalSkills": [
-    "JavaScript/TypeScript - İleri Seviye",
-    "React & Next.js - İleri Seviye",
-    "Python (Django, Flask) - Yetkin",
-    "Node.js (Express) - Yetkin",
-    "SQL & NoSQL Veritabanları (PostgreSQL, MongoDB) - Yetkin",
-    "Docker & Kubernetes - Orta Seviye",
-    "AWS & GCP - Orta Seviye"
-  ],
-  "techStackTitle": "Tercih Edilen Teknoloji Yığını",
-  "techStackItems": "React, Next.js, TypeScript, Python, Node.js, PostgreSQL, Docker",
-  "softSkillsTitle": "Sosyal Beceriler",
-  "softSkillItems": "Problem Çözme, Takım Çalışması, İletişim, Uyum Sağlama, Eleştirel Düşünme, Zaman Yönetimi"
+    "Temel olarak Ruby ve Go dillerinde yetkin",
+    "Debian & Emacs kullanıcısı. Unix ortamlarında ve bash betikleri yazmada çok rahat",
+    "AWS kaynakları hakkında kapsamlı bilgi. EC2, S3, Dynamo, SES, IAM, Route53 ile uygulamalı deneyim",
+    "Sürekli Entegrasyon ve Sürekli Dağıtımın erken benimseyicisi",
+    "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi",
+    "React, Vue ile Front End geliştirme deneyimi. Biraz Node.js deneyimi",
+    "Vibe kodlama becerileri, kısa sürede çok iş yapabilir. Ancak her zaman dikkatli.",
+    "Fonksiyonel programlama geçmişi",
+    "Java, C, PHP gibi eski dilleri yazma deneyimi",
+    "Hem Web hem de Mobil için Restful ve GraphQL API'leri tasarlama ve uygulama deneyimi"
+  ]
 }

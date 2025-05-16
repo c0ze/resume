@@ -2,33 +2,118 @@
   "title": "İş Deneyimi",
   "jobs": [
     {
-      "title": "Kıdemli Yazılım Mühendisi",
-      "company": "Teknoloji Çözümleri A.Ş.",
-      "period": "Ocak 2022 - Halen",
+      "title": "Sistem Mimarı",
+      "company": "Veltra (Tokyo, Uzaktan)",
+      "period": "Ocak 2024 - Halen",
       "responsibilities": [
-        "Yeni bir yapay zeka destekli analitik platformunun geliştirilmesine liderlik etti.",
-        "Ölçeklenebilir mikro servisler tasarladı ve uyguladı.",
-        "Genç geliştiricilere mentorluk yaptı ve kod incelemeleri gerçekleştirdi."
+        "Genel uygulama ve altyapı mimarisi ve planlaması",
+        "Monolitik PHP uygulamasından mikroservis mimarisine geçiş",
+        "Günlükleme, Güvenlik, Kimlik Doğrulama/Yetkilendirme, Kod Kapsamı, Linting için politikalar geliştirmek ve teşvik etmek",
+        "Denizaşırı ekipler arasında köprü mühendisi olarak görev yapmak"
       ]
     },
     {
-      "title": "Yazılım Geliştirici",
-      "company": "İnovatek Ltd.",
-      "period": "Haziran 2019 - Aralık 2021",
+      "title": "Kıdemli Geliştirici",
+      "company": "Gaussy (Tokyo, Uzaktan)",
+      "period": "Şubat 2020 - Aralık 2023",
       "responsibilities": [
-        "Büyük ölçekli bir e-ticaret uygulaması için özellikler geliştirdi ve bakımını yaptı.",
-        "Yüksek kaliteli yazılım sunmak için çapraz fonksiyonlu ekiplerle işbirliği yaptı.",
-        "Tam yazılım geliştirme yaşam döngüsüne katıldı."
+        "Warex projesi için backend geliştirme (Golang)",
+        "Gorm, Echo, MySQL kullanarak backend geliştirmeyi yönetmek",
+        "Hubspot, Mailgun, Bugsnag ile 3. parti servis entegrasyonu",
+        "Goose Migrations ve Testify Suite ile entegrasyon",
+        "Vue.js kullanarak bazı frontend geliştirmeleri (Admin sitesi)",
+        "Ruby on Rails, React geliştirme"
       ]
     },
     {
-      "title": "Junior Geliştirici",
-      "company": "Web Sihirbazları Ltd. Şti.",
-      "period": "Temmuz 2018 - Mayıs 2019",
+      "title": "Kıdemli Geliştirici",
+      "company": "Robotfund (Tokyo, Hibrit)",
+      "period": "Mart 2018 - Şubat 2020",
       "responsibilities": [
-        "Modern web teknolojilerini kullanarak müşteri web sitelerinin geliştirilmesine yardımcı oldu.",
-        "Ön uç ve arka uç geliştirme görevlerine katkıda bulundu.",
-        "Sürüm kontrol sistemleri ve çevik metodolojilerle deneyim kazandı."
+        "LINE fon bilgi platformu 'トークン' için fullstack geliştirme",
+        "API geliştirme (Ruby on Rails)",
+        "LINE API entegrasyonu (LINE Chat API ile entegrasyon)",
+        "Reuters API entegrasyonu (Fonlarla ilgili verilerin günlük olarak alınması ve işlenmesi)",
+        "Fon bilgi platformu Better World için fullstack geliştirme",
+        "Ruby on Rails kullanarak backend/frontend geliştirme",
+        "Reuters API entegrasyonu",
+        "Sesi sıkıştıran ve önbelleğe alan özel Golang servisi",
+        "Metin-ses servisi ile entegrasyon",
+        "Müşteri yanıtını sese dönüştürme ve metin-ses servisinin sık kullanılmaması için önbelleğe alma",
+        "Go kullanılarak geliştirildi, docker/AWS kullanılarak dağıtıldı"
+      ]
+    },
+    {
+      "title": "Kıdemli Geliştirme Mühendisi",
+      "company": "Allm Inc (Tokyo, Yerinde)",
+      "period": "Aralık 2014 - Mart 2018",
+      "responsibilities": [
+        "İçerik paylaşım ve yayınlama platformu için API / Backend geliştirme (örneğin, Kidint)",
+        "Ruby On Rails kullanarak API geliştirme",
+        "AWS Entegrasyonu (S3 varlıkları, SNS bildirimleri)",
+        "Angular kullanarak Frontend Geliştirme",
+        "Sosyal Medya Entegrasyonu ve 3. parti giriş (Facebook, Google)",
+        "Perakende BI uygulaması (Followup) için Wifi tabanlı müşteri takip platformu",
+        "IoT ve çevre birimleri için bağımsız servis geliştirme (Raspberry Pi üzerinde çalışan Go lang servisi, BLE beacon entegrasyonu)",
+        "IoT kitlesel dağıtım ve çevre birimi yönetimi",
+        "Go dilinde API geliştirme",
+        "Triyaj uygulaması JoinTriage için API geliştirme",
+        "Grape (Ruby) kullanarak API geliştirme",
+        "Frontend geliştirme (Angular 1.x ve Bootstrap)",
+        "CI & CD (GitlabCI & Docker)",
+        "Sağlık Hizmetleri için Yapay Zeka Araştırması",
+        "Derin sinir ağları kullanarak görüntü sınıflandırma ve tanıma",
+        "Makine öğrenimi kullanarak veri analizi ve segmentasyonu"
+      ]
+    },
+    {
+      "title": "Geliştirici",
+      "company": "Aiming Inc (Tokyo, Yerinde, Kontratlı)",
+      "period": "Haziran 2014 - Kasım 2014",
+      "responsibilities": [
+        "MMORPG '剣と魔法のログレス' için API backend geliştirme",
+        "Padrino framework (Ruby) kullanarak API geliştirme",
+        "Sıkı teslim tarihleri olan dinamik bir ekip içinde Çevik bir geliştirme ortamına katılma",
+        "Günlük binlerce aktif kullanıcısı olan bir oyun için geliştirme deneyimi"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "Kii Inc (Tokyo, Yerinde)",
+      "period": "Ağustos 2012 - Mayıs 2014",
+      "responsibilities": [
+        "API kullanım takibi ve günlükleme (3scale, Varnish-Cache, fluentd)",
+        "Ödeme Entegrasyonu (Zuora ve Paypal aracılığıyla)",
+        "Cloud Code bakımı (node.js)",
+        "Geliştirici Portalı geliştirme (Ruby on Rails, Backbone.js)",
+        "Çeşitli otomatik görevler (raporlar, Ruby/Bash ile puppet kullanılarak AWS kaynak ayarlaması)"
+      ]
+    },
+    {
+      "title": "Dev Ops",
+      "company": "Mobilous Inc (Tokyo, Yerinde)",
+      "period": "Ağustos 2011 - Temmuz 2012",
+      "responsibilities": [
+        "Lider DevOps/CloudOps: İzleme ve otomatik ölçeklendirme özellikli, ölçeklenebilir EC2 bulut altyapısı tasarlama ve uygulama. RoR ile Admin paneli entegrasyonu.",
+        "Glassfish AppServer bileşenine küçük katılım (Spring framework üzerinde Java)",
+        "PHP/Selenium ile web sayfası otomasyon betiği"
+      ]
+    },
+    {
+      "title": "Kontratlı Geliştirici",
+      "company": "Ryde Inc (Tokyo, Uzaktan - Yarı Zamanlı)",
+      "period": "Temmuz 2021 - Temmuz 2022",
+      "responsibilities": [
+        "Ryde servisleri (Mobil ve Web) için backend geliştirme (Ruby on Rails, GraphQL)",
+        "Bazı frontend geliştirmeleri (Admin sitesi, Ruby on Rails, React)"
+      ]
+    },
+    {
+      "title": "Kontratlı Geliştirici",
+      "company": "Iron.io (ABD, Uzaktan - Yarı Zamanlı)",
+      "period": "Temmuz 2017 - Temmuz 2020",
+      "responsibilities": [
+        "Açık Kaynak sunucusuz platformu Iron Functions için destek ve bakım"
       ]
     }
   ]

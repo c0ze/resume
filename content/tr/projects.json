@@ -2,19 +2,59 @@
   "title": "Projeler",
   "entries": [
     {
-      "title": "Yapay Zeka Destekli Tavsiye Motoru",
-      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
-      "description": "Bir e-ticaret platformu için kişiselleştirilmiş bir tavsiye sistemi geliştirildi ve kullanıcı etkileşimi %25 artırıldı."
+      "title": "Warex (Backend Geliştirme)",
+      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
+      "description": "Gaussy'de Warex projesi için backend geliştirme."
     },
     {
-      "title": "Gerçek Zamanlı Ortak Çalışma Beyaz Tahtası",
-      "technologies": "Node.js, WebSocket, React, Canvas API",
-      "description": "Birden fazla kullanıcının gerçek zamanlı olarak çizim yapmasına ve fikir paylaşmasına olanak tanıyan web tabanlı bir ortak çalışma beyaz tahta uygulaması oluşturuldu."
+      "title": "LINE Fon Bilgi Platformu 'トークン'",
+      "technologies": "Ruby on Rails, LINE API, Reuters API",
+      "description": "Robotfund'da, LINE ile entegre bir fon bilgi platformunun fullstack geliştirmesi, API geliştirme ve Reuters'tan veri çekme/işleme dahil."
     },
     {
-      "title": "Sunucusuz Veri İşleme Hattı",
-      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
-      "description": "Büyük hacimli IoT verilerini almak ve işlemek için sunucusuz bir hat tasarlandı ve uygulandı."
+      "title": "Fon Bilgi Platformu 'Better World'",
+      "technologies": "Ruby on Rails, Reuters API",
+      "description": "Robotfund'da, Reuters API entegrasyonu ile bir fon bilgi platformunun fullstack geliştirmesi."
+    },
+    {
+      "title": "Özel Ses Önbellekleme Servisi",
+      "technologies": "Golang, Docker, AWS, Metin-Konuşma Servisi Entegrasyonu",
+      "description": "Robotfund'da, metinden sese dönüştürülmüş sesi sıkıştırmak, önbelleğe almak ve sunmak için Go tabanlı bir servis geliştirildi, API kullanımını azaltıldı."
+    },
+    {
+      "title": "İçerik Paylaşım ve Yayınlama Platformu (ör. Kidint)",
+      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
+      "description": "Allm Inc.'de, AWS entegrasyonu ve sosyal medya girişleri dahil olmak üzere bir içerik paylaşım platformu için API ve backend geliştirme."
+    },
+    {
+      "title": "Perakende BI Müşteri Takip Platformu (Followup)",
+      "technologies": "Go, Raspberry Pi, BLE Beacons",
+      "description": "Allm Inc.'de, perakende iş zekası için WiFi tabanlı bir müşteri takip platformu geliştirildi, Raspberry Pi üzerinde IoT servis geliştirme ve BLE beacon entegrasyonu dahil."
+    },
+    {
+      "title": "Triyaj Uygulaması 'JoinTriage' (API)",
+      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
+      "description": "Allm Inc.'de, CI/CD kurulumu dahil bir triyaj uygulaması için API ve frontend geliştirme."
+    },
+    {
+      "title": "Sağlık Hizmetleri için Yapay Zeka Araştırması",
+      "technologies": "Derin Sinir Ağları, Makine Öğrenimi",
+      "description": "Allm Inc.'de, sağlık uygulamaları için görüntü sınıflandırma/tanıma ve veri analizi/segmentasyonu içeren yapay zeka araştırması yapıldı."
+    },
+    {
+      "title": "MMORPG API Backend '剣と魔法のログレス'",
+      "technologies": "Padrino (Ruby)",
+      "description": "Aiming Inc.'de popüler bir mobil MMORPG için API backend geliştirildi."
+    },
+    {
+      "title": "Kii Cloud Geliştirici Portalı",
+      "technologies": "Ruby on Rails, Backbone.js",
+      "description": "Kii Inc.'de Kii Cloud için geliştirici portalı geliştirme."
+    },
+    {
+      "title": "Iron Functions (Açık Kaynak Sunucusuz Platform)",
+      "technologies": "Go (Go ile oluşturulmuş bir sunucusuz platform olduğu için ima ediliyor)",
+      "description": "Iron.io'da Iron Functions açık kaynak sunucusuz platformu için destek ve bakım sağlandı."
     },
     {
       "title": "Portföy Web Sitesi (Bu Proje)",

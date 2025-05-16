@@ -2,19 +2,49 @@
   "title": "プロジェクト",
   "entries": [
     {
-      "title": "AI搭載レコメンデーションエンジン",
-      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
-      "description": "Eコマースプラットフォーム向けのパーソナライズされたレコメンデーションシステムを開発し、ユーザーエンゲージメントを25%向上させました。"
+      "title": "Warex Ai (バックエンドAPI開発)",
+      "technologies": "Go, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migration, Testify",
+      "description": "株式会社Gaussyにて、倉庫管理システムWarex AiのバックエンドAPI開発。"
     },
     {
-      "title": "リアルタイム共同ホワイトボード",
-      "technologies": "Node.js, WebSocket, React, Canvas API",
-      "description": "複数のユーザーがリアルタイムで描画しアイデアを共有できるウェブベースの共同ホワイトボードアプリケーションを構築しました。"
+      "title": "LINEファンド情報アプリ “未来のコツ”",
+      "technologies": "Ruby on Rails, LINE API, Reuters API, AWS",
+      "description": "株式会社Robotfundにて、LINEでのファンド情報アプリの開発。バックエンドAPI開発、LINE API・Reuters API連携、アドミンサイト開発、CI/CD連携。"
     },
     {
-      "title": "サーバーレスデータ処理パイプライン",
-      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
-      "description": "大量のIoTデータを取り込み処理するためのサーバーレスパイプラインを設計・実装しました。"
+      "title": "トリアージアプリ JoinTriage (API開発)",
+      "technologies": "Grape (Ruby), Angular JS, Coffee Script, GitlabCI, Docker",
+      "description": "株式会社Allmにて、トリアージアプリのAPI開発。フロントエンド開発、CI/CDも含む。"
+    },
+    {
+      "title": "教育専用CMS Kidint",
+      "technologies": "Angular JS, Coffee Script, Ruby (implied for API), AWS",
+      "description": "株式会社Allmにて、教育専用CMSの開発。フロントエンド開発、モバイル・ウェブ向けAPI開発、AWSインテグレーション、ソーシャルメディアインテグレーション。"
+    },
+    {
+      "title": "コンシューマーデータ分析向けBIサービス Followup",
+      "technologies": "Angular JS, Coffee Script, Go, Estimote (IoT Beacon)",
+      "description": "株式会社Allmにて、コンシューマーデータ分析向けBIサービス開発。フロントエンド開発、IoTビーコン展開・管理システム開発、Go言語でのAPI開発。"
+    },
+    {
+      "title": "オンラインゲーム「幻塔戦記 グリフォン」 (バックエンドAPI開発)",
+      "technologies": "Ruby (Padrinoフレームワーク)",
+      "description": "株式会社Aimingにて、オンラインゲームのバックエンドAPI開発。"
+    },
+    {
+      "title": "Kii Cloud Developer Portal",
+      "technologies": "Ruby on Rails, Backbone.js",
+      "description": "株式会社Kiiにて、Developer Portalの開発・メンテナンス。"
+    },
+    {
+      "title": "Rydeモバイルアプリ (GraphQLバックエンド開発)",
+      "technologies": "Ruby on Rails, React js, GraphQL",
+      "description": "株式会社Rydeにて、RydeモバイルアプリのGraphQLバックエンド開発、フロントエンド連携、アドミンサイト開発。"
+    },
+    {
+      "title": "IronFunctions (クラウドコードプロダクトメンテ)",
+      "technologies": "Go",
+      "description": "Iron Ioにて、IronFunctionsというAWS Lambdaのようなクラウドコードプロダクトのメンテナンスと一部開発。"
     },
     {
       "title": "ポートフォリオウェブサイト（このプロジェクト）",

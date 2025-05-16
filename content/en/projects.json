@@ -2,19 +2,59 @@
   "title": "Projects",
   "entries": [
     {
-      "title": "AI-Powered Recommendation Engine",
-      "technologies": "Python, TensorFlow, Scikit-learn, Flask, React",
-      "description": "Developed a personalized recommendation system for an e-commerce platform, increasing user engagement by 25%."
+      "title": "Warex (Backend Development)",
+      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
+      "description": "Backend development for the Warex project while at Gaussy."
     },
     {
-      "title": "Real-time Collaborative Whiteboard",
-      "technologies": "Node.js, WebSocket, React, Canvas API",
-      "description": "Built a web-based collaborative whiteboard application allowing multiple users to draw and share ideas in real-time."
+      "title": "LINE Fund Information Platform 'トークン'",
+      "technologies": "Ruby on Rails, LINE API, Reuters API",
+      "description": "Fullstack development of a fund information platform integrated with LINE, including API development and data fetching/processing from Reuters, at Robotfund."
     },
     {
-      "title": "Serverless Data Processing Pipeline",
-      "technologies": "AWS Lambda, S3, API Gateway, DynamoDB, Python",
-      "description": "Designed and implemented a serverless pipeline for ingesting and processing large volumes of IoT data."
+      "title": "Fund Information Platform 'Better World'",
+      "technologies": "Ruby on Rails, Reuters API",
+      "description": "Fullstack development of a fund information platform with Reuters API integration, at Robotfund."
+    },
+    {
+      "title": "Custom Audio Caching Service",
+      "technologies": "Golang, Docker, AWS, Text-to-Voice Service Integration",
+      "description": "Developed a Go-based service to compress, cache, and serve audio generated from text-to-voice, reducing API usage, at Robotfund."
+    },
+    {
+      "title": "Content Sharing and Publishing Platform (e.g., Kidint)",
+      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
+      "description": "API and backend development for a content sharing platform, including AWS integration and social media logins, at Allm Inc."
+    },
+    {
+      "title": "Retail BI Customer Tracking Platform (Followup)",
+      "technologies": "Go, Raspberry Pi, BLE Beacons",
+      "description": "Developed a WiFi-based customer tracking platform for retail business intelligence, including IoT service development on Raspberry Pi and BLE beacon integration, at Allm Inc."
+    },
+    {
+      "title": "Triage Application 'JoinTriage' (API)",
+      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
+      "description": "API and frontend development for a triage application, including CI/CD setup, at Allm Inc."
+    },
+    {
+      "title": "AI Research for Healthcare",
+      "technologies": "Deep Neural Networks, Machine Learning",
+      "description": "Conducted AI research involving image classification/recognition and data analysis/segmentation for healthcare applications, at Allm Inc."
+    },
+    {
+      "title": "MMORPG API Backend '剣と魔法のログレス'",
+      "technologies": "Padrino (Ruby)",
+      "description": "Developed the API backend for a popular mobile MMORPG, at Aiming Inc."
+    },
+    {
+      "title": "Kii Cloud Developer Portal",
+      "technologies": "Ruby on Rails, Backbone.js",
+      "description": "Development of the developer portal for Kii Cloud, at Kii Inc."
+    },
+    {
+      "title": "Iron Functions (Open Source Serverless Platform)",
+      "technologies": "Go (implied, as it's a serverless platform often built with Go)",
+      "description": "Provided support and maintenance for the Iron Functions open-source serverless platform, at Iron.io."
     },
     {
       "title": "Portfolio Website (This Project)",
