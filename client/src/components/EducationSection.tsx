@@ -3,12 +3,17 @@ import { useLanguage } from "../contexts/LanguageContext";
 // Removed: import { getTranslation } from "../translations";
 
 // Interface can remain the same as it matches the structure within the entries array
+interface AdditionalInfo {
+  title: string;
+  items: string[];
+}
+
 interface EducationEntry { // Renamed for clarity, as it's an entry from the 'entries' array
   degree: string;
   institution: string;
   period: string;
   description?: string; // description is optional in the new structure
-  additionalInfo?: string;
+  additionalInfo?: AdditionalInfo | null;
 }
 
 const EducationSection = () => {
@@ -63,7 +68,16 @@ const EducationSection = () => {
               </div>
             </div>
             <p>{edu.description}</p>
-            {edu.additionalInfo && <p className="mt-2">{edu.additionalInfo}</p>}
+            {edu.additionalInfo && (
+              <div className="mt-2">
+                <h4 className="font-semibold">{edu.additionalInfo.title}</h4>
+                <ul className="list-disc list-inside ml-4">
+                  {edu.additionalInfo.items.map((item, itemIndex) => (
+                    <li key={itemIndex}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

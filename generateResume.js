@@ -344,8 +344,17 @@ function generateResume(language) {
         renderText(entry.description, { x: doc.page.margins.left, width: itemWidth });
         doc.moveDown(0.3);
       }
-      if (entry.additionalInfo) {
-        renderText(entry.additionalInfo, { x: doc.page.margins.left, width: itemWidth });
+      if (entry.additionalInfo && entry.additionalInfo.title && Array.isArray(entry.additionalInfo.items)) {
+        doc.fontSize(10).font(boldFont).fillColor(colors.text); // Make title bold
+        renderText(entry.additionalInfo.title, { x: doc.page.margins.left, width: itemWidth });
+        doc.moveDown(0.2);
+        doc.fontSize(10).font(regularFont).fillColor(colors.text); // Reset to regular for items
+        // Ensure renderList is available or define a local one if not.
+        // Assuming renderList from experience section is suitable.
+        // We need to make sure doc.x is set correctly before calling renderList
+        doc.x = doc.page.margins.left;
+        renderList(entry.additionalInfo.items.map(item => `${item}`)); // Pass items to renderList
+        // renderList adds its own moveDown, so we might not need one here, or adjust as necessary
       }
       doc.moveDown(0.5);
     });

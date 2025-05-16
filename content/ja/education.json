@@ -6,14 +6,21 @@
       "institution": "慶應義塾大学",
       "period": "2006 - 2008",
       "description": "情報学部博士課程 2008-2011 (未卒業)。専門 : エンベデッドプロセッサー開発。",
-      "additionalInfo": "論文:\n- 2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))\n- 2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)\n- 2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Germany, 2009)"
+      "additionalInfo": {
+        "title": "論文:",
+        "items": [
+          "2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))",
+          "2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)",
+          "2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Germany, 2009)"
+        ]
+      }
     },
     {
       "degree": "情報学部",
       "institution": "Istanbul Bilgi 大学",
       "period": "2000 - 2004",
       "description": "",
-      "additionalInfo": ""
+      "additionalInfo": null
     }
   ]
 }

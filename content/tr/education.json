@@ -6,14 +6,21 @@
       "institution": "Keio University",
       "period": "2006 - 2008",
       "description": "Bilgisayar Bilimleri alanında Yüksek Lisans derecesi alındı. 2008-2011 yılları arasında Doktora çalışması yapıldı. Araştırma Alanı: Gömülü İşlemci Tasarımı ve Optimizasyonu.",
-      "additionalInfo": "Seçilmiş Makaleler:\n- 2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))\n- 2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)\n- 2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Almanya, 2009)"
+      "additionalInfo": {
+        "title": "Seçilmiş Makaleler:",
+        "items": [
+          "2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))",
+          "2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)",
+          "2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Almanya, 2009)"
+        ]
+      }
     },
     {
       "degree": "Lisans",
       "institution": "Istanbul Bilgi University",
       "period": "2000 - 2004",
       "description": "",
-      "additionalInfo": ""
+      "additionalInfo": null
     }
   ]
 }

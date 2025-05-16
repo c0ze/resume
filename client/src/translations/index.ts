@@ -33,7 +33,7 @@ export interface Translations {
       institution: string;
       period: string;
       description?: string;
-      additionalInfo?: string;
+      additionalInfo?: { title: string; items: string[] } | null;
     }>;
   };
   skills: {
