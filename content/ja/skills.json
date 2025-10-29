@@ -2,7 +2,7 @@
   "title": "スキル",
   "technicalSkillsTitle": "テクニカルスキル",
   "technicalSkills": [
-    "メイン開発言語はRubyとGo",
+    "メイン開発言語はRubyとGo.最近Pythonも試してみてる。",
     "DebianとEmacsユーザー（最近VisualCodeに移動）",
     "様々なAWSサービスの 経験 (EC2, S3, Dynamo, SES, IAM, Route53)",
     "Circle CI / GithubActions / Docker / Kubernetes 使用ディプロイメントの経験",

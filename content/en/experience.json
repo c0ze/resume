@@ -8,6 +8,8 @@
       "responsibilities": [
         "General application and infrastructure architecture and planning",
         "Migration from monolithic PHP app to microservices architecture",
+        "Refactored notification service from monolithic PHP app to a standalone Python service for easier maintenance",
+        "Migrate from a paid CDN solution to self developed CDN service which serves S3 assets to reduce costs (nodejs)",
         "Develop and encourage policies for Logging, Security, Authentication/Authorization, Code Coverage, Linting",
         "Perform as bridge engineer between Overseas teams"
       ]
@@ -17,12 +19,11 @@
       "company": "Gaussy (Tokyo, Remote)",
       "period": "February 2020 - December 2023",
       "responsibilities": [
-        "Back-end development for Warex project (Golang)",
+        "Development for warehouse management project (Golang)",
         "Manage backend development using Gorm, Echo, MySQL",
         "3rd party service integration with Hubspot, Mailgun, Bugsnag",
         "Integration with Goose Migrations and Testify Suite",
-        "Some frontend development using Vue js (Admin site)",
-        "Ruby on Rails, React development"
+        "Some frontend development using Vue js (Admin site)"
       ]
     },
     {

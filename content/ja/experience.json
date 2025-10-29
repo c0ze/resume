@@ -2,100 +2,119 @@
   "title": "職務経歴",
   "jobs": [
     {
-      "title": "アーキテクト",
-      "company": "Veltra (東京)",
+      "title": "システムアーキテクト",
+      "company": "Veltra (東京, リモート)",
       "period": "2024年1月 - 現在",
       "responsibilities": [
-        "アーキテクチャー設計",
-        "monolithic PHP から microservices に移動",
-        "Logging, Security, Authentication/Authorization, Code Coverage, Lintingのポリシー実行",
-        "海外チームとのコミュニケーション"
+        "アプリケーションとインフラのアーキテクチャ設計と計画",
+        "モノリシックPHPアプリからマイクロサービスアーキテクチャへの移行",
+        "通知サービスをモノリシックPHPアプリからスタンドアロンのPythonサービスにリファクタリングし、メンテナンスを容易に",
+        "有料CDNソリューションから自社開発のCDNサービス（S3アセットを配信）に移行し、コストを削減（nodejs）",
+        "ロギング、セキュリティ、認証/認可、コードカバレッジ、リンティングに関するポリシーを策定・推進",
+        "海外チームとのブリッジエンジニアとして活動"
       ]
     },
     {
-      "title": "開発者",
-      "company": "株式会社Gaussy (東京)",
+      "title": "シニア開発者",
+      "company": "Gaussy (東京, リモート)",
       "period": "2020年2月 - 2023年12月",
       "responsibilities": [
-        "倉庫管理システム Warex Ai のバックエンドAPI開発（Go）",
-        "Gorm, Echo, MySQLのスタック",
-        "Hubspot, Mailgun, Bugsnagの連携",
-        "Goose MigrationとTestify使用",
-        "Vue jsを使ってフロントエンド開発"
+        "倉庫管理プロジェクトの開発（Golang）",
+        "Gorm、Echo、MySQLを使用したバックエンド開発の管理",
+        "Hubspot、Mailgun、Bugsnagとのサードパーティサービス連携",
+        "Goose MigrationsおよびTestify Suiteとの連携",
+        "Vue.jsを使用した一部のフロントエンド開発（管理サイト）"
       ]
     },
     {
-      "title": "シニアー開発者",
-      "company": "株式会社Robotfund (東京)",
+      "title": "シニア開発者",
+      "company": "Robotfund (東京, ハイブリッド)",
       "period": "2018年3月 - 2020年2月",
       "responsibilities": [
-        "LINEでのファンドの情報アプリ“未来のコツ”の開発",
-        "バックエンドAPI開発（Ruby on Rails）",
-        "LINE APIとReuters API との連携",
-        "アドミンサイトの開発（Ruby on Rails）",
-        "CI／CD連携（AWS）"
+        "LINEファンド情報プラットフォーム「トークン」のフルスタック開発",
+        "API開発（Ruby on Rails）",
+        "LINE API連携（LINEチャットAPIとの連携）",
+        "Reuters API連携（ファンド関連データの毎日の取得と処理）",
+        "ファンド情報プラットフォームBetter Worldのフルスタック開発",
+        "Ruby on Railsを使用したバックエンド/フロントエンド開発",
+        "Reuters API連携",
+        "音声を圧縮・キャッシュするカスタムGolangサービス",
+        "テキスト読み上げサービスとの連携",
+        "顧客の応答を音声に変換し、テキスト読み上げサービスが頻繁に使用されないようにキャッシュ",
+        "Goを使用して開発、docker/AWSを使用してデプロイ"
       ]
     },
     {
-      "title": "シニアー開発エンジニアー",
-      "company": "株式会社 Allm (東京)",
+      "title": "シニア開発エンジニア",
+      "company": "Allm Inc (東京, オンサイト)",
       "period": "2014年12月 - 2018年3月",
       "responsibilities": [
-        "トリアージアプリのAPI開発 (JoinTriage): Grape (Ruby)フレームワークでAPI開発, Angular JS/Coffee Scriptを使ってフロントエンド開発, GitlabCI & Dockerを使用してCIとCD",
-        "教育専用CMS開発 (Kidint): Angular JS/Coffee Scriptを使ってフロントエンド開発, モバイルとウェブ向けのAPI開発, AWSインテグレーション, ソーシャルメディアインテグレーション",
-        "コンシューマーデータ分析向けのBIサービス開発 (Followup): Angular JS/Coffee Scriptを使ってフロントエンド開発, IoT ビーコン展開と管理システム開発(Estimote), Go言語でAPI開発"
+        "コンテンツ共有・公開プラットフォーム（例：Kidint）のAPI/バックエンド開発",
+        "Ruby On Railsを使用したAPI開発",
+        "AWS連携（S3アセット、SNS通知）",
+        "Angularを使用したフロントエンド開発",
+        "ソーシャルメディア連携およびサードパーティログイン（Facebook、Google）",
+        "小売業向けBIアプリケーション（Followup）のためのWifiベースの顧客追跡プラットフォーム",
+        "IoTおよび周辺機器向けのスタンドアロンサービス開発（Raspberry Pi上のGo言語サービス、BLEビーコン連携）",
+        "IoTの大規模展開と周辺機器管理",
+        "GoでのAPI開発",
+        "トリアージアプリケーションJoinTriageのAPI開発",
+        "Grape（Ruby）を使用したAPI開発",
+        "フロントエンド開発（Angular 1.xおよびBootstrap）",
+        "CI & CD（GitlabCI & Docker）",
+        "ヘルスケアのためのAI研究",
+        "ディープニューラルネットワークを使用した画像分類・認識",
+        "機械学習を使用したデータ分析とセグメンテーション"
       ]
     },
     {
       "title": "開発者",
-      "company": "株式会社Aiming (東京, 派遣)",
+      "company": "Aiming Inc (東京, オンサイト, 契約)",
       "period": "2014年6月 - 2014年11月",
       "responsibilities": [
-        "オンラインゲーム「幻塔戦記 グリフォン」のバックエンドAPI開発（RubyのPadrinoフレームワーク使用）",
-        "数多いDaUの問題解決",
-        "アジャイル開発"
+        "MMORPG「剣と魔法のログレス」のAPIバックエンド開発",
+        "Padrinoフレームワーク（Ruby）を使用したAPI開発",
+        "厳しい納期のアジャイル開発環境への参加",
+        "毎日数千人のアクティブユーザーがいるゲームの開発経験"
       ]
     },
     {
       "title": "Dev Ops",
-      "company": "株式会社Kii (東京)",
-      "period": "2012年8月 - 2014年4月",
+      "company": "Kii Inc (東京, オンサイト)",
+      "period": "2012年8月 - 2014年5月",
       "responsibilities": [
-        "API使用の計算とロッギング (3scale, Varnish-Cache, fluentd)",
-        "パイメントのインテグレーション (ZuoraとPaypal使用)",
-        "Cloud Code のメンテナンス (AWSのLambdaのように、クラウドでコード実行するサービス・node.js)",
-        "Developer Portalの 開発・メンテナンス (Ruby on Rails, Backbone.js)",
-        "さまざまの自動タスク (ハイタッチお客さん使用のリポートの作成、Puppet間のゲストのメンテナンスなど)"
+        "API使用状況の追跡とロギング（3scale、Varnish-Cache、fluentd）",
+        "支払い連携（ZuoraおよびPaypal経由）",
+        "クラウドコードのメンテナンス（node.js）",
+        "開発者ポータルの開発（Ruby on Rails、Backbone.js）",
+        "さまざまな自動化タスク（レポート、Ruby/Bashとpuppetを使用したAWSリソースのチューニング）"
       ]
     },
     {
       "title": "Dev Ops",
-      "company": "株式会社モビラス (東京)",
+      "company": "Mobilous Inc (東京, オンサイト)",
       "period": "2011年8月 - 2012年7月",
       "responsibilities": [
-        "AWS上で自動的にインスタンスフレームワーク（使用したAWSサービスはEC2,SES,Route53,S3,IAM。インスタンス側にはRubyのSinatraを使用）",
-        "インスタンスのASになるGlassfishのメンテナンス",
-        "PHPとSeleniumを使用してオートメーション"
+        "リードDevOps/CloudOps：監視と自動スケーリングを備えたスケーラブルなEC2クラウドインフラの設計と実装。RoRとの管理ダッシュボード連携。",
+        "Glassfish AppServerコンポーネントへのマイナー参加（Springフレームワーク上のJava）",
+        "PHP/Seleniumを使用したWebページ自動化スクリプト"
       ]
     },
     {
-      "title": "開発者",
-      "company": "株式会社Ryde (東京, パート)",
+      "title": "契約開発者",
+      "company": "Ryde Inc (東京, リモート - パートタイム)",
       "period": "2021年7月 - 2022年7月",
       "responsibilities": [
-        "RydeモバイルアプリのGraphQLバックエンド開発",
-        "バックエンドAPI開発（Ruby on Rails）",
-        "フロントエンドとの連携（React js／GraphQL）",
-        "アドミンサイトの開発（Ruby on Rails）"
+        "Ruby on Rails、GraphQLを使用したRydeサービス（モバイルおよびWeb）のバックエンド開発",
+        "一部のフロントエンド開発（管理サイト、Ruby on Rails、React）"
       ]
     },
     {
-      "title": "開発者",
-      "company": "Iron Io (東京, パート)",
+      "title": "契約開発者",
+      "company": "Iron.io (米国, リモート - パートタイム)",
       "period": "2017年7月 - 2020年7月",
       "responsibilities": [
-        "IronFunctionsというAWS Lambdaみたいクラウドコードプロダクトのメンテ",
-        "一部IronFunction開発（Go）"
+        "オープンソースのサーバーレスプラットフォーム、Iron Functionsのサポートとメンテナンス"
       ]
     }
   ]
