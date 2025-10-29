@@ -222,7 +222,7 @@ function generateResume(language) {
   doc.y = doc.y;     // Maintain current y
   renderText(contactLine); // Render text at current doc.x, doc.y
 
-  contactLine = 'Email: me@arda.karaduman.web.tr';
+  contactLine = 'Email: akaraduman@gmail.com';
   textWidth = doc.widthOfString(contactLine); // Re-assign
   centeredX = (doc.page.width - textWidth) / 2; // Re-assign
   if (language === 'ja') {
