@@ -7,11 +7,11 @@ import { queryClient } from './lib/queryClient';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 // ROUTER_BASE_PATH is for Wouter's `base` prop. Typically no trailing slash.
-const ROUTER_BASE_PATH = "/resume";
+const ROUTER_BASE_PATH = "/";
 
 // VITE_CONFIG_BASE_URL should match the `base` in vite.config.ts.
 // This is used to construct the full ssrPath.
-const VITE_CONFIG_BASE_URL = "/resume/";
+const VITE_CONFIG_BASE_URL = "/";
 
 export function render(url: string) { // url from static generator, e.g., "/", "/about"
   let ssrPathForWouter: string; // Renamed variable
