@@ -35,7 +35,7 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
   const clientOnlyPlugins: PluginOption[] = !isProduction ? [runtimeErrorOverlay()] : [];
 
   const commonConfig: Partial<UserConfig> = {
-    base: '/resume/', // <--- Add this line
+    base: '/',
     resolve: {
       alias: {
         // Ensure paths are resolved from the project root (where vite.config.ts is)
