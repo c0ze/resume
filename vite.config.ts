@@ -1,20 +1,9 @@
 import { defineConfig, type UserConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
-import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 // Async function to get cartographer plugin if needed
 async function getCartographerPlugin(isProduction: boolean): Promise<PluginOption[]> {
-  if (!isProduction && process.env.REPL_ID !== undefined) {
-    try {
-      const m = await import("@replit/vite-plugin-cartographer");
-      return [m.cartographer()];
-    } catch (e) {
-      console.warn("Failed to load @replit/vite-plugin-cartographer:", e);
-      return [];
-    }
-  }
   return [];
 }
 
@@ -27,12 +16,11 @@ export default defineConfig(async ({ command, mode }): Promise<UserConfig> => {
 
   const basePlugins: PluginOption[] = [
     react(),
-    themePlugin(), // Assuming this is needed for both client and SSR or benign for SSR
     ...cartographerPlugins,
   ];
 
   // runtimeErrorOverlay is for client-side development only
-  const clientOnlyPlugins: PluginOption[] = !isProduction ? [runtimeErrorOverlay()] : [];
+  const clientOnlyPlugins: PluginOption[] = [];
 
   const commonConfig: Partial<UserConfig> = {
     base: '/',
