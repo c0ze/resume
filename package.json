@@ -4,6 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
+    "dev": "node scripts/generate-theme.mjs && vite",
     "build": "node scripts/build-static.mjs",
     "preview": "vite preview",
     "check": "tsc",
