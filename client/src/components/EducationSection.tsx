@@ -23,21 +23,21 @@ const EducationSection = () => {
     // Basic loading state for EducationSection
     return (
       <section id="education" className="mb-12 animate-pulse">
-        <div className="h-8 bg-gray-300 rounded w-1/3 mb-6"></div>
-        {[...Array(1)].map((_, i) => ( // Skeleton for 1 education card
-          <Card key={i} className="mb-6">
+        <div className="h-8 bg-muted rounded w-1/3 mb-6"></div>
+        {[...Array(1)].map((_, i) => (
+          <Card key={i} className="mb-6 bg-card border-border">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between mb-4">
                 <div>
-                  <div className="h-6 bg-gray-300 rounded w-3/4 mb-1"></div>
-                  <div className="h-5 bg-gray-300 rounded w-1/2"></div>
+                  <div className="h-6 bg-muted rounded w-3/4 mb-1"></div>
+                  <div className="h-5 bg-muted rounded w-1/2"></div>
                 </div>
                 <div className="mt-2 md:mt-0">
-                  <div className="h-7 bg-gray-300 rounded-full w-24"></div>
+                  <div className="h-7 bg-muted rounded-full w-24"></div>
                 </div>
               </div>
-              <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
-              <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+              <div className="h-4 bg-muted rounded w-full mb-2"></div>
+              <div className="h-4 bg-muted rounded w-5/6"></div>
             </CardContent>
           </Card>
         ))}
@@ -51,27 +51,27 @@ const EducationSection = () => {
 
   return (
     <section id="education" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b pb-2">{t.education.title}</h2>
-      
+      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.education.title}</h2>
+
       {educationEntries.map((edu, index) => (
-        <Card key={index} className="mb-6">
+        <Card key={index} className="mb-6 bg-card border-border">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row justify-between mb-4">
               <div>
-                <h3 className="text-xl font-bold">{edu.degree}</h3>
-                <p className="text-blue-500 font-medium">{edu.institution}</p>
+                <h3 className="text-xl font-bold text-foreground">{edu.degree}</h3>
+                <p className="text-primary font-medium">{edu.institution}</p>
               </div>
               <div className="mt-2 md:mt-0">
-                <span className="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold">
+                <span className="inline-block bg-secondary text-muted-foreground rounded-full px-3 py-1 text-sm font-semibold">
                   {edu.period}
                 </span>
               </div>
             </div>
-            <p>{edu.description}</p>
+            <p className="text-muted-foreground">{edu.description}</p>
             {edu.additionalInfo && (
               <div className="mt-2">
-                <h4 className="font-semibold">{edu.additionalInfo.title}</h4>
-                <ul className="list-disc list-inside ml-4">
+                <h4 className="font-semibold text-foreground">{edu.additionalInfo.title}</h4>
+                <ul className="list-disc list-inside ml-4 text-muted-foreground">
                   {edu.additionalInfo.items.map((item, itemIndex) => (
                     <li key={itemIndex}>{item}</li>
                   ))}

@@ -15,12 +15,12 @@ const SkillsSection = () => {
     // Basic loading state for SkillsSection
     return (
       <section id="skills" className="mb-12 animate-pulse">
-        <div className="h-8 bg-gray-300 rounded w-1/4 mb-6"></div>
-        <Card>
+        <div className="h-8 bg-muted rounded w-1/4 mb-6"></div>
+        <Card className="bg-card border-border">
           <CardContent className="p-6">
-            <div className="h-6 bg-gray-300 rounded w-1/3 mb-4"></div>
+            <div className="h-6 bg-muted rounded w-1/3 mb-4"></div>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-300 rounded w-full mb-3"></div>
+              <div key={i} className="h-4 bg-muted rounded w-full mb-3"></div>
             ))}
           </CardContent>
         </Card>
@@ -33,25 +33,24 @@ const SkillsSection = () => {
 
   return (
     <section id="skills" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b pb-2">{t.skills.title}</h2>
-      
-      {/* Displaying technical skills in a single card, possibly in columns */}
-      <Card>
+      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.skills.title}</h2>
+
+      <Card className="bg-card border-border">
         <CardContent className="p-6">
-          <h3 className="text-xl font-bold mb-4">{t.skills.technicalSkillsTitle}</h3>
-          
+          <h3 className="text-xl font-bold mb-4 text-foreground">{t.skills.technicalSkillsTitle}</h3>
+
           {technicalSkillsList.length > 0 ? (
             <ul className="columns-1 md:columns-2 lg:columns-3 gap-x-6">
               {technicalSkillsList.map((skill, index) => (
-                <li key={index} className="mb-2 text-gray-700 dark:text-gray-300 break-inside-avoid">
-                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-sm">
+                <li key={index} className="mb-2 text-muted-foreground break-inside-avoid">
+                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
                     {skill}
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No skills listed.</p>
+            <p className="text-muted-foreground">No skills listed.</p>
           )}
         </CardContent>
       </Card>
