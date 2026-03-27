@@ -37,9 +37,9 @@
       "description": "API and frontend development for a triage application, including CI/CD setup, at Allm Inc."
     },
     {
-      "title": "MMORPG API Backend '幻塔戦記グリフォン'",
+      "title": "MMORPG API Backend 'Gentosenki Griffin'",
       "technologies": "Padrino (Ruby)",
-      "description": "Developed the API backend for the mobile MMORPG '幻塔戦記グリフォン', at Aiming Inc."
+      "description": "Developed the API backend for the mobile MMORPG 'Gentosenki Griffin' (幻塔戦記グリフォン), at Aiming Inc."
     },
     {
       "title": "Portfolio Website (This Project)",

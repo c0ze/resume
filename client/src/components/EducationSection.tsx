@@ -68,7 +68,7 @@ const EducationSection = () => {
                 </span>
               </div>
             </div>
-            <p className="text-foreground text-base">{edu.description}</p>
+            {edu.description && <p className="text-foreground text-base">{edu.description}</p>}
             {edu.additionalInfo && (
               <div className="mt-2">
                 <h4 className="font-semibold text-sm text-foreground">{edu.additionalInfo.title}</h4>

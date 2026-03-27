@@ -221,7 +221,7 @@ function generateResume(language) {
   doc.y = doc.y;     // Maintain current y
   renderText(contactLine); // Render text at current doc.x, doc.y
 
-  contactLine = 'Email: akaraduman@gmail.com';
+  contactLine = `Email: ${t.header.contactViaEmail}`;
   textWidth = doc.widthOfString(contactLine); // Re-assign
   centeredX = (doc.page.width - textWidth) / 2; // Re-assign
   if (language === 'ja') {
@@ -391,30 +391,6 @@ function generateResume(language) {
     renderList(techSkills);
   }
   
-  doc.moveDown(0.5);
-
-  // Tech Stack with UTF-8 support
-  doc.fontSize(11)
-     .font(boldFont)
-     .fillColor(colors.text);
-  renderText(t.skills.techStackTitle, { x: doc.page.margins.left, width: skillsSectionWidth }); // Use techStackTitle
-  
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.skills.techStackItems, { x: doc.page.margins.left, width: skillsSectionWidth });
-  doc.moveDown(0.5);
-
-  // Soft Skills with UTF-8 support
-  doc.fontSize(11)
-     .font(boldFont)
-     .fillColor(colors.text);
-  renderText(t.skills.softSkillsTitle, { x: doc.page.margins.left, width: skillsSectionWidth }); // Use softSkillsTitle
-  
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-  renderText(t.skills.softSkillItems, { x: doc.page.margins.left, width: skillsSectionWidth });
   doc.moveDown(1);
 
   // Projects
