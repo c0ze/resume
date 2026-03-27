@@ -1,4 +1,4 @@
-import { Language } from '../contexts/LanguageContext';
+import type { Language } from '../contexts/LanguageContext';
 
 // Define the structure for a single language's content
 export interface Translations {
@@ -80,69 +80,44 @@ export interface Translations {
   };
 }
 
-// Use import.meta.glob to make Vite aware of all possible JSON files
-// The path is relative to the current file: client/src/translations/index.ts
-const allContentModules = import.meta.glob('../../../content/**/*.json'); // Corrected path
+const allContentModules = import.meta.glob('../../../content/**/*.json', {
+  eager: true,
+  import: 'default',
+});
 
-// Helper to import a JSON module using the globbed modules
-const loadJson = async (lang: Language, fileName: string): Promise<any> => {
-  // Construct the key for the allContentModules object, matching the glob pattern structure
+const loadJsonSync = (lang: Language, fileName: string) => {
   const moduleKey = `../../../content/${lang}/${fileName}.json`;
-  
-  if (allContentModules[moduleKey]) {
-    try {
-      // Assert the type of the dynamically imported module
-      const module: { default: any } = await allContentModules[moduleKey]() as { default: any };
-      return module.default;
-    } catch (error) {
-      console.error(`Error executing module function for ${moduleKey}:`, error);
-      return {}; // Return empty object on error
-    }
-  } else {
-    console.error(`Module not found in glob for path: ${moduleKey}. Available paths:`, Object.keys(allContentModules));
-    return {}; // Return empty object if path not in glob
+  const module = allContentModules[moduleKey];
+
+  if (!module) {
+    console.error(`Module not found in glob for path: ${moduleKey}`);
+    return {};
   }
+
+  return module;
 };
 
-// Async hook to get translations based on selected language
-export const getTranslation = async (language: Language): Promise<Translations | null> => {
+export const getTranslationSync = (language: Language): Translations | null => {
   try {
-    const [
-      header,
-      about,
-      experience,
-      education,
-      skills,
-      projects,
-      pdf_meta,
-      navigation,
-      contact,
-      footer
-    ] = await Promise.all([
-      loadJson(language, 'header'),
-      loadJson(language, 'about'),
-      loadJson(language, 'experience'),
-      loadJson(language, 'education'),
-      loadJson(language, 'skills'),
-      loadJson(language, 'projects'),
-      loadJson(language, 'pdf_meta'),
-      loadJson(language, 'navigation'),
-      loadJson(language, 'contact'),
-      loadJson(language, 'footer')
-    ]);
+    const header = loadJsonSync(language, 'header');
+    const about = loadJsonSync(language, 'about');
+    const experience = loadJsonSync(language, 'experience');
+    const education = loadJsonSync(language, 'education');
+    const skills = loadJsonSync(language, 'skills');
+    const projects = loadJsonSync(language, 'projects');
+    const pdf_meta = loadJsonSync(language, 'pdf_meta');
+    const navigation = loadJsonSync(language, 'navigation');
+    const contact = loadJsonSync(language, 'contact');
+    const footer = loadJsonSync(language, 'footer');
 
-    // Check if core content loaded (you might want more granular checks or fallbacks)
-    if (!header || Object.keys(header).length === 0 || 
-        !about || Object.keys(about).length === 0 ||
-        !navigation || Object.keys(navigation).length === 0 // Example check for navigation
-        /* add other essential checks if needed */
-       ) {
-        console.error(`Core translation files might be missing or empty for language: ${language}`);
-        // Optionally, you could try to load 'en' as a fallback here if language !== 'en'
-        // For now, returning null or a partial object might be better than throwing.
-        // return null; 
+    if (
+      !header || Object.keys(header).length === 0 ||
+      !about || Object.keys(about).length === 0 ||
+      !navigation || Object.keys(navigation).length === 0
+    ) {
+      console.error(`Core translation files might be missing or empty for language: ${language}`);
     }
-    
+
     return {
       header,
       about,
@@ -153,10 +128,13 @@ export const getTranslation = async (language: Language): Promise<Translations |
       pdf_meta,
       navigation,
       contact,
-      footer
+      footer,
     } as Translations;
   } catch (error) {
     console.error(`Failed to get translations for language ${language}:`, error);
     return null;
   }
 };
+
+export const getTranslation = async (language: Language): Promise<Translations | null> =>
+  getTranslationSync(language);

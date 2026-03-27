@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getTranslation, Translations } from '../translations'; // Assuming Translations type is exported from index.ts
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { getTranslationSync } from '../translations';
+import type { Translations } from '../translations';
 
 // Define available languages
 export type Language = 'en' | 'ja' | 'tr';
@@ -16,34 +17,13 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 // Create LanguageProvider component
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en'); // Default language
-  const [translations, setTranslations] = useState<Translations | null>(null);
-  const [loadingTranslations, setLoadingTranslations] = useState<boolean>(true);
-
-  useEffect(() => {
-    let active = true; // Prevent state updates on unmounted component
-    setLoadingTranslations(true);
-
-    getTranslation(language)
-      .then((loadedTranslations) => {
-        if (active) {
-          setTranslations(loadedTranslations);
-          setLoadingTranslations(false);
-        }
-      })
-      .catch((error) => {
-        console.error(`Failed to load translations for ${language}`, error);
-        if (active) {
-          setTranslations(null); // Or set to some default/fallback translations
-          setLoadingTranslations(false);
-        }
-      });
-
-    return () => {
-      active = false; // Cleanup function to set active to false when component unmounts
-    };
-  }, [language]); // Rerun effect when language changes
+export const LanguageProvider: React.FC<{ children: ReactNode; initialLanguage?: Language }> = ({
+  children,
+  initialLanguage = 'en',
+}) => {
+  const [language, setLanguage] = useState<Language>(initialLanguage);
+  const translations = getTranslationSync(language);
+  const loadingTranslations = translations === null;
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, translations, loadingTranslations }}>

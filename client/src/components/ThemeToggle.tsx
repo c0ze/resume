@@ -2,9 +2,9 @@ import { useTheme } from "../contexts/ThemeContext";
 import { Moon, Sun, Sparkles } from "lucide-react";
 
 const themes = [
-  { id: "van-helsing", name: "Dark", icon: Moon },
+  { id: "van-helsing", name: "Van Helsing", icon: Moon },
   { id: "dracula", name: "Dracula", icon: Sparkles },
-  { id: "alucard", name: "Light", icon: Sun },
+  { id: "alucard", name: "Alucard", icon: Sun },
 ] as const;
 
 export function ThemeToggle() {

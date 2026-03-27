@@ -10,28 +10,33 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = "resume-theme";
+const THEMES: Theme[] = ["van-helsing", "dracula", "alucard"];
+const DARK_THEMES = new Set<Theme>(["van-helsing", "dracula"]);
+const DEFAULT_THEME: Theme = "alucard";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
-      if (stored && ["van-helsing", "dracula", "alucard"].includes(stored)) {
+      if (stored && THEMES.includes(stored)) {
         return stored;
       }
     }
-    return "van-helsing";
+    return DEFAULT_THEME;
   });
 
   useEffect(() => {
     const root = document.documentElement;
+    const isDarkTheme = DARK_THEMES.has(theme);
 
-    // Remove all theme classes
-    root.classList.remove("van-helsing", "dracula", "alucard");
+    root.classList.remove(...THEMES, "dark");
 
-    // Add current theme class
     root.classList.add(theme);
+    if (isDarkTheme) {
+      root.classList.add("dark");
+    }
+    root.style.colorScheme = isDarkTheme ? "dark" : "light";
 
-    // Store preference
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 

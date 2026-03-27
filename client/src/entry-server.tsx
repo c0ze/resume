@@ -5,11 +5,12 @@ import App from './App';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // ROUTER_BASE_PATH is for Wouter's `base` prop. Typically no trailing slash.
 const ROUTER_BASE_PATH = "/";
 
-// VITE_CONFIG_BASE_URL should match the `base` in vite.config.ts.
+// VITE_CONFIG_BASE_URL should match the `base` in config/vite.config.ts.
 // This is used to construct the full ssrPath.
 const VITE_CONFIG_BASE_URL = "/";
 
@@ -28,15 +29,17 @@ export function render(url: string) { // url from static generator, e.g., "/", "
   // Removed: const hook = staticLocationHook(pathForStaticHook);
 
   const html = ReactDOMServer.renderToString(
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        {/* Use ssrPath prop with the Router's base prop */}
-        <WouterRouter ssrPath={ssrPathForWouter} base={ROUTER_BASE_PATH}>
-          {/* App is now a direct child of WouterRouter */}
-          <App />
-        </WouterRouter>
-      </LanguageProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          {/* Use ssrPath prop with the Router's base prop */}
+          <WouterRouter ssrPath={ssrPathForWouter} base={ROUTER_BASE_PATH}>
+            {/* App is now a direct child of WouterRouter */}
+            <App />
+          </WouterRouter>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
   return { html };
 }
