@@ -1,6 +1,6 @@
 # resume.arda.tr
 
-Multi-language resume/portfolio site for Arda Karaduman. The site is built with Vite + React, prerendered into static HTML, and ships downloadable PDF resumes for English, Japanese, and Turkish.
+Multi-language resume/portfolio site for Arda Karaduman. The site is built with Vite + React, prerendered into static HTML, and ships downloadable PDF and DOCX resumes for English, Japanese, and Turkish.
 
 [![Deploy to GitHub Pages](https://github.com/c0ze/resume/actions/workflows/deploy.yml/badge.svg)](https://github.com/c0ze/resume/actions/workflows/deploy.yml)
 
@@ -9,7 +9,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Static site output under `dist/client`
 - Server-rendered initial HTML for the homepage
 - Multi-language content sourced from JSON in `content/en`, `content/ja`, and `content/tr`
-- Generated PDFs in `public/resume-en.pdf`, `public/resume-ja.pdf`, and `public/resume-tr.pdf`
+- Generated PDF/DOCX resumes in `public/resume-{en,ja,tr}.{pdf,docx}`
 - Generated `sitemap.xml` included in the production build
 - Theme generation driven by `config/theme.json`
 
@@ -91,9 +91,9 @@ The build pipeline:
 1. builds the client bundle
 2. builds the SSR entry
 3. prerenders the homepage into static HTML
-4. regenerates the PDF resumes
+4. regenerates the PDF and DOCX resumes
 5. copies public assets into `dist/client`
-6. writes `pdf-status.json`
+6. writes `artifact-status.json`
 7. writes `sitemap.xml`
 
 ### Preview
@@ -109,7 +109,7 @@ npm run check
 npm run test:static
 ```
 
-`npm run test:static` verifies that the generated homepage contains real content and that the sitemap includes the homepage and all generated PDFs.
+`npm run test:static` verifies that the generated homepage contains real content, that the sitemap includes the homepage plus all generated PDF/DOCX resumes, and that `artifact-status.json` reports all generated artifacts.
 
 ## Content Workflow
 
@@ -122,8 +122,8 @@ Visible resume content lives in:
 When you update content:
 
 1. keep language files aligned where possible
-2. run `npm run build` to regenerate the PDFs and static output
-3. run `npm run test:static` to verify the homepage and sitemap output
+2. run `npm run build` to regenerate the PDF/DOCX files and static output
+3. run `npm run test:static` to verify the homepage, sitemap, and artifact status output
 
 ## Theme Workflow
 
@@ -135,5 +135,5 @@ GitHub Actions builds the site and deploys `dist/client` to GitHub Pages using `
 
 ## Notes
 
-- `public/resume-*.pdf` are generated artifacts and are expected to change when the build runs.
+- `public/resume-*.pdf` and `public/resume-*.docx` are generated artifacts and are expected to change when the build runs.
 - exported `.txt` and `.docx` resume files are intentionally not kept in the repository.

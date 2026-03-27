@@ -44,7 +44,7 @@ function buildSitemapXml(entries) {
   ].join('\n');
 }
 
-async function writeSitemap(outputPath, pdfFiles) {
+async function writeSitemap(outputPath, resumeArtifacts) {
   const homepageEntry = {
     loc: new URL('/', siteUrl).toString(),
     lastmod: new Date().toISOString(),
@@ -52,25 +52,27 @@ async function writeSitemap(outputPath, pdfFiles) {
     priority: '1.0',
   };
 
-  const pdfEntries = await Promise.all(
-    Object.entries(pdfFiles)
-      .filter(([, exists]) => exists)
-      .map(async ([language]) => {
-        const fileName = `resume-${language}.pdf`;
-        const filePath = path.join(publicPath, fileName);
-        const stats = await fs.stat(filePath);
+  const artifactEntries = await Promise.all(
+    Object.entries(resumeArtifacts).flatMap(([extension, files]) =>
+      Object.entries(files)
+        .filter(([, exists]) => exists)
+        .map(async ([language]) => {
+          const fileName = `resume-${language}.${extension}`;
+          const filePath = path.join(publicPath, fileName);
+          const stats = await fs.stat(filePath);
 
-        return {
-          loc: new URL(`/${fileName}`, siteUrl).toString(),
-          lastmod: stats.mtime.toISOString(),
-          changefreq: 'monthly',
-          priority: '0.8',
-        };
-      })
+          return {
+            loc: new URL(`/${fileName}`, siteUrl).toString(),
+            lastmod: stats.mtime.toISOString(),
+            changefreq: 'monthly',
+            priority: extension === 'pdf' ? '0.8' : '0.7',
+          };
+        })
+    )
   );
 
   const sitemapPath = path.join(outputPath, 'sitemap.xml');
-  const sitemapXml = buildSitemapXml([homepageEntry, ...pdfEntries]);
+  const sitemapXml = buildSitemapXml([homepageEntry, ...artifactEntries]);
 
   await fs.writeFile(sitemapPath, sitemapXml);
   console.log(`Sitemap saved to ${sitemapPath}`);
@@ -138,8 +140,8 @@ async function build() {
     console.log('Generating DOCX resumes...');
     execSync('node scripts/generate-docx.mjs', { stdio: 'inherit', cwd: projectRoot });
 
-    // 10. Check for PDF files and create pdf-status.json
-    console.log('Checking for PDF files...');
+    // 10. Check for generated resume files and create artifact-status.json
+    console.log('Checking for generated resume files...');
     const pdfFiles = {
       en: await fs.pathExists(path.join(publicPath, 'resume-en.pdf')),
       ja: await fs.pathExists(path.join(publicPath, 'resume-ja.pdf')),
@@ -150,9 +152,10 @@ async function build() {
       ja: await fs.pathExists(path.join(publicPath, 'resume-ja.docx')),
       tr: await fs.pathExists(path.join(publicPath, 'resume-tr.docx')),
     };
-    const pdfStatusPath = path.join(clientDistPath, 'pdf-status.json');
-    await fs.writeJson(pdfStatusPath, { pdf: pdfFiles, docx: docxFiles });
-    console.log(`PDF status saved to ${pdfStatusPath}`);
+    const resumeArtifacts = { pdf: pdfFiles, docx: docxFiles };
+    const artifactStatusPath = path.join(clientDistPath, 'artifact-status.json');
+    await fs.writeJson(artifactStatusPath, resumeArtifacts);
+    console.log(`Artifact status saved to ${artifactStatusPath}`);
 
     // 11. Copy public directory contents to dist/client
     // (Vite's client build might already do this for assets it knows about,
@@ -173,7 +176,7 @@ async function build() {
 
     // 12. Generate sitemap.xml for the homepage and downloadable resumes
     console.log('Generating sitemap.xml...');
-    await writeSitemap(clientDistPath, pdfFiles);
+    await writeSitemap(clientDistPath, resumeArtifacts);
 
     console.log('Static site generation complete!');
     console.log(`Site generated in: ${clientDistPath}`);

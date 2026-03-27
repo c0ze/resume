@@ -50,11 +50,11 @@ Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
 
 - Keep language files structurally aligned.
 - If you add a new field in one language, update the others in the same pass unless there is a good reason not to.
-- Rebuild after content changes so the PDFs and sitemap stay in sync.
+- Rebuild after content changes so the PDF/DOCX artifacts and sitemap stay in sync.
 
 ## Build Notes
 
-`npm run build` does more than bundling. It also prerenders the homepage, regenerates PDFs, writes `pdf-status.json`, and emits `sitemap.xml`.
+`npm run build` does more than bundling. It also prerenders the homepage, regenerates PDF/DOCX resumes, writes `artifact-status.json`, and emits `sitemap.xml`.
 
 Be careful when editing:
 
