@@ -1,8 +1,14 @@
-import type { Config } from "tailwindcss";
+const path = require("node:path");
 
-export default {
+const projectRoot = path.resolve(__dirname, "..");
+
+/** @type {import("tailwindcss").Config} */
+module.exports = {
   darkMode: ["class"],
-  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    path.resolve(projectRoot, "client/index.html"),
+    path.resolve(projectRoot, "client/src/**/*.{js,jsx,ts,tsx}"),
+  ],
   theme: {
     extend: {
       borderRadius: {
@@ -87,4 +93,4 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
-} satisfies Config;
+};

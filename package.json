@@ -4,16 +4,15 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "node scripts/generate-theme.mjs && vite",
+    "dev": "node scripts/generate-theme.mjs && vite --config config/vite.config.ts",
     "build": "node scripts/build-static.mjs",
-    "preview": "vite preview",
-    "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "preview": "vite preview --config config/vite.config.ts",
+    "check": "tsc -p config/tsconfig.json",
+    "test:static": "node --test tests/static-output.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "@jridgewell/trace-mapping": "^0.3.25",
-    "@neondatabase/serverless": "^0.10.4",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -46,8 +45,6 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
-    "drizzle-orm": "^0.39.1",
-    "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^11.13.1",
     "input-otp": "^1.2.4",
@@ -71,19 +68,18 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "20.16.11",
+    "@types/node": "^20.19.37",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.2",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
-    "drizzle-kit": "^0.30.4",
     "fs-extra": "^11.3.0",
     "postcss": "^8.4.47",
     "serve": "^14.2.4",
     "tailwindcss": "^3.4.14",
     "typescript": "5.6.3",
-    "vite": "^5.4.14"
+    "vite": "^8.0.3"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"

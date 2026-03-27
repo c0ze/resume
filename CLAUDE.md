@@ -1,115 +1,81 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this repository.
+This file provides repository-specific guidance to Claude Code when working here.
 
 ## Project Overview
 
-Online resume/portfolio at resume.arda.tr - a multi-language professional resume website with PDF generation support for English, Japanese, and Turkish.
+`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF resumes, and deploys the final output to GitHub Pages.
 
-## Architecture
+## Current Stack
 
-- **Framework**: Vite 5 + React 18 + TypeScript
-- **Styling**: TailwindCSS + shadcn/ui components
-- **Routing**: Wouter (lightweight router)
-- **State**: TanStack React Query + React Context (language)
-- **Theme Management**: CSS variables with 3 themes (dark, dracula, light)
-- **PDF Generation**: pdfkit for resume downloads
-- **Deployment**: GitHub Pages (static)
+- Vite 8
+- React 18
+- TypeScript
+- Tailwind CSS
+- Wouter
+- TanStack Query
+- PDFKit
+- GitHub Actions + GitHub Pages
 
-## Project Structure
+## Source of Truth
 
-```
-.
-├── client/
-│   ├── src/
-│   │   ├── App.tsx              # Main app with routes
-│   │   ├── main.tsx             # Entry point with providers
-│   │   ├── index.css            # Tailwind directives
-│   │   ├── theme.css            # Theme CSS variables (HSL)
-│   │   ├── components/
-│   │   │   ├── Header.tsx       # Name, title, contact info
-│   │   │   ├── Navigation.tsx   # Sticky nav + language selector
-│   │   │   ├── AboutSection.tsx
-│   │   │   ├── ExperienceSection.tsx
-│   │   │   ├── EducationSection.tsx
-│   │   │   ├── SkillsSection.tsx
-│   │   │   ├── ProjectsSection.tsx
-│   │   │   ├── ContactSection.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── ThemeToggle.tsx  # Theme switcher (3 themes)
-│   │   │   └── ui/              # shadcn/ui components
-│   │   ├── contexts/
-│   │   │   └── LanguageContext.tsx
-│   │   ├── pages/
-│   │   │   ├── Home.tsx         # Main resume page
-│   │   │   └── not-found.tsx    # 404 page
-│   │   └── lib/                 # Utilities
-│   └── index.html               # HTML template
-├── content/                     # Multi-language JSON content
-│   ├── en/                      # English translations
-│   ├── ja/                      # Japanese translations
-│   └── tr/                      # Turkish translations
-├── public/                      # Static assets (PDFs, images)
-├── scripts/                     # Build scripts (PDF generation, theme)
-├── tailwind.config.ts           # Tailwind configuration
-└── theme.json                   # Theme configuration
+- Website content: `content/{en,ja,tr}/*.json`
+- Theme config: `config/theme.json`
+- Tooling config: `config/{vite.config.ts,tsconfig.json,tailwind.config.cjs,postcss.config.cjs}`
+- PDF generator: `scripts/generate-resume.mjs`
+- Static build pipeline: `scripts/build-static.mjs`
+- Static smoke tests: `tests/static-output.test.mjs`
+
+## Important Directories
+
+```text
+client/               React application
+content/              Language-specific JSON content
+config/               Theme and build-tool configuration
+public/               Static assets, fonts, generated PDFs
+scripts/              Build scripts and generators
+tests/                Smoke tests for build output
 ```
 
-## Common Commands
+## Commands
 
 ```bash
-# Development server
 npm run dev
-
-# Production build (includes PDF generation)
 npm run build
-
-# Preview production build
 npm run preview
-
-# Type checking
 npm run check
+npm run test:static
 ```
 
-## Key Implementation Details
+## Build Expectations
 
-### Theming
+`npm run build` should:
 
-- 3 themes: Van Helsing (dark), Dracula Pro, Alucard (light)
-- CSS variables defined in `client/src/theme.css` using HSL format
-- Tailwind configured to use CSS variables via `tailwind.config.ts`
-- Theme class applied to `<html>` element
-- Theme preference stored in localStorage
+1. build the client bundle
+2. build the SSR entry
+3. prerender `/` into static HTML
+4. regenerate `public/resume-en.pdf`, `public/resume-ja.pdf`, and `public/resume-tr.pdf`
+5. copy public assets into `dist/client`
+6. generate `dist/client/sitemap.xml`
 
-### Multi-Language Support
+If content, theme configuration, or build scripts change, run:
 
-- Languages: English (en), Japanese (ja), Turkish (tr)
-- Content stored in `content/{lang}/*.json` files
-- Language context provides translations throughout app
-- PDF resumes generated for each language
+```bash
+npm run check
+npm run build
+npm run test:static
+```
 
-### Design Style
+## Content Rules
 
-- Anthropic-inspired minimal design
-- Clean typography with professional spacing
-- Subtle borders and soft shadows
-- Smooth transitions on interactions
+- Keep `en`, `ja`, and `tr` content files structurally aligned.
+- Treat `content/` as the canonical source for visible resume content.
+- Do not hand-edit generated files in `dist/`.
+- Expect `public/resume-*.pdf` to change after builds because they are generated artifacts.
 
-### Sections
+## Repository Hygiene
 
-1. **Header**: Name, title, contact info, download resume button
-2. **Navigation**: Sticky nav with section links + language selector + theme toggle
-3. **About**: Bio and language proficiencies
-4. **Experience**: Work history with responsibilities
-5. **Education**: Academic background
-6. **Skills**: Technical skills in columns
-7. **Projects**: Featured projects
-8. **Contact**: Contact form
-9. **Footer**: Copyright + back to top
-
-### SEO
-
-- JSON-LD structured data (Person schema)
-- OpenGraph and Twitter card meta tags
-- Semantic HTML5 tags
-- robots.txt with sitemap directive
+- Keep the root lean.
+- Put new automation in `scripts/`.
+- Put tool config in `config/` unless a tool hard-requires the root.
+- Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.

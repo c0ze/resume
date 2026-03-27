@@ -7,10 +7,10 @@ import { fileURLToPath } from 'url'; // For ES module __dirname equivalent
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..');
 
 // Function to load JSON content for a given language and section
 function loadContent(language, section) {
-  const projectRoot = path.resolve(__dirname); // Assumes script is at project root
   const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
   try {
     const fileContent = fs.readFileSync(filePath, 'utf8');
@@ -53,8 +53,7 @@ function generateResume(language) {
   };
 
   const doc = new PDFDocument(pdfDocOptions);
-  // Output path relative to the script's directory, then up to project root, then to public
-  const projectRoot = path.resolve(__dirname); // Assumes script is at project root
+  // Output path is always written into the tracked public/ directory.
   let outputFile;
   if (language === 'en') {
     outputFile = path.join(projectRoot, 'public', 'resume-en.pdf');

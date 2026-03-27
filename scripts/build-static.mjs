@@ -9,6 +9,72 @@ const projectRoot = path.resolve(__dirname, '..'); // Assuming scripts/ is one l
 const clientDistPath = path.resolve(projectRoot, 'dist/client');
 const serverDistPath = path.resolve(projectRoot, 'dist/server');
 const publicPath = path.resolve(projectRoot, 'public');
+const viteConfigPath = 'config/vite.config.ts';
+const siteUrl = 'https://resume.arda.tr';
+
+function escapeXml(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
+}
+
+function buildSitemapXml(entries) {
+  const urlEntries = entries
+    .map(({ loc, lastmod, changefreq, priority }) => {
+      return [
+        '  <url>',
+        `    <loc>${escapeXml(loc)}</loc>`,
+        `    <lastmod>${escapeXml(lastmod)}</lastmod>`,
+        `    <changefreq>${escapeXml(changefreq)}</changefreq>`,
+        `    <priority>${escapeXml(priority)}</priority>`,
+        '  </url>',
+      ].join('\n');
+    })
+    .join('\n');
+
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    urlEntries,
+    '</urlset>',
+    '',
+  ].join('\n');
+}
+
+async function writeSitemap(outputPath, pdfFiles) {
+  const homepageEntry = {
+    loc: new URL('/', siteUrl).toString(),
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '1.0',
+  };
+
+  const pdfEntries = await Promise.all(
+    Object.entries(pdfFiles)
+      .filter(([, exists]) => exists)
+      .map(async ([language]) => {
+        const fileName = `resume-${language}.pdf`;
+        const filePath = path.join(publicPath, fileName);
+        const stats = await fs.stat(filePath);
+
+        return {
+          loc: new URL(`/${fileName}`, siteUrl).toString(),
+          lastmod: stats.mtime.toISOString(),
+          changefreq: 'monthly',
+          priority: '0.8',
+        };
+      })
+  );
+
+  const sitemapPath = path.join(outputPath, 'sitemap.xml');
+  const sitemapXml = buildSitemapXml([homepageEntry, ...pdfEntries]);
+
+  await fs.writeFile(sitemapPath, sitemapXml);
+  console.log(`Sitemap saved to ${sitemapPath}`);
+}
 
 async function build() {
   try {
@@ -18,33 +84,40 @@ async function build() {
     console.log('Cleaning dist directory...');
     await fs.emptyDir(path.resolve(projectRoot, 'dist'));
 
-    // 2. Build client assets
-    console.log('Building client assets...');
-    execSync('npx vite build', { stdio: 'inherit', cwd: projectRoot });
+    // 2. Generate theme CSS so production builds use the latest theme config.
+    console.log('Generating theme CSS...');
+    execSync('node scripts/generate-theme.mjs', { stdio: 'inherit', cwd: projectRoot });
 
-    // 3. Build server bundle
+    // 3. Build client assets
+    console.log('Building client assets...');
+    execSync(`npx vite build --config ${viteConfigPath}`, { stdio: 'inherit', cwd: projectRoot });
+
+    // 4. Build server bundle
     console.log('Building server bundle...');
     // Set SSR_BUILD env var for Vite config to pick up SSR build
-    execSync('npx cross-env SSR_BUILD=true vite build --ssr', { stdio: 'inherit', cwd: projectRoot });
+    execSync(`npx cross-env SSR_BUILD=true vite build --config ${viteConfigPath} --ssr`, {
+      stdio: 'inherit',
+      cwd: projectRoot,
+    });
 
-    // 4. Load the server bundle
+    // 5. Load the server bundle
     console.log('Loading server bundle...');
     const serverEntryPath = path.join(serverDistPath, 'entry-server.js');
     const { render } = await import(pathToFileURL(serverEntryPath).href);
 
-    // 5. Read the client's index.html template
+    // 6. Read the client's index.html template
     console.log('Reading HTML template...');
     const templatePath = path.join(clientDistPath, 'index.html');
     let template = await fs.readFile(templatePath, 'utf-8');
 
-    // 6. Render the app HTML
+    // 7. Render the app HTML
     // For now, we only have the main page at '/'
     // If you add more top-level pages, you'll need to iterate and render them.
     console.log('Rendering page HTML for / ...');
     const appRender = render('/'); // Pass the route you want to render
     const appHtml = appRender.html;
 
-    // 7. Inject app HTML into the template
+    // 8. Inject app HTML into the template
     template = template.replace('<!--ssr-outlet-->', appHtml); // Standard placeholder
     // Or, if your template uses <div id="root"></div> and you want to replace its content:
     template = template.replace(
@@ -52,16 +125,16 @@ async function build() {
       `<div id="root">${appHtml}</div>`
     );
 
-    // 8. Save the final HTML to dist/client/index.html
+    // 9. Save the final HTML to dist/client/index.html
     // This effectively makes dist/client the final output directory for the static site.
     await fs.writeFile(templatePath, template); // Overwrite the client's index.html with the rendered one
     console.log(`Rendered HTML saved to ${templatePath}`);
 
-    // NEW: Generate PDF resumes for all languages
+    // Generate PDF resumes for all languages.
     console.log('Generating PDF resumes...');
-    execSync('node generateResume.js', { stdio: 'inherit', cwd: projectRoot });
+    execSync('node scripts/generate-resume.mjs', { stdio: 'inherit', cwd: projectRoot });
 
-    // 9. Check for PDF files and create pdf-status.json
+    // 10. Check for PDF files and create pdf-status.json
     console.log('Checking for PDF files...');
     const pdfFiles = {
       en: await fs.pathExists(path.join(publicPath, 'resume-en.pdf')),
@@ -72,7 +145,7 @@ async function build() {
     await fs.writeJson(pdfStatusPath, pdfFiles);
     console.log(`PDF status saved to ${pdfStatusPath}`);
 
-    // 10. Copy public directory contents to dist/client
+    // 11. Copy public directory contents to dist/client
     // (Vite's client build might already do this for assets it knows about,
     // but this ensures everything from public/ is copied, like PDFs)
     // We exclude index.html from public if it exists, as we've generated our own.
@@ -85,10 +158,13 @@ async function build() {
           return false;
         }
         return true;
-      }, // Added missing comma here if it was the issue, but the error is '}' expected.
+      },
     });
     console.log('Public assets copied.');
 
+    // 12. Generate sitemap.xml for the homepage and downloadable resumes
+    console.log('Generating sitemap.xml...');
+    await writeSitemap(clientDistPath, pdfFiles);
 
     console.log('Static site generation complete!');
     console.log(`Site generated in: ${clientDistPath}`);
