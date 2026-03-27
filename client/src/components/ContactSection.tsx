@@ -7,24 +7,10 @@ import { useLanguage } from "../contexts/LanguageContext";
 const ContactSection = () => {
   const { language, translations, loadingTranslations } = useLanguage();
 
-  const handleDownloadResume = () => {
-    let fileName;
-    if (language === 'en') {
-      fileName = 'resume-en.pdf'; // Updated filename
-    } else if (language === 'ja') {
-      fileName = 'resume-ja.pdf';
-    } else if (language === 'tr') {
-      fileName = 'resume-tr.pdf';
-    } else {
-      console.error("Unsupported language for resume download:", language);
-      return;
-    }
-    // Construct the correct path using Vite's BASE_URL
-    const fullResumePath = `${import.meta.env.BASE_URL}${fileName}`;
-    const pathWithTimestamp = `${fullResumePath}?t=${Date.now()}`;
-    
-    console.log(`Downloading resume from ContactSection for language: ${language}, path: ${pathWithTimestamp}`);
-    window.open(pathWithTimestamp, '_blank');
+  const handleDownload = (ext: string) => {
+    const fileName = `resume-${language}.${ext}`;
+    const fullPath = `${import.meta.env.BASE_URL}${fileName}?t=${Date.now()}`;
+    window.open(fullPath, '_blank');
   };
 
   if (loadingTranslations || !translations || !translations.contact || !translations.header) {
@@ -148,13 +134,24 @@ const ContactSection = () => {
 
               <div className="mt-8">
                 <p className="font-medium mb-2 text-foreground">{t.header.downloadResume}</p>
-                <Button
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                  onClick={handleDownloadResume}
-                >
-                  <DownloadIcon className="h-4 w-4 mr-2" />
-                  {t.header.downloadResume}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => handleDownload('pdf')}
+                  >
+                    <DownloadIcon className="h-4 w-4 mr-2" />
+                    {t.header.downloadPdf || 'PDF'}
+                  </Button>
+                  <Button
+                    type="button"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                    onClick={() => handleDownload('docx')}
+                  >
+                    <DownloadIcon className="h-4 w-4 mr-2" />
+                    {t.header.downloadDocx || 'DOCX'}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

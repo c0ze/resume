@@ -39,7 +39,7 @@ const Footer = () => {
             onClick={scrollToTop}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
-            {(t.footer as any).backToTop || 'Back to top'}
+            {t.footer.backToTop || 'Back to top'}
             <ArrowUp className="h-4 w-4" />
           </button>
         </div>

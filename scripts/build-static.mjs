@@ -134,6 +134,10 @@ async function build() {
     console.log('Generating PDF resumes...');
     execSync('node scripts/generate-resume.mjs', { stdio: 'inherit', cwd: projectRoot });
 
+    // Generate DOCX resumes for all languages.
+    console.log('Generating DOCX resumes...');
+    execSync('node scripts/generate-docx.mjs', { stdio: 'inherit', cwd: projectRoot });
+
     // 10. Check for PDF files and create pdf-status.json
     console.log('Checking for PDF files...');
     const pdfFiles = {
@@ -141,8 +145,13 @@ async function build() {
       ja: await fs.pathExists(path.join(publicPath, 'resume-ja.pdf')),
       tr: await fs.pathExists(path.join(publicPath, 'resume-tr.pdf')),
     };
+    const docxFiles = {
+      en: await fs.pathExists(path.join(publicPath, 'resume-en.docx')),
+      ja: await fs.pathExists(path.join(publicPath, 'resume-ja.docx')),
+      tr: await fs.pathExists(path.join(publicPath, 'resume-tr.docx')),
+    };
     const pdfStatusPath = path.join(clientDistPath, 'pdf-status.json');
-    await fs.writeJson(pdfStatusPath, pdfFiles);
+    await fs.writeJson(pdfStatusPath, { pdf: pdfFiles, docx: docxFiles });
     console.log(`PDF status saved to ${pdfStatusPath}`);
 
     // 11. Copy public directory contents to dist/client

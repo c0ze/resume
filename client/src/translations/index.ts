@@ -9,6 +9,8 @@ export interface Translations {
     location: string;
     website: string;
     downloadResume: string;
+    downloadPdf?: string;
+    downloadDocx?: string;
   };
   about: {
     title: string;

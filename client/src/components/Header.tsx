@@ -4,23 +4,10 @@ import { useLanguage } from "../contexts/LanguageContext";
 const Header = () => {
   const { language, translations, loadingTranslations } = useLanguage();
 
-  const handleDownloadResume = () => {
-    let fileName;
-    if (language === 'en') {
-      fileName = 'resume-en.pdf';
-    } else if (language === 'ja') {
-      fileName = 'resume-ja.pdf';
-    } else if (language === 'tr') {
-      fileName = 'resume-tr.pdf';
-    } else {
-      console.error("Unsupported language for resume download:", language);
-      return;
-    }
-
-    const fullResumePath = `${import.meta.env.BASE_URL}${fileName}`;
-    const pathWithTimestamp = `${fullResumePath}?t=${Date.now()}`;
-    console.log(`Downloading resume for language: ${language}, path: ${pathWithTimestamp}`);
-    window.open(pathWithTimestamp, '_blank');
+  const handleDownload = (ext: string) => {
+    const fileName = `resume-${language}.${ext}`;
+    const fullPath = `${import.meta.env.BASE_URL}${fileName}?t=${Date.now()}`;
+    window.open(fullPath, '_blank');
   };
 
   if (loadingTranslations || !translations) {
@@ -71,13 +58,23 @@ const Header = () => {
               <GlobeIcon className="h-3.5 w-3.5" />
               {t.header.website}
             </a>
-            <button
-              onClick={handleDownloadResume}
-              className="flex items-center gap-1.5 bg-primary text-primary-foreground font-medium py-1.5 px-3 rounded text-sm hover:opacity-90 transition-opacity"
-            >
+            <span className="flex items-center gap-1.5">
               <DownloadIcon className="h-3.5 w-3.5" />
-              {t.header.downloadResume}
-            </button>
+              <button
+                type="button"
+                onClick={() => handleDownload('pdf')}
+                className="bg-primary text-primary-foreground font-medium py-1 px-2.5 rounded text-sm hover:opacity-90 transition-opacity"
+              >
+                {t.header.downloadPdf || 'PDF'}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDownload('docx')}
+                className="bg-primary text-primary-foreground font-medium py-1 px-2.5 rounded text-sm hover:opacity-90 transition-opacity"
+              >
+                {t.header.downloadDocx || 'DOCX'}
+              </button>
+            </span>
           </div>
         </div>
       </div>

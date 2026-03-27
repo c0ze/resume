@@ -4,5 +4,7 @@
   "contactViaEmail": "akaraduman@gmail.com",
   "location": "調布市、東京都",
   "website": "https://arda.tr",
-  "downloadResume": "履歴書をダウンロード"
+  "downloadResume": "履歴書をダウンロード",
+  "downloadPdf": "PDF",
+  "downloadDocx": "DOCX"
 }
