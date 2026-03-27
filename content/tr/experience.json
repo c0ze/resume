@@ -30,7 +30,7 @@
       "company": "Robotfund (Tokyo, Hibrit)",
       "period": "Mart 2018 - Şubat 2020",
       "responsibilities": [
-        "LINE fon bilgi platformu 'トークン'un tam yığın geliştirilmesi",
+        "LINE fon bilgi platformu tam yığın geliştirilmesi",
         "API geliştirme (Ruby on Rails)",
         "LINE API entegrasyonu (LINE Sohbet API'si ile entegrasyon)",
         "Reuters API entegrasyonu (Fonla ilgili verilerin günlük olarak alınması ve işlenmesi)",

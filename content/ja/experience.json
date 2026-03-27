@@ -30,7 +30,7 @@
       "company": "Robotfund (東京, ハイブリッド)",
       "period": "2018年3月 - 2020年2月",
       "responsibilities": [
-        "LINEファンド情報プラットフォーム「トークン」のフルスタック開発",
+        "LINEファンド情報プラットフォームのフルスタック開発",
         "API開発（Ruby on Rails）",
         "LINE API連携（LINEチャットAPIとの連携）",
         "Reuters API連携（ファンド関連データの毎日の取得と処理）",

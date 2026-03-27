@@ -30,7 +30,7 @@
       "company": "Robotfund (Tokyo, Hybrid)",
       "period": "March 2018 - February 2020",
       "responsibilities": [
-        "Fullstack development of LINE fund information platform 'トークン'",
+        "Fullstack development of LINE fund information platform",
         "API development (Ruby on Rails)",
         "LINE API integration (Integrate with LINE Chat API)",
         "Reuters API integration (Daily fetching and processing of fund related data)",
