@@ -29,9 +29,9 @@ const Footer = () => {
   const t = translations;
 
   return (
-    <footer className="bg-card border-t border-border py-8 px-4 md:px-8 mt-auto">
+    <footer className="bg-card border-t border-border py-4 px-4 md:px-8 mt-auto">
       <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
           <div className="text-sm text-muted-foreground">
             {t.footer.copyright.replace('{year}', new Date().getFullYear().toString())}
           </div>

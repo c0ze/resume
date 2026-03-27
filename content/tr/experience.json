@@ -7,10 +7,9 @@
       "period": "Ocak 2024 - Halen",
       "responsibilities": [
         "Genel uygulama ve altyapı mimarisi ve planlaması",
-        "Monolitik PHP uygulamasından mikroservis mimarisine geçiş",
-        "Bildirim servisini monolitik PHP uygulamasından daha kolay bakım için bağımsız bir Python servisine yeniden düzenlendi",
-        "Maliyetleri düşürmek için ücretli bir CDN çözümünden kendi geliştirdiğimiz ve S3 varlıklarını sunan CDN servisine geçiş (nodejs)",
-        "Günlükleme, Güvenlik, Kimlik Doğrulama/Yetkilendirme, Kod Kapsamı, Linting için politikalar geliştirmek ve teşvik etmek",
+        "Eski sistemlerin MCP entegrasyonu",
+        "Monolitik PHP uygulamasından mikroservis mimarisine geçişi denetleme",
+        "Ücretli CDN çözümünden kendi geliştirilen CDN servisine geçiş",
         "Denizaşırı ekipler arasında köprü mühendisi olarak görev yapmak"
       ]
     },

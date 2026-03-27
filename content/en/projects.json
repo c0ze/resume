@@ -7,7 +7,7 @@
       "description": "Backend development for the Warex project while at Gaussy."
     },
     {
-      "title": "LINE Fund Information Platform 'トークン'",
+      "title": "LINE Fund Information Platform",
       "technologies": "Ruby on Rails, LINE API, Reuters API",
       "description": "Fullstack development of a fund information platform integrated with LINE, including API development and data fetching/processing from Reuters, at Robotfund."
     },
@@ -37,24 +37,9 @@
       "description": "API and frontend development for a triage application, including CI/CD setup, at Allm Inc."
     },
     {
-      "title": "AI Research for Healthcare",
-      "technologies": "Deep Neural Networks, Machine Learning",
-      "description": "Conducted AI research involving image classification/recognition and data analysis/segmentation for healthcare applications, at Allm Inc."
-    },
-    {
-      "title": "MMORPG API Backend '剣と魔法のログレス'",
+      "title": "MMORPG API Backend '幻塔戦記グリフォン'",
       "technologies": "Padrino (Ruby)",
-      "description": "Developed the API backend for a popular mobile MMORPG, at Aiming Inc."
-    },
-    {
-      "title": "Kii Cloud Developer Portal",
-      "technologies": "Ruby on Rails, Backbone.js",
-      "description": "Development of the developer portal for Kii Cloud, at Kii Inc."
-    },
-    {
-      "title": "Iron Functions (Open Source Serverless Platform)",
-      "technologies": "Go (implied, as it's a serverless platform often built with Go)",
-      "description": "Provided support and maintenance for the Iron Functions open-source serverless platform, at Iron.io."
+      "description": "Developed the API backend for the mobile MMORPG '幻塔戦記グリフォン', at Aiming Inc."
     },
     {
       "title": "Portfolio Website (This Project)",

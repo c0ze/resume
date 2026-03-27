@@ -50,28 +50,29 @@ const EducationSection = () => {
   const educationEntries: EducationEntry[] = t.education.entries || [];
 
   return (
-    <section id="education" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.education.title}</h2>
+    <section id="education" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.education.title}</h2>
 
+      <div className="space-y-4">
       {educationEntries.map((edu, index) => (
-        <Card key={index} className="mb-6 bg-card border-border">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row justify-between mb-4">
+        <Card key={index} className="bg-card border-border">
+          <CardContent className="p-4 md:p-5">
+            <div className="flex flex-col md:flex-row justify-between mb-2">
               <div>
-                <h3 className="text-xl font-bold text-foreground">{edu.degree}</h3>
-                <p className="text-primary font-medium">{edu.institution}</p>
+                <h3 className="text-lg font-bold text-foreground">{edu.degree}</h3>
+                <p className="text-primary font-medium text-sm">{edu.institution}</p>
               </div>
-              <div className="mt-2 md:mt-0">
-                <span className="inline-block bg-secondary text-muted-foreground rounded-full px-3 py-1 text-sm font-semibold">
+              <div className="mt-1 md:mt-0">
+                <span className="inline-block bg-secondary text-muted-foreground rounded-full px-2.5 py-0.5 text-xs font-semibold">
                   {edu.period}
                 </span>
               </div>
             </div>
-            <p className="text-muted-foreground">{edu.description}</p>
+            <p className="text-foreground text-base">{edu.description}</p>
             {edu.additionalInfo && (
               <div className="mt-2">
-                <h4 className="font-semibold text-foreground">{edu.additionalInfo.title}</h4>
-                <ul className="list-disc list-inside ml-4 text-muted-foreground">
+                <h4 className="font-semibold text-sm text-foreground">{edu.additionalInfo.title}</h4>
+                <ul className="list-disc list-inside ml-4 text-foreground text-base">
                   {edu.additionalInfo.items.map((item, itemIndex) => (
                     <li key={itemIndex}>{item}</li>
                   ))}
@@ -81,6 +82,7 @@ const EducationSection = () => {
           </CardContent>
         </Card>
       ))}
+      </div>
     </section>
   );
 };

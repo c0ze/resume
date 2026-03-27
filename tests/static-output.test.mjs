@@ -13,7 +13,7 @@ test("static output contains real resume content instead of loading placeholders
   const html = fs.readFileSync(staticHtmlPath, "utf8");
 
   assert.ok(
-    html.includes("Full-Stack Developer | AI Enthusiast"),
+    html.includes("Senior Developer | AI Enthusiast"),
     "expected the static output to include the translated header subtitle"
   );
   assert.ok(

@@ -7,7 +7,7 @@
       "description": "Gaussy'de Warex projesi için backend geliştirme."
     },
     {
-      "title": "LINE Fon Bilgi Platformu 'トークン'",
+      "title": "LINE Fon Bilgi Platformu",
       "technologies": "Ruby on Rails, LINE API, Reuters API",
       "description": "Robotfund'da, LINE ile entegre bir fon bilgi platformunun fullstack geliştirmesi, API geliştirme ve Reuters'tan veri çekme/işleme dahil."
     },
@@ -19,10 +19,10 @@
     {
       "title": "Özel Ses Önbellekleme Servisi",
       "technologies": "Golang, Docker, AWS, Metin-Konuşma Servisi Entegrasyonu",
-      "description": "Robotfund'da, metinden sese dönüştürülmüş sesi sıkıştırmak, önbelleğe almak ve sunmak için Go tabanlı bir servis geliştirildi, API kullanımını azaltıldı."
+      "description": "Robotfund'da, metinden sese dönüştürülmüş sesi sıkıştırmak, önbelleğe almak ve sunmak için Go tabanlı bir servis geliştirildi, API kullanımı azaltıldı."
     },
     {
-      "title": "İçerik Paylaşım ve Yayınlama Platformu (ör. Kidint)",
+      "title": "İçerik Paylaşım ve Yayınlama Platformu (Kidint)",
       "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
       "description": "Allm Inc.'de, AWS entegrasyonu ve sosyal medya girişleri dahil olmak üzere bir içerik paylaşım platformu için API ve backend geliştirme."
     },
@@ -37,24 +37,9 @@
       "description": "Allm Inc.'de, CI/CD kurulumu dahil bir triyaj uygulaması için API ve frontend geliştirme."
     },
     {
-      "title": "Sağlık Hizmetleri için Yapay Zeka Araştırması",
-      "technologies": "Derin Sinir Ağları, Makine Öğrenimi",
-      "description": "Allm Inc.'de, sağlık uygulamaları için görüntü sınıflandırma/tanıma ve veri analizi/segmentasyonu içeren yapay zeka araştırması yapıldı."
-    },
-    {
-      "title": "MMORPG API Backend '剣と魔法のログレス'",
+      "title": "MMORPG API Backend '幻塔戦記グリフォン'",
       "technologies": "Padrino (Ruby)",
-      "description": "Aiming Inc.'de popüler bir mobil MMORPG için API backend geliştirildi."
-    },
-    {
-      "title": "Kii Cloud Geliştirici Portalı",
-      "technologies": "Ruby on Rails, Backbone.js",
-      "description": "Kii Inc.'de Kii Cloud için geliştirici portalı geliştirme."
-    },
-    {
-      "title": "Iron Functions (Açık Kaynak Sunucusuz Platform)",
-      "technologies": "Go (Go ile oluşturulmuş bir sunucusuz platform olduğu için ima ediliyor)",
-      "description": "Iron.io'da Iron Functions açık kaynak sunucusuz platformu için destek ve bakım sağlandı."
+      "description": "Aiming Inc.'de mobil MMORPG '幻塔戦記グリフォン' için API backend geliştirildi."
     },
     {
       "title": "Portföy Web Sitesi (Bu Proje)",

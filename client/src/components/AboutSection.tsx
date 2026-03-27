@@ -41,22 +41,22 @@ const AboutSection = () => {
   const t = translations; // Use translations from context
 
   return (
-    <section id="about" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.about.title}</h2>
+    <section id="about" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.about.title}</h2>
       <div className="md:flex">
         <div className="md:w-3/4 pr-0 md:pr-6">
-          <p className="mb-4 text-muted-foreground">
+          <p className="mb-3 text-foreground leading-relaxed">
             {t.about.paragraph1}
           </p>
           {t.about.paragraph2 && (
-            <p className="text-muted-foreground">
+            <p className="text-foreground leading-relaxed">
               {t.about.paragraph2}
             </p>
           )}
         </div>
-        <div className="mt-6 md:mt-0 md:w-1/4 md:pl-0 lg:pl-6">
+        <div className="mt-4 md:mt-0 md:w-1/4 md:pl-0 lg:pl-6">
           <Card className="p-4 bg-secondary border-border">
-            <h3 className="font-semibold text-lg mb-3 text-foreground">{t.about.languages}</h3>
+            <h3 className="font-semibold text-base mb-2 text-foreground">{t.about.languages}</h3>
             <p className="text-sm text-muted-foreground">{t.about.languagesContent}</p>
             
             {/* Example: Displaying location from header (if needed here) */}

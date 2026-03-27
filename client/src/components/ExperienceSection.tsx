@@ -47,24 +47,25 @@ const ExperienceSection = () => {
   const experiences: Experience[] = t.experience.jobs || [];
 
   return (
-    <section id="experience" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.experience.title}</h2>
+    <section id="experience" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.experience.title}</h2>
 
+      <div className="space-y-4">
       {experiences.map((exp, index) => (
-        <Card key={index} className="mb-6 bg-card border-border">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row justify-between mb-4">
+        <Card key={index} className="bg-card border-border">
+          <CardContent className="p-4 md:p-5">
+            <div className="flex flex-col md:flex-row justify-between mb-2">
               <div>
-                <h3 className="text-xl font-bold text-foreground">{exp.title}</h3>
-                <p className="text-primary font-medium">{exp.company}</p>
+                <h3 className="text-lg font-bold text-foreground">{exp.title}</h3>
+                <p className="text-primary font-medium text-sm">{exp.company}</p>
               </div>
-              <div className="mt-2 md:mt-0">
-                <span className="inline-block bg-secondary text-muted-foreground rounded-full px-3 py-1 text-sm font-semibold">
+              <div className="mt-1 md:mt-0">
+                <span className="inline-block bg-secondary text-muted-foreground rounded-full px-2.5 py-0.5 text-xs font-semibold">
                   {exp.period}
                 </span>
               </div>
             </div>
-            <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
+            <ul className="list-disc pl-5 space-y-1 text-foreground text-base">
               {exp.responsibilities.map((responsibility, idx) => (
                 <li key={idx}>{responsibility}</li>
               ))}
@@ -72,6 +73,7 @@ const ExperienceSection = () => {
           </CardContent>
         </Card>
       ))}
+      </div>
     </section>
   );
 };

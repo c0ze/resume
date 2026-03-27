@@ -2,15 +2,15 @@
   "title": "スキル",
   "technicalSkillsTitle": "テクニカルスキル",
   "technicalSkills": [
-    "メイン開発言語はRubyとGo.最近Pythonも試してみてる。",
-    "DebianとEmacsユーザー（最近VisualCodeに移動）",
-    "様々なAWSサービスの 経験 (EC2, S3, Dynamo, SES, IAM, Route53)",
-    "Circle CI / GithubActions / Docker / Kubernetes 使用ディプロイメントの経験",
-    "GitHub使用してTDD, BDD, アジャイル開発経験",
-    "React, Vueでフロントエンド開発経験",
-    "Vibeコーディング使用（AIを適切に活用し迅速な開発を心がける）",
-    "関数型プログラミング知識",
-    "Java, C, PHP開発の経験",
-    "RestfulとGraphQL使用してWeb/Mobile APIのデザインと開発経験"
+    "Go、Ruby、Pythonに精通。新しい言語の習得も得意。",
+    "Arch Linux（CachyOS）& Emacsユーザー。Unix環境やシェルスクリプトに精通。",
+    "AWS & GCPの豊富な経験。EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebaseの実務経験。",
+    "React、Vue、Astroでのフロントエンド開発。全プロジェクトでTailwind CSSを使用。",
+    "Node.js/ExpressおよびGo/Echoでのバックエンド開発。Web・モバイル向けRESTfulおよびGraphQL APIの設計経験。",
+    "AI/LLM連携 — Gemini API、Anthropic API、TTSエンジン（Edge TTS、Coqui）、MCPツールの活用。",
+    "Dockerコンテナ化とCI/CD。継続的インテグレーション・デプロイメントの早期採用者。",
+    "PlaywrightおよびGo-rodによるブラウザ自動化とWebスクレイピング。",
+    "TDD、BDD、アジャイル、GitHub駆動開発の経験。",
+    "Vibeコーディングスキル、短時間で多くの成果を出せる。既存のコードを壊さずに。"
   ]
 }

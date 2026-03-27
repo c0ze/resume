@@ -41,21 +41,21 @@ const ProjectsSection = () => {
   const projectEntries: ProjectEntry[] = t.projects.entries || [];
 
   return (
-    <section id="projects" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.projects.title}</h2>
+    <section id="projects" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.projects.title}</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {projectEntries.map((project, index) => (
           <Card key={index} className="overflow-hidden flex flex-col bg-card border-border">
-            <CardContent className="p-6 flex-grow">
-              <h3 className="text-xl font-bold mb-2 text-foreground">{project.title}</h3>
-              <p className="text-muted-foreground mb-4 text-sm">{project.description}</p>
-              <div className="flex flex-wrap gap-2 mb-4">
+            <CardContent className="p-4 md:p-5 flex-grow">
+              <h3 className="text-base font-bold mb-1 text-foreground">{project.title}</h3>
+              <p className="text-foreground mb-3 text-base leading-relaxed">{project.description}</p>
+              <div className="flex flex-wrap gap-1.5">
                 {(project.technologies || "").split(",").map((tech, idx) => (
                   tech.trim() && (
                     <span
                       key={idx}
-                      className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium"
+                      className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium"
                     >
                       {tech.trim()}
                     </span>

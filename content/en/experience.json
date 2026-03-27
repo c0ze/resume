@@ -7,10 +7,9 @@
       "period": "January 2024 - Present",
       "responsibilities": [
         "General application and infrastructure architecture and planning",
-        "Migration from monolithic PHP app to microservices architecture",
-        "Refactored notification service from monolithic PHP app to a standalone Python service for easier maintenance",
-        "Migrate from a paid CDN solution to self developed CDN service which serves S3 assets to reduce costs (nodejs)",
-        "Develop and encourage policies for Logging, Security, Authentication/Authorization, Code Coverage, Linting",
+        "MCP integration of legacy systems",
+        "Oversee migration from monolithic PHP app to microservices architecture",
+        "Migrate from a paid CDN solution to self developed CDN service",
         "Perform as bridge engineer between Overseas teams"
       ]
     },

@@ -2,15 +2,15 @@
   "title": "Skills",
   "technicalSkillsTitle": "Technical Skills",
   "technicalSkills": [
-    "Mainly proficient in Ruby and Go. Recently adding Python to the mix.",
-    "Debian & Emacs user. Very comfortable in unix environments and writing bash scripts",
-    "Extensive knowledge of AWS resources. Hands on experience with EC2, S3, Dynamo, SES, IAM, Route53",
-    "Early adopter of Continuous Integration and Continuous Deployment",
-    "Experience with TDD, BDD, Agile and GitHub driven development",
-    "Front End development experience with React, Vue. Some Node.js experience",
-    "Vibe coding skills, can get lots of work done in short time. Always cautious though.",
-    "Functional programming background",
-    "Experience writing Legacy languages such as, Java, C, PHP",
-    "Experience in designing and implementing Restful and GraphQL APIs for both Web and Mobile"
+    "Proficient in Go, Ruby, and Python. Comfortable picking up new languages quickly.",
+    "Arch Linux (CachyOS) & Emacs user. Very comfortable in unix environments and shell scripting.",
+    "Extensive experience with AWS & GCP. Hands on with EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase.",
+    "Frontend development with React, Vue, and Astro. Tailwind CSS across all projects.",
+    "Backend development with Node.js/Express and Go/Echo. Experience designing RESTful and GraphQL APIs for web and mobile.",
+    "AI/LLM integration — working with Gemini API, Anthropic API, TTS engines (Edge TTS, Coqui), MCP tooling.",
+    "Docker containerization and CI/CD. Early adopter of continuous integration and deployment practices.",
+    "Browser automation and web scraping with Playwright and go-rod.",
+    "Experience with TDD, BDD, Agile and GitHub driven development.",
+    "Vibe coding skills, can get lots of work done in short time. Without breaking existing work."
   ]
 }

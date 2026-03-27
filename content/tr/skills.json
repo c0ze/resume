@@ -2,15 +2,15 @@
   "title": "Yetenekler",
   "technicalSkillsTitle": "Teknik Yetenekler",
   "technicalSkills": [
-    "Temel olarak Ruby ve Go dillerinde yetkin",
-    "Debian & Emacs kullanıcısı. Unix ortamlarında ve bash betikleri yazmada çok rahat",
-    "AWS kaynakları hakkında kapsamlı bilgi. EC2, S3, Dynamo, SES, IAM, Route53 ile uygulamalı deneyim",
-    "Sürekli Entegrasyon ve Sürekli Dağıtımın erken benimseyicisi",
-    "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi",
-    "React, Vue ile Front End geliştirme deneyimi. Biraz Node.js deneyimi",
-    "Vibe kodlama becerileri, kısa sürede çok iş yapabilir. Ancak her zaman dikkatli.",
-    "Fonksiyonel programlama geçmişi",
-    "Java, C, PHP gibi eski dilleri yazma deneyimi",
-    "Hem Web hem de Mobil için Restful ve GraphQL API'leri tasarlama ve uygulama deneyimi"
+    "Go, Ruby ve Python'da yetkin. Yeni dilleri hızlıca öğrenebilir.",
+    "Arch Linux (CachyOS) & Emacs kullanıcısı. Unix ortamlarında ve shell scripting'de çok rahat.",
+    "AWS & GCP'de kapsamlı deneyim. EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase ile uygulamalı deneyim.",
+    "React, Vue ve Astro ile frontend geliştirme. Tüm projelerde Tailwind CSS kullanımı.",
+    "Node.js/Express ve Go/Echo ile backend geliştirme. Web ve mobil için RESTful ve GraphQL API tasarım deneyimi.",
+    "AI/LLM entegrasyonu — Gemini API, Anthropic API, TTS motorları (Edge TTS, Coqui), MCP araçları ile çalışma.",
+    "Docker konteynerizasyonu ve CI/CD. Sürekli entegrasyon ve dağıtım uygulamalarının erken benimseyicisi.",
+    "Playwright ve go-rod ile tarayıcı otomasyonu ve web scraping.",
+    "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi.",
+    "Vibe kodlama becerileri, kısa sürede çok iş yapabilir. Mevcut kodu bozmadan."
   ]
 }

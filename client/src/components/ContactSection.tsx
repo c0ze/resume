@@ -73,16 +73,16 @@ const ContactSection = () => {
   const t = translations; // Use translations from context
 
   return (
-    <section id="contact" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.contact.title}</h2>
+    <section id="contact" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.contact.title}</h2>
 
       <Card className="bg-card border-border">
-        <CardContent className="p-6">
+        <CardContent className="p-4 md:p-5">
           <div className="md:flex">
             <div className="md:w-1/2 md:pr-4">
-              <h3 className="text-xl font-bold mb-4 text-foreground">{t.contact.getInTouch}</h3>
+              <h3 className="text-base font-bold mb-3 text-foreground">{t.contact.getInTouch}</h3>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-center">
                   <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-4">
                     <AtSign className="h-5 w-5 text-primary-foreground" />
@@ -128,7 +128,7 @@ const ContactSection = () => {
             </div>
 
             <div className="mt-8 md:mt-0 md:w-1/2 md:pl-4">
-              <h3 className="text-xl font-bold mb-4 text-foreground">{t.contact.findMeOn}</h3>
+              <h3 className="text-base font-bold mb-3 text-foreground">{t.contact.findMeOn}</h3>
               <div className="flex space-x-4">
                 {t.contact.socialLinks && t.contact.socialLinks.map(link => (
                   <a

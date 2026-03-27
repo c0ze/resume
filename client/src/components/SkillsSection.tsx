@@ -32,20 +32,17 @@ const SkillsSection = () => {
   const technicalSkillsList: string[] = t.skills.technicalSkills || [];
 
   return (
-    <section id="skills" className="mb-12">
-      <h2 className="text-2xl font-bold mb-6 text-primary border-b border-border pb-2">{t.skills.title}</h2>
+    <section id="skills" className="mb-8">
+      <h2 className="text-xl font-bold mb-4 text-primary border-b border-border pb-2">{t.skills.title}</h2>
 
       <Card className="bg-card border-border">
-        <CardContent className="p-6">
-          <h3 className="text-xl font-bold mb-4 text-foreground">{t.skills.technicalSkillsTitle}</h3>
-
+        <CardContent className="p-4 md:p-5">
           {technicalSkillsList.length > 0 ? (
-            <ul className="columns-1 md:columns-2 lg:columns-3 gap-x-6">
+            <ul className="space-y-1.5">
               {technicalSkillsList.map((skill, index) => (
-                <li key={index} className="mb-2 text-muted-foreground break-inside-avoid">
-                  <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
-                    {skill}
-                  </span>
+                <li key={index} className="flex items-start gap-2 text-foreground text-base">
+                  <span className="text-primary mt-1.5 shrink-0 block w-1.5 h-1.5 rounded-full bg-primary" />
+                  {skill}
                 </li>
               ))}
             </ul>

@@ -90,29 +90,28 @@ const Navigation = () => {
   return (
     <nav className="sticky top-0 bg-card/80 backdrop-blur-sm border-b border-border z-10">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <ul className="flex flex-wrap justify-center md:justify-start gap-1 py-4">
+        <div className="flex items-center justify-between gap-2 py-2.5">
+          <div className="flex flex-wrap items-center gap-1 min-w-0">
             {sections.map((section) => (
-              <li key={section.id}>
-                <a
-                  href={`#${section.id}`}
-                  onClick={(e) => scrollToSection(e, section.id)}
-                  className={`px-3 py-2 rounded text-sm transition-colors ${
-                    activeSection === section.id
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  }`}
-                >
-                  {section.label}
-                </a>
-              </li>
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                onClick={(e) => scrollToSection(e, section.id)}
+                className={`px-2.5 py-1.5 rounded text-sm whitespace-nowrap transition-colors ${
+                  activeSection === section.id
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                {section.label}
+              </a>
             ))}
-          </ul>
-          <div className="pb-4 md:py-4 flex items-center gap-3">
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <select
               value={language}
               onChange={(e) => handleLanguageChange(e.target.value)}
-              className="px-3 py-2 rounded text-sm border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              className="px-2 py-1.5 rounded text-sm border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
             >
               {languageOptions.map((option) => (
                 <option key={option.value} value={option.value}>

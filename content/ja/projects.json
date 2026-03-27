@@ -2,49 +2,44 @@
   "title": "プロジェクト",
   "entries": [
     {
-      "title": "Warex Ai (バックエンドAPI開発)",
-      "technologies": "Go, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migration, Testify",
-      "description": "株式会社Gaussyにて、倉庫管理システムWarex AiのバックエンドAPI開発。"
+      "title": "Warex（バックエンド開発）",
+      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
+      "description": "株式会社Gaussyにて、Warexプロジェクトのバックエンド開発。"
     },
     {
-      "title": "LINEファンド情報アプリ “未来のコツ”",
-      "technologies": "Ruby on Rails, LINE API, Reuters API, AWS",
-      "description": "株式会社Robotfundにて、LINEでのファンド情報アプリの開発。バックエンドAPI開発、LINE API・Reuters API連携、アドミンサイト開発、CI/CD連携。"
+      "title": "LINEファンド情報プラットフォーム",
+      "technologies": "Ruby on Rails, LINE API, Reuters API",
+      "description": "株式会社Robotfundにて、LINEと連携したファンド情報プラットフォームのフルスタック開発。API開発およびReutersからのデータ取得・処理を含む。"
     },
     {
-      "title": "トリアージアプリ JoinTriage (API開発)",
-      "technologies": "Grape (Ruby), Angular JS, Coffee Script, GitlabCI, Docker",
-      "description": "株式会社Allmにて、トリアージアプリのAPI開発。フロントエンド開発、CI/CDも含む。"
+      "title": "ファンド情報プラットフォーム 'Better World'",
+      "technologies": "Ruby on Rails, Reuters API",
+      "description": "株式会社Robotfundにて、Reuters API連携によるファンド情報プラットフォームのフルスタック開発。"
     },
     {
-      "title": "教育専用CMS Kidint",
-      "technologies": "Angular JS, Coffee Script, Ruby (implied for API), AWS",
-      "description": "株式会社Allmにて、教育専用CMSの開発。フロントエンド開発、モバイル・ウェブ向けAPI開発、AWSインテグレーション、ソーシャルメディアインテグレーション。"
+      "title": "カスタムオーディオキャッシングサービス",
+      "technologies": "Golang, Docker, AWS, テキスト音声変換サービス連携",
+      "description": "株式会社Robotfundにて、テキスト音声変換で生成された音声を圧縮・キャッシュ・配信するGoベースのサービスを開発し、API使用量を削減。"
     },
     {
-      "title": "コンシューマーデータ分析向けBIサービス Followup",
-      "technologies": "Angular JS, Coffee Script, Go, Estimote (IoT Beacon)",
-      "description": "株式会社Allmにて、コンシューマーデータ分析向けBIサービス開発。フロントエンド開発、IoTビーコン展開・管理システム開発、Go言語でのAPI開発。"
+      "title": "コンテンツ共有・配信プラットフォーム（Kidint）",
+      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
+      "description": "株式会社Allmにて、AWS連携やソーシャルメディアログインを含むコンテンツ共有プラットフォームのAPI・バックエンド開発。"
     },
     {
-      "title": "オンラインゲーム「幻塔戦記 グリフォン」 (バックエンドAPI開発)",
-      "technologies": "Ruby (Padrinoフレームワーク)",
-      "description": "株式会社Aimingにて、オンラインゲームのバックエンドAPI開発。"
+      "title": "リテールBI顧客追跡プラットフォーム（Followup）",
+      "technologies": "Go, Raspberry Pi, BLE Beacons",
+      "description": "株式会社Allmにて、リテールビジネスインテリジェンス向けのWiFiベース顧客追跡プラットフォームを開発。Raspberry Pi上のIoTサービス開発やBLEビーコン連携を含む。"
     },
     {
-      "title": "Kii Cloud Developer Portal",
-      "technologies": "Ruby on Rails, Backbone.js",
-      "description": "株式会社Kiiにて、Developer Portalの開発・メンテナンス。"
+      "title": "トリアージアプリ 'JoinTriage'（API）",
+      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
+      "description": "株式会社Allmにて、CI/CDセットアップを含むトリアージアプリのAPI・フロントエンド開発。"
     },
     {
-      "title": "Rydeモバイルアプリ (GraphQLバックエンド開発)",
-      "technologies": "Ruby on Rails, React js, GraphQL",
-      "description": "株式会社Rydeにて、RydeモバイルアプリのGraphQLバックエンド開発、フロントエンド連携、アドミンサイト開発。"
-    },
-    {
-      "title": "IronFunctions (クラウドコードプロダクトメンテ)",
-      "technologies": "Go",
-      "description": "Iron Ioにて、IronFunctionsというAWS Lambdaのようなクラウドコードプロダクトのメンテナンスと一部開発。"
+      "title": "MMORPG APIバックエンド '幻塔戦記グリフォン'",
+      "technologies": "Padrino (Ruby)",
+      "description": "株式会社Aimingにて、モバイルMMORPG '幻塔戦記グリフォン' のAPIバックエンド開発。"
     },
     {
       "title": "ポートフォリオウェブサイト（このプロジェクト）",
