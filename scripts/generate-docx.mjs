@@ -1,6 +1,6 @@
 import {
   Document, Packer, Paragraph, TextRun, HeadingLevel,
-  AlignmentType, BorderStyle, TabStopPosition, TabStopType,
+  AlignmentType, BorderStyle, ShadingType,
 } from 'docx';
 import fs from 'fs';
 import path from 'path';
@@ -20,8 +20,112 @@ function loadContent(language, section) {
   }
 }
 
-function generateDocx(language) {
-  const t = {
+// Strip CJK characters and surrounding parentheses for non-JA documents
+function stripCJK(text) {
+  if (typeof text !== 'string') return text;
+  let result = text.replace(/\s*[（(][^\)）]*[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+[^\)）]*[)）]/g, '');
+  result = result.replace(/[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+/g, '');
+  return result.trim();
+}
+
+function sanitizeContent(obj) {
+  if (typeof obj === 'string') return stripCJK(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeContent);
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeContent(v);
+    return out;
+  }
+  return obj;
+}
+
+// ── Typography constants (sizes in half-points) ─────────────────────
+function getFonts(language) {
+  if (language === 'ja') {
+    return {
+      heading: 'Noto Sans CJK JP',  // sans for headings — has proper bold
+      body: 'Noto Serif CJK JP',    // serif for body — has proper bold
+    };
+  }
+  return {
+    heading: 'Calibri',
+    body: 'Cambria',
+  };
+}
+
+const COLOR = {
+  black: '1a1a1a',
+  dark: '2d2d2d',
+  mid: '555555',
+  light: '888888',
+  rule: 'cccccc',
+};
+
+// ── Helpers (constructed per-language with correct fonts) ────────────
+function makeHelpers(FONT, language) {
+  const jaSpacing = language === 'ja';
+
+  function sectionHeading(text) {
+    return new Paragraph({
+      children: [
+        new TextRun({
+          text: jaSpacing ? text : text.toUpperCase(),
+          bold: true,
+          size: 22,
+          font: FONT.heading,
+          color: COLOR.black,
+          characterSpacing: jaSpacing ? 20 : 60,
+        }),
+      ],
+      spacing: { before: 280, after: jaSpacing ? 100 : 60 },
+      keepNext: true,  // prevent orphaned section headers at page bottom
+      border: {
+        bottom: { style: BorderStyle.SINGLE, size: 1, color: COLOR.rule, space: 4 },
+      },
+    });
+  }
+
+  function jobEntry(title, company, period) {
+    return [
+      new Paragraph({
+        children: [
+          new TextRun({ text: title, bold: true, size: 21, font: FONT.body, color: COLOR.black }),
+          new TextRun({ text: `  —  ${company}`, size: 20, font: FONT.body, color: COLOR.mid }),
+        ],
+        keepNext: true,  // keep title with period line
+        spacing: { before: 120, after: 10 },
+      }),
+      new Paragraph({
+        children: [
+          new TextRun({ text: period, size: 18, italics: !jaSpacing, font: FONT.body, color: COLOR.light }),
+        ],
+        keepNext: true,  // keep period with first content line
+        spacing: { after: jaSpacing ? 60 : 40 },
+      }),
+    ];
+  }
+
+  function bulletItem(text) {
+    return new Paragraph({
+      children: [new TextRun({ text, size: 19, font: FONT.body, color: COLOR.dark })],
+      bullet: { level: 0 },
+      spacing: { after: jaSpacing ? 30 : 15 },
+    });
+  }
+
+  function bodyPara(text, opts = {}) {
+    return new Paragraph({
+      children: [new TextRun({ text, size: 20, font: FONT.body, color: COLOR.dark, ...opts })],
+      spacing: { after: jaSpacing ? 80 : 60 },
+    });
+  }
+
+  return { sectionHeading, jobEntry, bulletItem, bodyPara };
+}
+
+// ── Generator ───────────────────────────────────────────────────────
+async function generateDocx(language) {
+  const raw = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
@@ -30,181 +134,131 @@ function generateDocx(language) {
     projects: loadContent(language, 'projects'),
     pdf: loadContent(language, 'pdf_meta'),
   };
+  const t = language === 'ja' ? raw : sanitizeContent(raw);
 
-  const sectionBorder = {
-    bottom: { style: BorderStyle.SINGLE, size: 1, color: '999999' },
-  };
-
-  function sectionHeading(text) {
-    return new Paragraph({
-      text,
-      heading: HeadingLevel.HEADING_2,
-      spacing: { before: 300, after: 100 },
-      border: sectionBorder,
-    });
-  }
+  const FONT = getFonts(language);
+  const { sectionHeading, jobEntry, bulletItem, bodyPara } = makeHelpers(FONT, language);
+  const isJa = language === 'ja';
 
   const children = [];
+  const sep = '   ·   ';
 
-  // Header
+  // ── Header ──────────────────────────────────────────────────────
   children.push(
     new Paragraph({
-      children: [new TextRun({ text: t.header.title, bold: true, size: 36, font: 'Calibri' })],
+      children: [new TextRun({ text: t.header.title, bold: true, size: 40, font: FONT.heading, color: COLOR.black })],
       alignment: AlignmentType.CENTER,
-      spacing: { after: 40 },
+      spacing: { after: 30 },
     }),
     new Paragraph({
-      children: [new TextRun({ text: t.header.subtitle, size: 22, color: '555555', font: 'Calibri' })],
+      children: [new TextRun({ text: t.header.subtitle, size: 22, font: FONT.body, italics: !isJa, color: COLOR.mid })],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 60 },
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({ text: `${t.header.location}${sep}${t.header.contactViaEmail}${sep}${t.header.website}`, size: 18, font: FONT.heading, color: COLOR.dark }),
+      ],
       alignment: AlignmentType.CENTER,
       spacing: { after: 80 },
-    }),
-    new Paragraph({
-      children: [
-        new TextRun({ text: t.header.location, size: 18, font: 'Calibri' }),
-        new TextRun({ text: '  |  ', size: 18, color: '999999', font: 'Calibri' }),
-        new TextRun({ text: t.header.contactViaEmail, size: 18, font: 'Calibri' }),
-        new TextRun({ text: '  |  ', size: 18, color: '999999', font: 'Calibri' }),
-        new TextRun({ text: t.header.website, size: 18, font: 'Calibri' }),
-      ],
-      alignment: AlignmentType.CENTER,
-      spacing: { after: 200 },
+      border: {
+        bottom: { style: BorderStyle.SINGLE, size: 1, color: COLOR.rule, space: 6 },
+      },
     }),
   );
 
-  // About
+  // ── About ───────────────────────────────────────────────────────
   children.push(sectionHeading(t.about.title));
-  if (t.about.paragraph1) {
-    children.push(new Paragraph({ children: [new TextRun({ text: t.about.paragraph1, size: 20, font: 'Calibri' })], spacing: { after: 80 } }));
-  }
-  if (t.about.paragraph2) {
-    children.push(new Paragraph({ children: [new TextRun({ text: t.about.paragraph2, size: 20, font: 'Calibri' })], spacing: { after: 80 } }));
-  }
-  children.push(
-    new Paragraph({
-      children: [
-        new TextRun({ text: `${t.about.languages} `, bold: true, size: 20, font: 'Calibri' }),
-        new TextRun({ text: t.about.languagesContent, size: 20, font: 'Calibri' }),
-      ],
-      spacing: { after: 100 },
-    }),
-  );
+  if (t.about.paragraph1) children.push(bodyPara(t.about.paragraph1));
+  if (t.about.paragraph2) children.push(bodyPara(t.about.paragraph2));
+  children.push(new Paragraph({
+    children: [
+      new TextRun({ text: `${t.about.languages}: `, bold: true, size: 20, font: FONT.body, color: COLOR.black }),
+      new TextRun({ text: t.about.languagesContent, size: 20, font: FONT.body, color: COLOR.dark }),
+    ],
+    spacing: { after: isJa ? 80 : 60 },
+  }));
 
-  // Experience
+  // ── Experience ──────────────────────────────────────────────────
   children.push(sectionHeading(t.experience.title));
   if (Array.isArray(t.experience.jobs)) {
     for (const job of t.experience.jobs) {
-      children.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: job.title, bold: true, size: 22, font: 'Calibri' }),
-            new TextRun({ text: `  —  ${job.company}`, size: 20, color: '333333', font: 'Calibri' }),
-          ],
-          spacing: { before: 140, after: 20 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: job.period, size: 18, italics: true, color: '666666', font: 'Calibri' })],
-          spacing: { after: 60 },
-        }),
-      );
+      children.push(...jobEntry(job.title, job.company, job.period));
       if (Array.isArray(job.responsibilities)) {
         for (const item of job.responsibilities) {
-          children.push(new Paragraph({
-            children: [new TextRun({ text: item, size: 20, font: 'Calibri' })],
-            bullet: { level: 0 },
-            spacing: { after: 20 },
-          }));
+          children.push(bulletItem(item));
         }
       }
     }
   }
 
-  // Education
+  // ── Education ───────────────────────────────────────────────────
   children.push(sectionHeading(t.education.title));
   if (Array.isArray(t.education.entries)) {
     for (const edu of t.education.entries) {
-      children.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: edu.degree, bold: true, size: 22, font: 'Calibri' }),
-            new TextRun({ text: `  —  ${edu.institution}`, size: 20, color: '333333', font: 'Calibri' }),
-          ],
-          spacing: { before: 140, after: 20 },
-        }),
-        new Paragraph({
-          children: [new TextRun({ text: edu.period, size: 18, italics: true, color: '666666', font: 'Calibri' })],
-          spacing: { after: 60 },
-        }),
-      );
+      children.push(...jobEntry(edu.degree, edu.institution, edu.period));
       if (edu.description) {
-        children.push(new Paragraph({ children: [new TextRun({ text: edu.description, size: 20, font: 'Calibri' })], spacing: { after: 40 } }));
+        children.push(new Paragraph({
+          children: [new TextRun({ text: edu.description, size: 19, font: FONT.body, color: COLOR.dark })],
+          spacing: { after: isJa ? 50 : 30 },
+        }));
       }
       if (edu.additionalInfo) {
         children.push(new Paragraph({
-          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 20, font: 'Calibri' })],
-          spacing: { before: 40, after: 20 },
+          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
+          spacing: { before: 30, after: 15 },
         }));
         if (Array.isArray(edu.additionalInfo.items)) {
           for (const item of edu.additionalInfo.items) {
-            children.push(new Paragraph({
-              children: [new TextRun({ text: item, size: 20, font: 'Calibri' })],
-              bullet: { level: 0 },
-              spacing: { after: 20 },
-            }));
+            children.push(bulletItem(item));
           }
         }
       }
     }
   }
 
-  // Skills
+  // ── Skills ──────────────────────────────────────────────────────
   children.push(sectionHeading(t.skills.title));
   if (Array.isArray(t.skills.technicalSkills)) {
     for (const skill of t.skills.technicalSkills) {
-      children.push(new Paragraph({
-        children: [new TextRun({ text: skill, size: 20, font: 'Calibri' })],
-        bullet: { level: 0 },
-        spacing: { after: 20 },
-      }));
+      children.push(bulletItem(skill));
     }
   }
 
-  // Projects
+  // ── Projects ────────────────────────────────────────────────────
   children.push(sectionHeading(t.projects.title));
   if (Array.isArray(t.projects.entries)) {
     for (const project of t.projects.entries) {
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({ text: project.title, bold: true, size: 20, font: 'Calibri' }),
-          ],
-          spacing: { before: 100, after: 20 },
+          children: [new TextRun({ text: project.title, bold: true, size: 20, font: FONT.body, color: COLOR.black })],
+          spacing: { before: 80, after: 10 },
         }),
         new Paragraph({
-          children: [new TextRun({ text: project.technologies, size: 18, italics: true, color: '666666', font: 'Calibri' })],
-          spacing: { after: 40 },
+          children: [new TextRun({ text: project.technologies, size: 18, italics: !isJa, font: FONT.body, color: COLOR.light })],
+          spacing: { after: isJa ? 50 : 30 },
         }),
         new Paragraph({
-          children: [new TextRun({ text: project.description, size: 20, font: 'Calibri' })],
-          spacing: { after: 60 },
+          children: [new TextRun({ text: project.description, size: 19, font: FONT.body, color: COLOR.dark })],
+          spacing: { after: isJa ? 60 : 40 },
         }),
       );
     }
   }
 
-  // Footer
-  children.push(
-    new Paragraph({
-      children: [new TextRun({
-        text: `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`,
-        size: 16,
-        color: '999999',
-        font: 'Calibri',
-      })],
-      alignment: AlignmentType.CENTER,
-      spacing: { before: 400 },
-    }),
-  );
+  // ── Footer ──────────────────────────────────────────────────────
+  children.push(new Paragraph({
+    children: [new TextRun({
+      text: `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`,
+      size: 16,
+      font: FONT.heading,
+      color: COLOR.light,
+    })],
+    alignment: AlignmentType.CENTER,
+    spacing: { before: 300 },
+  }));
 
+  // ── Build document ──────────────────────────────────────────────
   const doc = new Document({
     creator: t.pdf.author,
     title: t.pdf.title,
@@ -212,7 +266,12 @@ function generateDocx(language) {
     sections: [{
       properties: {
         page: {
-          margin: { top: 720, bottom: 720, left: 720, right: 720 },
+          margin: {
+            top: 1000,    // ~0.7in
+            bottom: 850,  // ~0.6in
+            left: 1100,   // ~0.76in
+            right: 1100,
+          },
         },
       },
       children,
@@ -220,17 +279,16 @@ function generateDocx(language) {
   });
 
   const outputFile = path.join(projectRoot, 'public', `resume-${language}.docx`);
-
-  Packer.toBuffer(doc).then(buffer => {
+  try {
+    const buffer = await Packer.toBuffer(doc);
     fs.writeFileSync(outputFile, buffer);
     console.log(`[${language}] Successfully generated: ${outputFile}`);
-  }).catch(err => {
+  } catch (err) {
     console.error(`[${language}] Error generating DOCX:`, err);
-  });
+  }
 }
 
+// ── Run ─────────────────────────────────────────────────────────────
 console.log('Starting DOCX resume generation...');
-generateDocx('en');
-generateDocx('ja');
-generateDocx('tr');
-console.log('DOCX generation process called for all languages.');
+await Promise.all([generateDocx('en'), generateDocx('ja'), generateDocx('tr')]);
+console.log('DOCX generation complete.');

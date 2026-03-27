@@ -1,445 +1,396 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url'; // For ES module __dirname equivalent
-// Removed: import { translations } from './translations.js';
+import { fileURLToPath } from 'url';
 
-// Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
-// Function to load JSON content for a given language and section
 function loadContent(language, section) {
   const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
   try {
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContent);
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
     console.error(`Error loading content file: ${filePath}`, error);
-    return {}; // Return empty object on error to avoid breaking the structure
+    return {};
   }
 }
 
-// Function to generate resume PDF for a specific language
+// Strip CJK characters and surrounding parentheses/whitespace for non-JA PDFs
+// e.g. "Gentosenki Griffin (幻塔戦記グリフォン)" → "Gentosenki Griffin"
+function stripCJK(text) {
+  if (typeof text !== 'string') return text;
+  // Remove parenthesized CJK blocks like (幻塔戦記グリフォン) or （幻塔戦記グリフォン）
+  let result = text.replace(/\s*[（(][^\)）]*[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+[^\)）]*[)）]/g, '');
+  // Remove any remaining lone CJK characters
+  result = result.replace(/[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+/g, '');
+  return result.trim();
+}
+
+function sanitizeContent(obj) {
+  if (typeof obj === 'string') return stripCJK(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeContent);
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeContent(v);
+    return out;
+  }
+  return obj;
+}
+
+// ── Layout constants ────────────────────────────────────────────────
+const PAGE = {
+  size: 'A4',
+  margin: { top: 72, bottom: 60, left: 72, right: 72 },
+};
+
+const COLOR = {
+  black: '#1a1a1a',
+  dark: '#2d2d2d',
+  mid: '#555555',
+  light: '#888888',
+  rule: '#cccccc',
+};
+
+const SIZE = {
+  name: 22,
+  subtitle: 11,
+  contact: 9,
+  sectionTitle: 11,
+  jobTitle: 10.5,
+  company: 10,
+  period: 9,
+  body: 10,
+  bullet: 9.5,
+  footer: 8,
+};
+
+// ── Font setup ──────────────────────────────────────────────────────
+const fontDir = path.join(projectRoot, 'public', 'fonts');
+
+function setupFonts(doc, language) {
+  const fonts = { regular: 'Helvetica', bold: 'Helvetica-Bold', italic: 'Helvetica-Oblique' };
+
+  if (language === 'ja') {
+    // Noto Serif CJK JP — proper bold weight for visual hierarchy
+    const serifJP = path.join(fontDir, 'NotoSerifCJKJP-Regular.ttf');
+    const serifJPBold = path.join(fontDir, 'NotoSerifCJKJP-Bold.ttf');
+    const sansJP = path.join(fontDir, 'NotoSansCJKJP-Regular.ttf');
+    const sansJPBold = path.join(fontDir, 'NotoSansCJKJP-Bold.ttf');
+
+    if (fs.existsSync(serifJP) && fs.existsSync(serifJPBold)) {
+      doc.registerFont('NotoSerifJP', serifJP);
+      doc.registerFont('NotoSerifJP-Bold', serifJPBold);
+      fonts.regular = 'NotoSerifJP';
+      fonts.bold = 'NotoSerifJP-Bold';
+      fonts.italic = 'NotoSerifJP'; // no italic in CJK
+    }
+    if (fs.existsSync(sansJP) && fs.existsSync(sansJPBold)) {
+      doc.registerFont('NotoSansJP', sansJP);
+      doc.registerFont('NotoSansJP-Bold', sansJPBold);
+      fonts.sansRegular = 'NotoSansJP';
+      fonts.sansBold = 'NotoSansJP-Bold';
+    }
+    console.log(`[ja] Using Noto Serif CJK JP + Noto Sans CJK JP`);
+  } else {
+    // Noto Serif for body text — professional, readable serif
+    const serifRegular = path.join(fontDir, 'NotoSerif-Regular.ttf');
+    const serifBold = path.join(fontDir, 'NotoSerif-Bold.ttf');
+    const serifItalic = path.join(fontDir, 'NotoSerif-Italic.ttf');
+    // Noto Sans for headings — clean contrast
+    const sansRegular = path.join(fontDir, 'NotoSans-Regular.ttf');
+    const sansBold = path.join(fontDir, 'NotoSans-Bold.ttf');
+
+    if (fs.existsSync(serifRegular) && fs.existsSync(serifBold)) {
+      doc.registerFont('NotoSerif', serifRegular);
+      doc.registerFont('NotoSerif-Bold', serifBold);
+      if (fs.existsSync(serifItalic)) doc.registerFont('NotoSerif-Italic', serifItalic);
+      fonts.regular = 'NotoSerif';
+      fonts.bold = 'NotoSerif-Bold';
+      fonts.italic = fs.existsSync(serifItalic) ? 'NotoSerif-Italic' : 'NotoSerif';
+    }
+    if (fs.existsSync(sansRegular) && fs.existsSync(sansBold)) {
+      doc.registerFont('NotoSans', sansRegular);
+      doc.registerFont('NotoSans-Bold', sansBold);
+      fonts.sansRegular = 'NotoSans';
+      fonts.sansBold = 'NotoSans-Bold';
+    }
+    console.log(`[${language}] Using Noto Serif + Noto Sans`);
+  }
+
+  return fonts;
+}
+
+// ── Generator ───────────────────────────────────────────────────────
 function generateResume(language) {
-  // Load all content sections for the given language
-  const contentSections = {
+  const raw = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
     education: loadContent(language, 'education'),
     skills: loadContent(language, 'skills'),
     projects: loadContent(language, 'projects'),
-    pdf: loadContent(language, 'pdf_meta') // pdf_meta.json for PDF metadata
+    pdf: loadContent(language, 'pdf_meta'),
   };
-  const t = contentSections; // Use 't' as before for consistency in the rest of the script
+  // Strip CJK from EN/TR since those fonts don't support Japanese characters
+  const t = language === 'ja' ? raw : sanitizeContent(raw);
 
-  const pdfDocOptions = {
-    size: 'A4',
-    margins: { top: 50, bottom: 50, left: 50, right: 50 },
-    info: { // Use data from pdf_meta.json
+  const doc = new PDFDocument({
+    size: PAGE.size,
+    margins: PAGE.margin,
+    info: {
       Title: t.pdf.title || `Resume - ${language.toUpperCase()}`,
-      Author: t.pdf.author || "Default Author",
-      Subject: t.pdf.subject || `Resume (${language.toUpperCase()})`,
-      Keywords: t.pdf.keywords || "resume, cv",
+      Author: t.pdf.author || 'Arda Karaduman',
+      Subject: t.pdf.subject || 'Resume',
+      Keywords: t.pdf.keywords || 'resume',
     },
     lang: language,
     pdfVersion: '1.7',
     tagged: true,
     displayTitle: true,
     autoFirstPage: true,
-    fontSubsetting: language === 'ja' ? false : true // Disable subsetting for Japanese
-  };
+    fontSubsetting: language !== 'ja',
+  });
 
-  const doc = new PDFDocument(pdfDocOptions);
-  // Output path is always written into the tracked public/ directory.
-  let outputFile;
-  if (language === 'en') {
-    outputFile = path.join(projectRoot, 'public', 'resume-en.pdf');
-  } else if (language === 'ja') {
-    outputFile = path.join(projectRoot, 'public', 'resume-ja.pdf');
-  } else if (language === 'tr') {
-    outputFile = path.join(projectRoot, 'public', 'resume-tr.pdf');
-  } else {
-    // Fallback or error for unsupported languages, though current setup only calls for en, ja, tr
-    outputFile = path.join(projectRoot, 'public', `resume-${language}.pdf`);
-  }
-  
-  const stream = fs.createWriteStream(outputFile); // Removed encoding: 'utf8' as it's for text streams
+  const outputFile = path.join(projectRoot, 'public', `resume-${language}.pdf`);
+  const stream = fs.createWriteStream(outputFile);
   doc.pipe(stream);
 
-  // Define monochrome colors for PDF
-  const colors = {
-    primary: '#000000',     // Black for main headers, titles
-    secondary: '#333333',   // Dark gray for subtitles or secondary info
-    text: '#000000',        // Black for body text
-    lightText: '#555555',   // Lighter gray for dates, less important info
-    // background: '#FFFFFF' // Background is white by default, no need to set explicitly
-  };
+  const fonts = setupFonts(doc, language);
+  const contentWidth = doc.page.width - PAGE.margin.left - PAGE.margin.right;
 
-  // Font paths relative to the script's location, then up to project root, then to public/fonts
-  const fontDir = path.join(projectRoot, 'public', 'fonts');
-  const notoRegularPath = path.join(fontDir, 'NotoSans-Regular.ttf');
-  const notoBoldPath = path.join(fontDir, 'NotoSans-Bold.ttf');
-  // const notoJPRegularPath = path.join(fontDir, 'NotoSansJP-Regular.ttf'); // No longer using NotoSansJP
-  // const notoJPBoldPath = path.join(fontDir, 'NotoSansJP-Bold.ttf');    // No longer using NotoSansJP
-  const ipaexgPath = path.join(fontDir, 'ipaexg.ttf'); // Path for IPAexGothic
+  // Use sans-serif for headings (or same font for JA)
+  const headingFont = fonts.sansBold || fonts.bold;
+  const headingRegular = fonts.sansRegular || fonts.regular;
+  // Japanese text needs more vertical breathing room (single-weight font, dense glyphs)
+  const lineGap = language === 'ja' ? 6 : 2;
+  const bulletGap = language === 'ja' ? 5 : 1;
 
-  let regularFont = 'Helvetica';
-  let boldFont = 'Helvetica-Bold';
-  let customFontSuccessfullySet = false;
+  // ── Helpers ─────────────────────────────────────────────────────
+  function textCenter(text, options = {}) {
+    const w = doc.widthOfString(text);
+    doc.x = (doc.page.width - w) / 2;
+    doc.text(text, { width: w + 1, ...options });
+  }
 
-  if (language === 'ja') {
-    console.log(`[ja] Attempting to load Japanese font (IPAexGothic)...`);
-    try {
-      if (!fs.existsSync(ipaexgPath)) throw new Error(`Japanese Font (IPAexGothic) not found: ${ipaexgPath}. Please download ipaexg.ttf and place it in public/fonts/`);
-      
-      // Register IPAexGothic for both regular and bold needs.
-      // PDFKit will use the same font file; styling differences might be minimal without a dedicated bold variant.
-      doc.registerFont('IPAexGothic', ipaexgPath);
-      
-      // Try to activate the font to force parsing by fontkit
-      doc.font('IPAexGothic').text('', 0, 0); // Dummy text to trigger font processing
-      
-      regularFont = 'IPAexGothic';
-      boldFont = 'IPAexGothic'; // Use the same for bold
-      customFontSuccessfullySet = true;
-      console.log(`[ja] Successfully registered and tested Japanese font (IPAexGothic).`);
-    } catch (e) {
-      console.error(`[ja] ERROR loading/using Japanese font (IPAexGothic): ${e.message}`);
-      console.error(`[ja] This often means the font file at ${ipaexgPath} is corrupted, not valid TTF, or incompatible with the PDF font engine (fontkit).`);
-      console.error("[ja] Falling back to Helvetica for Japanese. Characters will likely be garbled.");
-      // regularFont and boldFont remain Helvetica
-    }
-  } else if (language === 'tr') {
-    console.log(`[tr] Attempting to load NotoSans fonts for Turkish...`);
-    try {
-      if (!fs.existsSync(notoRegularPath)) throw new Error(`Regular Font (NotoSans-Regular) not found: ${notoRegularPath}`);
-      if (!fs.existsSync(notoBoldPath)) throw new Error(`Bold Font (NotoSans-Bold) not found: ${notoBoldPath}`);
+  function drawRule() {
+    const y = doc.y;
+    doc.strokeColor(COLOR.rule).lineWidth(0.5)
+       .moveTo(PAGE.margin.left, y)
+       .lineTo(doc.page.width - PAGE.margin.right, y)
+       .stroke();
+    doc.y = y + 6;
+  }
 
-      doc.registerFont('NotoSans-Regular', notoRegularPath);
-      doc.registerFont('NotoSans-Bold', notoBoldPath);
+  function sectionHeader(title) {
+    // Reserve enough for the header + rule + first entry (title, subtitle, period, ~2 lines).
+    // This prevents the section header from rendering at the bottom of a page
+    // with the first entry breaking onto the next page.
+    ensureSpace(200);
+    doc.font(headingFont).fontSize(SIZE.sectionTitle).fillColor(COLOR.black);
+    doc.x = PAGE.margin.left;
+    doc.text(title.toUpperCase(), { width: contentWidth, characterSpacing: 1.5 });
+    doc.moveDown(0.15);
+    drawRule();
+    doc.moveDown(0.15);
+  }
 
-      doc.font('NotoSans-Regular').text('', 0, 0); // Dummy text
-
-      regularFont = 'NotoSans-Regular';
-      boldFont = 'NotoSans-Bold';
-      customFontSuccessfullySet = true;
-      console.log(`[tr] Successfully registered and tested NotoSans fonts for Turkish.`);
-    } catch (e) {
-      console.error(`[tr] ERROR loading/using NotoSans fonts for Turkish: ${e.message}`);
-      console.error(`[tr] This often means the font files at ${notoRegularPath} or ${notoBoldPath} are corrupted, not valid TTF, or incompatible with the PDF font engine (fontkit).`);
-      console.error("[tr] Falling back to Helvetica for Turkish. Some characters may be garbled.");
-      // regularFont and boldFont remain Helvetica
+  function ensureSpace(needed) {
+    if (doc.y + needed > doc.page.height - PAGE.margin.bottom) {
+      doc.addPage();
     }
   }
-  // For 'en', Helvetica is used by default, customFontSuccessfullySet remains false.
-  
-  // Helper function to ensure UTF-8 text rendering
-  const renderText = (text, options = {}) => {
-    // pdfkit handles UTF-8 strings directly when fonts support the characters.
-    return doc.text(text, Object.assign({ // Removed utf8Text variable, direct usage
-      characterSpacing: 0,
-      wordSpacing: 0,
-      lineGap: 0,
-    }, options));
-  };
 
-  // Helper function for section headers with UTF-8 support
-  function addSectionHeader(text) {
-    doc.fontSize(16)
-       .font(boldFont) // Use dynamic boldFont
-       .fillColor(colors.primary);
-    // Explicitly set x for section titles to ensure they obey left margin
-    doc.x = doc.page.margins.left;
-    // We need to ensure y is also correct if previous operations moved it unexpectedly.
-    // However, addSectionHeader is usually called when y is already at a new line.
-    // Let's also pass the width for consistency, though underline might not need it.
-    const sectionTitleWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    renderText(text, { underline: true, width: sectionTitleWidth });
-    doc.moveDown(0.5);
+  // ── Header ──────────────────────────────────────────────────────
+  doc.y = PAGE.margin.top;
+
+  // Name
+  doc.font(headingFont).fontSize(SIZE.name).fillColor(COLOR.black);
+  textCenter(t.header.title);
+  doc.moveDown(0.2);
+
+  // Subtitle
+  doc.font(fonts.italic || fonts.regular).fontSize(SIZE.subtitle).fillColor(COLOR.mid);
+  textCenter(t.header.subtitle);
+  doc.moveDown(0.4);
+
+  // Contact line: location · email · website
+  doc.font(headingRegular).fontSize(SIZE.contact).fillColor(COLOR.dark);
+  const sep = '   ·   ';
+  const contactStr = `${t.header.location}${sep}${t.header.contactViaEmail}${sep}${t.header.website}`;
+  textCenter(contactStr);
+  doc.moveDown(0.6);
+
+  drawRule();
+  doc.moveDown(0.3);
+
+  // ── About ───────────────────────────────────────────────────────
+  sectionHeader(t.about.title);
+
+  doc.font(fonts.regular).fontSize(SIZE.body).fillColor(COLOR.dark);
+  doc.x = PAGE.margin.left;
+  if (t.about.paragraph1) {
+    doc.text(t.about.paragraph1, { width: contentWidth, lineGap });
+    doc.moveDown(0.3);
+  }
+  if (t.about.paragraph2) {
+    doc.x = PAGE.margin.left;
+    doc.text(t.about.paragraph2, { width: contentWidth, lineGap });
+    doc.moveDown(0.3);
   }
 
-  // Helper function for subsection headers with UTF-8 support
-  function addSubsectionHeader(title, subtitle, dates) {
-    doc.fontSize(12)
-       .font(boldFont) // Use dynamic boldFont
-       .fillColor(colors.text);
-    renderText(title, { continued: false });
-    
-    doc.fontSize(11)
-       .font(regularFont) // Use dynamic regularFont
-       .fillColor(colors.primary);
-    renderText(subtitle, { continued: false });
-    
-    doc.fontSize(10)
-       .font(regularFont) // Use dynamic regularFont
-       .fillColor(colors.lightText);
-    renderText(dates);
-    doc.moveDown(0.2);
-  }
-
-  // Header with UTF-8 support
-  // Revert to using align: 'center' with explicit bounding box based on margins
-  const contentAreaWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-  
-  // Manually set starting Y position for the entire header block
-  doc.y = doc.page.margins.top;
-
-  doc.fontSize(24).font(boldFont).fillColor(colors.primary);
-  // Manual centering for the title by setting doc.x
-  // Re-assign textWidth and centeredX (remove 'let')
-  var textWidth = doc.widthOfString(t.header.title); // Use var or ensure not re-declared if in same block scope
-  var centeredX = (doc.page.width - textWidth) / 2; // Use var or ensure not re-declared
-  doc.x = centeredX;
-  // doc.y is already set from doc.page.margins.top
-  renderText(t.header.title); // Render at current doc.x, doc.y
+  // Languages
+  doc.x = PAGE.margin.left;
+  doc.font(fonts.bold).fontSize(SIZE.body).fillColor(COLOR.black);
+  doc.text(`${t.about.languages}: `, { continued: true, width: contentWidth });
+  doc.font(fonts.regular).fillColor(COLOR.dark);
+  doc.text(t.about.languagesContent, { width: contentWidth });
   doc.moveDown(0.5);
 
-  doc.fontSize(14).font(regularFont).fillColor(colors.secondary);
-  // Manual centering for the subtitle by setting doc.x
-  // Re-assign textWidth and centeredX
-  textWidth = doc.widthOfString(t.header.subtitle);
-  centeredX = (doc.page.width - textWidth) / 2;
-  doc.x = centeredX;
-  // doc.y has advanced from the previous renderText and moveDown
-  renderText(t.header.subtitle); // Render at current doc.x, doc.y
-  doc.moveDown(0.5);
+  // ── Experience ──────────────────────────────────────────────────
+  sectionHeader(t.experience.title);
 
-  // Contact Info with UTF-8 support (This section is correctly centered with manual doc.x)
-  doc.fontSize(10).font(regularFont).fillColor(colors.text);
-  let contactLine = `${t.header.location}`;
-  // Re-assign textWidth and centeredX (remove 'let' as they were declared with 'var' earlier)
-  textWidth = doc.widthOfString(contactLine);
-  centeredX = (doc.page.width - textWidth) / 2;
-  if (language === 'ja') {
-    console.log(`[ja] Contact Line 1: "${contactLine}"`);
-    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
-  }
-  doc.x = centeredX; // Set doc.x manually
-  doc.y = doc.y;     // Maintain current y
-  renderText(contactLine); // Render text at current doc.x, doc.y
+  if (Array.isArray(t.experience.jobs)) {
+    t.experience.jobs.forEach((job, i) => {
+      ensureSpace(60);
 
-  contactLine = `Email: ${t.header.contactViaEmail}`;
-  textWidth = doc.widthOfString(contactLine); // Re-assign
-  centeredX = (doc.page.width - textWidth) / 2; // Re-assign
-  if (language === 'ja') {
-    console.log(`[ja] Contact Line 2: "${contactLine}"`);
-    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
-  }
-  doc.x = centeredX; // Set doc.x manually
-  doc.y = doc.y;     // Maintain current y (renderText implies a line feed, so y should be ok for next line)
-  renderText(contactLine); // Render text at current doc.x, doc.y
+      // Job title — Company | Period (on same line)
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(job.title, { continued: true, width: contentWidth });
 
-  contactLine = `${t.header.website}`;
-  textWidth = doc.widthOfString(contactLine); // Re-assign
-  centeredX = (doc.page.width - textWidth) / 2; // Re-assign
-  if (language === 'ja') {
-    console.log(`[ja] Contact Line 3: "${contactLine}"`);
-    console.log(`[ja]   doc.page.width: ${doc.page.width}, textWidth: ${textWidth}, centeredX: ${centeredX}`);
-  }
-  doc.x = centeredX; // Set doc.x manually
-  doc.y = doc.y;     // Maintain current y
-  renderText(contactLine); // Render text at current doc.x, doc.y
-  doc.moveDown(1.5);
+      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+      doc.text(`  —  ${job.company}`, { width: contentWidth });
 
-  // About Me with UTF-8 support
-  addSectionHeader(t.about.title); // This title seems to align correctly
-  
-  doc.fontSize(11)
-     .font(regularFont)
-     .fillColor(colors.text);
-  const paragraphWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
+      doc.text(job.period, { width: contentWidth });
+      doc.moveDown(0.15);
 
-  // For paragraph1: Set doc.x explicitly, then renderText without x option
-  doc.x = doc.page.margins.left;
-  doc.y = doc.y; // ensure y is maintained if it was moved by addSectionHeader's moveDown
-  renderText(t.about.paragraph1, {
-    // x: doc.page.margins.left, // Rely on current doc.x
-    // align: 'justify', // Still removed for testing
-    width: paragraphWidth
-  });
-  doc.moveDown(0.5);
-
-  // For paragraph2: Set doc.x explicitly, then renderText without x option
-  doc.x = doc.page.margins.left;
-  doc.y = doc.y;
-  renderText(t.about.paragraph2, {
-    // x: doc.page.margins.left, // Rely on current doc.x
-    // align: 'justify', // Still removed for testing
-    width: paragraphWidth
-  });
-  doc.moveDown(1);
-
-  // Languages with UTF-8 support
-  doc.fontSize(11)
-     .font(boldFont)
-     .fillColor(colors.text);
-  // For languages title: Set doc.x explicitly
-  doc.x = doc.page.margins.left;
-  doc.y = doc.y;
-  renderText(`${t.about.languages}`, {
-    // x: doc.page.margins.left, // Rely on current doc.x
-    width: paragraphWidth
-  });
-  
-  doc.fontSize(11)
-     .font(regularFont)
-     .fillColor(colors.text);
-  // For languages content: Set doc.x explicitly
-  doc.x = doc.page.margins.left;
-  doc.y = doc.y;
-  renderText(t.about.languagesContent, {
-    // x: doc.page.margins.left, // Rely on current doc.x
-    width: paragraphWidth
-  });
-  doc.moveDown(1);
-
-  // Work Experience
-  addSectionHeader(t.experience.title);
-
-  // Helper function to render a UTF-8 friendly list
-  const renderList = (items) => {
-    const listWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right - 10; // Subtract indent
-    items.forEach(item => {
-      // We use doc.x and doc.y for list items to flow naturally after the bullet.
-      // The initial x for the bullet itself will be set by the calling context or default to margin.
-      // However, to ensure the whole list block respects margins, the first call to renderList
-      // should be preceded by setting doc.x to doc.page.margins.left if it's a new section.
-      // For now, let's ensure the text *within* renderText respects a width.
-      // The indent option in PDFKit handles the bullet point's horizontal spacing.
-      renderText(`• ${item}`, {
-        // x: doc.page.margins.left, // Let indent handle the bullet, text flows after
-        width: listWidth,
-        indent: 10
-      });
-    });
-  };
-
-  // Iterate over jobs array
-  if (t.experience && Array.isArray(t.experience.jobs)) {
-    t.experience.jobs.forEach(job => {
-      addSubsectionHeader(job.title, job.company, job.period);
-      doc.fontSize(10)
-         .font(regularFont)
-         .fillColor(colors.text);
+      // Responsibilities
       if (Array.isArray(job.responsibilities)) {
-        doc.x = doc.page.margins.left; // Set x before rendering the list
-        renderList(job.responsibilities);
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        for (const item of job.responsibilities) {
+          ensureSpace(20);
+          doc.x = PAGE.margin.left;
+          doc.text(`•  ${item}`, {
+            width: contentWidth - 10,
+            indent: 10,
+            lineGap: bulletGap,
+          });
+        }
       }
-      doc.moveDown(0.5);
+
+      if (i < t.experience.jobs.length - 1) doc.moveDown(0.4);
     });
   }
-  doc.moveDown(0.5); // Add a bit more space after the last job, was 1 before for job3
+  doc.moveDown(0.3);
 
-  // Education
-  addSectionHeader(t.education.title);
+  // ── Education ───────────────────────────────────────────────────
+  sectionHeader(t.education.title);
 
-  // Iterate over education entries array
-  if (t.education && Array.isArray(t.education.entries)) {
-    t.education.entries.forEach(entry => {
-      addSubsectionHeader(entry.degree, entry.institution, entry.period);
-      doc.fontSize(10)
-         .font(regularFont)
-         .fillColor(colors.text);
-      const itemWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-      if (entry.description) {
-        renderText(entry.description, { x: doc.page.margins.left, width: itemWidth });
-        doc.moveDown(0.3);
+  if (Array.isArray(t.education.entries)) {
+    t.education.entries.forEach((edu, i) => {
+      ensureSpace(50);
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(edu.degree, { continued: true, width: contentWidth });
+
+      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+      doc.text(`  —  ${edu.institution}`, { width: contentWidth });
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
+      doc.text(edu.period, { width: contentWidth });
+
+      if (edu.description) {
+        doc.moveDown(0.1);
+        doc.x = PAGE.margin.left;
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        doc.text(edu.description, { width: contentWidth, lineGap: bulletGap });
       }
-      if (entry.additionalInfo && entry.additionalInfo.title && Array.isArray(entry.additionalInfo.items)) {
-        doc.fontSize(10).font(boldFont).fillColor(colors.text); // Make title bold
-        renderText(entry.additionalInfo.title, { x: doc.page.margins.left, width: itemWidth });
-        doc.moveDown(0.2);
-        doc.fontSize(10).font(regularFont).fillColor(colors.text); // Reset to regular for items
-        // Ensure renderList is available or define a local one if not.
-        // Assuming renderList from experience section is suitable.
-        // We need to make sure doc.x is set correctly before calling renderList
-        doc.x = doc.page.margins.left;
-        renderList(entry.additionalInfo.items.map(item => `${item}`)); // Pass items to renderList
-        // renderList adds its own moveDown, so we might not need one here, or adjust as necessary
+
+      if (edu.additionalInfo && Array.isArray(edu.additionalInfo.items)) {
+        doc.moveDown(0.15);
+        doc.x = PAGE.margin.left;
+        doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
+        doc.text(edu.additionalInfo.title, { width: contentWidth });
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        for (const item of edu.additionalInfo.items) {
+          doc.x = PAGE.margin.left;
+          doc.text(`•  ${item}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
+        }
       }
-      doc.moveDown(0.5);
+
+      if (i < t.education.entries.length - 1) doc.moveDown(0.4);
     });
   }
-  doc.moveDown(1);
+  doc.moveDown(0.3);
 
-  // Skills with UTF-8 support
-  addSectionHeader(t.skills.title);
-  const skillsSectionWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  // ── Skills ──────────────────────────────────────────────────────
+  sectionHeader(t.skills.title);
 
-  // Technical Skills Title
-  doc.fontSize(11)
-     .font(boldFont)
-     .fillColor(colors.text);
-  renderText(t.skills.technicalSkillsTitle, { x: doc.page.margins.left, width: skillsSectionWidth }); // Use technicalSkillsTitle
-  
-  doc.fontSize(10)
-     .font(regularFont)
-     .fillColor(colors.text);
-     
-  // Technical Skills List (already handled with doc.x before renderList)
-  const techSkills = t.skills.technicalSkills; // Assuming technicalSkills is an array in skills.json
-                                            // If not, this needs to match the JSON structure.
-                                            // The hardcoded list was:
-                                            // [
-                                            //   'JavaScript/TypeScript - Advanced', ...
-                                            // ];
-  if(Array.isArray(techSkills)) {
-    doc.x = doc.page.margins.left;
-    renderList(techSkills);
+  if (Array.isArray(t.skills.technicalSkills)) {
+    doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+    for (const skill of t.skills.technicalSkills) {
+      ensureSpace(20);
+      doc.x = PAGE.margin.left;
+      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
+    }
   }
-  
-  doc.moveDown(1);
+  doc.moveDown(0.3);
 
-  // Projects
-  addSectionHeader(t.projects.title);
+  // ── Projects ────────────────────────────────────────────────────
+  sectionHeader(t.projects.title);
 
-  // Iterate over projects entries array
-  if (t.projects && Array.isArray(t.projects.entries)) {
-    t.projects.entries.forEach(project => {
-      addSubsectionHeader(project.title, project.technologies, ''); // No date for projects here
-      doc.fontSize(10)
-         .font(regularFont)
-         .fillColor(colors.text);
-      const projectDescWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
+  if (Array.isArray(t.projects.entries)) {
+    t.projects.entries.forEach((project, i) => {
+      ensureSpace(40);
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(project.title, { width: contentWidth });
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
+      doc.text(project.technologies, { width: contentWidth });
+      doc.moveDown(0.1);
+
       if (project.description) {
-        renderText(project.description, { x: doc.page.margins.left, width: projectDescWidth });
+        doc.x = PAGE.margin.left;
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
       }
-      doc.moveDown(0.5);
+
+      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
     });
   }
-  doc.moveDown(0.5); // Add a bit more space after the last project, was 1 before
 
-  // Footer with UTF-8 support
-  const footerY = doc.page.height - 50;
-  doc.fontSize(9)
-     .font(regularFont)
-     .fillColor(colors.lightText);
-  renderText(`${t.pdf.generatedOn} ` + new Date().toLocaleDateString(),
-    { align: 'center', lineBreak: false, continued: false, width: doc.page.width - 100, x: 50, y: footerY });
+  // ── Footer ──────────────────────────────────────────────────────
+  const footerText = `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`;
+  doc.font(headingRegular).fontSize(SIZE.footer).fillColor(COLOR.light);
+  doc.text(footerText, PAGE.margin.left, doc.page.height - PAGE.margin.bottom + 10, {
+    width: contentWidth,
+    align: 'center',
+  });
 
-  // Finalize the PDF and end the stream
+  // Finalize
   try {
-    console.log(`[${language}] Attempting to finalize PDF: ${outputFile}`);
     doc.end();
+    console.log(`[${language}] Finalizing PDF: ${outputFile}`);
   } catch (e) {
     console.error(`[${language}] Error during doc.end():`, e);
   }
 
-  stream.on('finish', () => {
-    console.log(`[${language}] Successfully generated and saved: ${outputFile}`);
-  });
-
-  stream.on('error', (err) => {
-    console.error(`[${language}] Error writing PDF to stream for ${outputFile}:`, err);
-  });
+  stream.on('finish', () => console.log(`[${language}] Successfully generated: ${outputFile}`));
+  stream.on('error', (err) => console.error(`[${language}] Error writing PDF:`, err));
 }
 
-// Generate resumes for all languages
-console.log("Starting resume generation process...");
+// ── Run ─────────────────────────────────────────────────────────────
+console.log('Starting resume generation...');
 generateResume('en');
 generateResume('ja');
 generateResume('tr');
-console.log("Resume generation process called for all languages.");
+console.log('Resume generation complete.');
