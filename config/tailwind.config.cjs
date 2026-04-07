@@ -7,7 +7,7 @@ module.exports = {
   darkMode: ["class"],
   content: [
     path.resolve(projectRoot, "client/index.html"),
-    path.resolve(projectRoot, "client/src/**/*.{js,jsx,ts,tsx}"),
+    path.resolve(projectRoot, "client/src/**/*.{res,js,jsx,ts,tsx}"),
   ],
   theme: {
     extend: {

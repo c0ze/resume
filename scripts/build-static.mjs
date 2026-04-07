@@ -90,6 +90,10 @@ async function build() {
     console.log('Generating theme CSS...');
     execSync('node scripts/generate-theme.mjs', { stdio: 'inherit', cwd: projectRoot });
 
+    // 2b. Compile ReScript sources
+    console.log('Compiling ReScript...');
+    execSync('npx rescript build', { stdio: 'inherit', cwd: projectRoot });
+
     // 3. Build client assets
     console.log('Building client assets...');
     execSync(`npx vite build --config ${viteConfigPath}`, { stdio: 'inherit', cwd: projectRoot });

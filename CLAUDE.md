@@ -10,10 +10,8 @@ This file provides repository-specific guidance to Claude Code when working here
 
 - Vite 8
 - React 18
-- TypeScript
+- ReScript 11
 - Tailwind CSS
-- Wouter
-- TanStack Query
 - PDFKit
 - GitHub Actions + GitHub Pages
 
@@ -21,7 +19,8 @@ This file provides repository-specific guidance to Claude Code when working here
 
 - Website content: `content/{en,ja,tr}/*.json`
 - Theme config: `config/theme.json`
-- Tooling config: `config/{vite.config.ts,tsconfig.json,tailwind.config.cjs,postcss.config.cjs}`
+- Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
+- ReScript config: `rescript.json`
 - PDF generator: `scripts/generate-resume.mjs`
 - DOCX generator: `scripts/generate-docx.mjs`
 - Static build pipeline: `scripts/build-static.mjs`
@@ -30,7 +29,7 @@ This file provides repository-specific guidance to Claude Code when working here
 ## Important Directories
 
 ```text
-client/               React application
+client/               React application (ReScript source in client/src/)
 content/              Language-specific JSON content
 config/               Theme and build-tool configuration
 public/               Static assets, fonts, generated resume artifacts
@@ -41,24 +40,27 @@ tests/                Smoke tests for build output
 ## Commands
 
 ```bash
-npm run dev
-npm run build
-npm run preview
-npm run check
-npm run test:static
+npm run dev           # ReScript watch + Vite dev server (requires concurrently)
+npm run build         # Full static build (ReScript → Vite → SSR → PDF/DOCX)
+npm run preview       # Preview built site
+npm run check         # ReScript type check (rescript build)
+npm run test:static   # Smoke tests for build output
+npm run res:build     # ReScript compile only
+npm run res:clean     # Clean ReScript build artifacts
 ```
 
 ## Build Expectations
 
 `npm run build` should:
 
-1. build the client bundle
-2. build the SSR entry
-3. prerender `/` into static HTML
-4. regenerate `public/resume-{en,ja,tr}.pdf` and `public/resume-{en,ja,tr}.docx`
-5. write `dist/client/artifact-status.json`
-6. copy public assets into `dist/client`
-7. generate `dist/client/sitemap.xml`
+1. compile ReScript sources to `.res.mjs`
+2. build the client bundle
+3. build the SSR entry
+4. prerender `/` into static HTML
+5. regenerate `public/resume-{en,ja,tr}.pdf` and `public/resume-{en,ja,tr}.docx`
+6. write `dist/client/artifact-status.json`
+7. copy public assets into `dist/client`
+8. generate `dist/client/sitemap.xml`
 
 If content, theme configuration, or build scripts change, run:
 
@@ -67,6 +69,15 @@ npm run check
 npm run build
 npm run test:static
 ```
+
+## ReScript Notes
+
+- Source files are `.res` in `client/src/` with subdirectories for organization.
+- ReScript compiles to `.res.mjs` files in-source (same directory as `.res`).
+- The `.res.mjs` files are gitignored — Vite picks them up during build.
+- JSON content is loaded via Vite's `import.meta.glob` through `%raw` interop.
+- Lucide React icon bindings are in `client/src/bindings/LucideReact.res`.
+- UI primitives (Card, CardContent, Button) are in `client/src/UI.res`.
 
 ## Content Rules
 
@@ -81,3 +92,4 @@ npm run test:static
 - Put new automation in `scripts/`.
 - Put tool config in `config/` unless a tool hard-requires the root.
 - Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
+- Do not commit `.res.mjs` files — they are build artifacts.

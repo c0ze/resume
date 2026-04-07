@@ -9,3 +9,8 @@ Arda Karaduman Resume *.txt
 Arda Karaduman 履歴書 *.docx
 public/resume-*.pdf
 public/resume-*.docx
+
+# ReScript build artifacts
+*.res.mjs
+.bsb.lock
+lib/

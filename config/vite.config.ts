@@ -1,5 +1,4 @@
 import { defineConfig, type PluginOption, type UserConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import path from "node:path";
 
 const projectRoot = path.resolve(import.meta.dirname, "..");
@@ -8,22 +7,11 @@ const clientSrcRoot = path.resolve(clientRoot, "src");
 const distRoot = path.resolve(projectRoot, "dist");
 const postcssConfigPath = path.resolve(import.meta.dirname, "postcss.config.cjs");
 
-async function getCartographerPlugin(_isProduction: boolean): Promise<PluginOption[]> {
-  return [];
-}
-
 export default defineConfig(async ({ mode }): Promise<UserConfig> => {
   const isProduction = mode === "production";
   const isSsrBuild = process.env.SSR_BUILD === "true";
 
-  const cartographerPlugins = await getCartographerPlugin(isProduction);
-
-  const basePlugins: PluginOption[] = [
-    react(),
-    ...cartographerPlugins,
-  ];
-
-  const clientOnlyPlugins: PluginOption[] = [];
+  const basePlugins: PluginOption[] = [];
 
   const commonConfig: Partial<UserConfig> = {
     base: "/",
@@ -47,13 +35,11 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
         outDir: path.resolve(distRoot, "server"),
         ssr: true,
         rollupOptions: {
-          input: path.resolve(clientSrcRoot, "entry-server.tsx"),
+          input: path.resolve(clientSrcRoot, "EntryServer.res.mjs"),
           external: [
             "react",
             "react-dom",
             "react-dom/server",
-            "@tanstack/react-query",
-            /^@radix-ui\/.*/,
             "lucide-react",
           ],
           output: {
@@ -70,7 +56,7 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
 
   return {
     ...commonConfig,
-    plugins: [...basePlugins, ...clientOnlyPlugins],
+    plugins: basePlugins,
     build: {
       outDir: path.resolve(distRoot, "client"),
       emptyOutDir: true,
