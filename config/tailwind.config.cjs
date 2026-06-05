@@ -10,11 +10,18 @@ module.exports = {
     path.resolve(projectRoot, "client/src/**/*.{res,js,jsx,ts,tsx}"),
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "1.5rem",
+    },
     extend: {
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+      fontFamily: {
+        // Geometric, confident display face for headings + the name.
+        display: ['"Space Grotesk"', "ui-sans-serif", "system-ui", "sans-serif"],
+        // Humanist, highly legible body face for prose.
+        sans: ['"Manrope"', "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
+        // Engineer-signal mono for dates, eyebrows, tags + stats.
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -50,45 +57,52 @@ module.exports = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        chart: {
-          "1": "hsl(var(--chart-1))",
-          "2": "hsl(var(--chart-2))",
-          "3": "hsl(var(--chart-3))",
-          "4": "hsl(var(--chart-4))",
-          "5": "hsl(var(--chart-5))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
+      },
+      backgroundImage: {
+        "gradient-subtle": "var(--gradient-subtle)",
+        "gradient-primary": "var(--gradient-primary)",
+      },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        medium: "var(--shadow-medium)",
+        glow: "var(--shadow-glow)",
+      },
+      transitionTimingFunction: {
+        smooth: "cubic-bezier(0.4, 0, 0.2, 1)",
+        spring: "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(14px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "bounce-soft": {
+          "0%, 100%": { transform: "translateY(0)", opacity: "0.4" },
+          "50%": { transform: "translateY(6px)", opacity: "0.85" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        marquee: "marquee 42s linear infinite",
+        "bounce-soft": "bounce-soft 2.4s ease-in-out infinite",
       },
     },
   },

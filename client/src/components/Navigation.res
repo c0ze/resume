@@ -27,9 +27,15 @@ let getActiveSection: unit => string = %raw(`
   }
 `)
 
+let isScrolled: unit => bool = %raw(`function() { return window.scrollY > 12; }`)
+
+let addScrollListener: (unit => unit) => unit = %raw(`function(fn) { window.addEventListener("scroll", fn, { passive: true }) }`)
+let removeScrollListener: (unit => unit) => unit = %raw(`function(fn) { window.removeEventListener("scroll", fn) }`)
+
 @react.component
 let make = () => {
   let (activeSection, setActiveSection) = React.useState(() => "about")
+  let (scrolled, setScrolled) = React.useState(() => false)
   let {language, setLanguage, translations: t} = LanguageContext.useLanguage()
 
   React.useEffect0(() => {
@@ -38,11 +44,11 @@ let make = () => {
       if current !== "" {
         setActiveSection(_ => current)
       }
+      setScrolled(_ => isScrolled())
     }
-    let add: (unit => unit) => unit = %raw(`function(fn) { window.addEventListener("scroll", fn) }`)
-    let remove: (unit => unit) => unit = %raw(`function(fn) { window.removeEventListener("scroll", fn) }`)
-    add(handleScroll)
-    Some(() => remove(handleScroll))
+    handleScroll()
+    addScrollListener(handleScroll)
+    Some(() => removeScrollListener(handleScroll))
   })
 
   let sections = [
@@ -56,10 +62,15 @@ let make = () => {
 
   let languageOptions = [("en", "EN"), ("ja", "JA"), ("tr", "TR")]
 
-  <nav className="sticky top-0 bg-card/80 backdrop-blur-sm border-b border-border z-10">
-    <div className="container mx-auto px-4 md:px-8">
+  <nav
+    className={"sticky top-0 z-40 border-b transition-all duration-300 " ++ (
+      scrolled
+        ? "glass border-border shadow-soft"
+        : "border-transparent bg-background/50 backdrop-blur-sm"
+    )}>
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
       <div className="flex items-center justify-between gap-2 py-2.5">
-        <div className="flex flex-wrap items-center gap-1 min-w-0">
+        <div className="flex min-w-0 flex-wrap items-center gap-1">
           {sections
           ->Array.map(((id, label)) =>
             <a
@@ -70,26 +81,24 @@ let make = () => {
                 scrollToSection(id)
                 setActiveSection(_ => id)
               }}
-              className={"px-2.5 py-1.5 rounded text-sm whitespace-nowrap transition-colors " ++ if (
+              className={"whitespace-nowrap rounded-full px-3 py-1.5 text-sm transition-colors " ++ (
                 activeSection == id
-              ) {
-                "bg-primary/10 text-primary"
-              } else {
-                "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              }}>
+                  ? "bg-primary/10 font-medium text-primary"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              )}>
               {React.string(label)}
             </a>
           )
           ->React.array}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2">
           <select
             value={Translations.languageToString(language)}
             onChange={e => {
               let value = ReactEvent.Form.target(e)["value"]
               setLanguage(Translations.languageFromString(value))
             }}
-            className="px-2 py-1.5 rounded text-sm border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+            className="rounded-full border border-border bg-card px-2.5 py-1.5 font-mono text-xs text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40">
             {languageOptions
             ->Array.map(((value, label)) =>
               <option key=value value> {React.string(label)} </option>

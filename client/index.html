@@ -3,7 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
+
+    <!-- Mark JS as available before first paint so scroll-reveal styles only
+         hide content when we can actually animate it back in. No-JS / print
+         keep everything visible. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Arda Karaduman - Senior Developer Resume</title>
     <meta name="description" content="Professional resume of Arda Karaduman - Senior Developer based in Japan. 20+ years experience in Ruby, Go, Python, AWS, and GCP." />
     <meta name="author" content="Arda Karaduman" />

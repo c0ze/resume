@@ -1,15 +1,18 @@
 @react.component
 let make = () => {
-  <div className="min-h-screen flex flex-col bg-background text-foreground">
-    <Header />
+  <div className="flex min-h-screen flex-col bg-background text-foreground">
     <Navigation />
-    <main className="container mx-auto px-4 md:px-8 py-6">
-      <AboutSection />
-      <ExperienceSection />
-      <EducationSection />
-      <SkillsSection />
-      <ProjectsSection />
-      <ContactSection />
+    <Header />
+    <TechMarquee />
+    <main>
+      <div className="mx-auto w-full max-w-5xl px-6">
+        <AboutSection />
+        <ExperienceSection />
+        <EducationSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <ContactSection />
+      </div>
     </main>
     <Footer />
   </div>

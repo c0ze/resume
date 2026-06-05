@@ -10,70 +10,103 @@ let handleDownload = (language, ext) => {
   openUrl(fullPath)
 }
 
+let normalizeUrl = url =>
+  if Js.String2.startsWith(url, "http") {
+    url
+  } else {
+    "https://" ++ url
+  }
+
+let statChip = (icon, label) =>
+  <span className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground">
+    {icon}
+    {React.string(label)}
+  </span>
+
 @react.component
 let make = () => {
   let {language, translations: t} = LanguageContext.useLanguage()
 
-  <header className="bg-card border-b border-border py-5 px-4 md:px-8">
-    <div className="container mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="space-y-0.5">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-            {React.string(t.header.title)}
-          </h1>
-          <p className="text-base text-muted-foreground">
-            {React.string(t.header.subtitle)}
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-          <button
-            onClick={_ => navigateTo("mailto:" ++ t.header.contactViaEmail)}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors">
-            <LucideReact.AtSign className="h-3.5 w-3.5" />
-            {React.string(t.header.contactViaEmail)}
-          </button>
-          <span className="flex items-center gap-1.5">
-            <LucideReact.MapPin className="h-3.5 w-3.5" />
-            {React.string(t.header.location)}
-          </span>
-          <a
-            href={if Js.String2.startsWith(t.header.website, "http") {
-              t.header.website
-            } else {
-              "https://" ++ t.header.website
-            }}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 hover:text-primary transition-colors">
-            <LucideReact.Globe className="h-3.5 w-3.5" />
-            {React.string(t.header.website)}
-          </a>
-          <span className="flex items-center gap-1.5">
-            <LucideReact.Download className="h-3.5 w-3.5" />
-            <button
-              type_="button"
-              onClick={_ => handleDownload(language, "pdf")}
-              className="bg-primary text-primary-foreground font-medium py-1 px-2.5 rounded text-sm hover:opacity-90 transition-opacity">
-              {React.string(
-                switch t.header.downloadPdf {
-                | Some(label) => label
-                | None => "PDF"
-                },
-              )}
-            </button>
-            <button
-              type_="button"
-              onClick={_ => handleDownload(language, "docx")}
-              className="bg-primary text-primary-foreground font-medium py-1 px-2.5 rounded text-sm hover:opacity-90 transition-opacity">
-              {React.string(
-                switch t.header.downloadDocx {
-                | Some(label) => label
-                | None => "DOCX"
-                },
-              )}
-            </button>
-          </span>
-        </div>
+  <header id="top" className="relative overflow-hidden border-b border-border">
+    <div ariaHidden=true className="pointer-events-none absolute inset-0 dossier-grid opacity-80" />
+    <div
+      ariaHidden=true
+      className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl"
+    />
+
+    <div className="relative mx-auto w-full max-w-5xl px-6 pb-14 pt-16 sm:pt-20">
+      <div className="animate-fade-up ad-1 glass mb-7 inline-flex items-center gap-3 rounded-full px-4 py-1.5">
+        <span className="flex items-center gap-1.5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-primary">
+          <LucideReact.MapPin className="h-3.5 w-3.5" />
+          {React.string(t.header.location)}
+        </span>
+        <span className="h-3.5 w-px bg-border" ariaHidden=true />
+        <TokyoClock />
+      </div>
+
+      <h1
+        className="animate-fade-up ad-2 font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl">
+        <span className="text-gradient-primary"> {React.string(t.header.title)} </span>
+      </h1>
+
+      <p
+        className="animate-fade-up ad-3 mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+        {React.string(t.header.subtitle)}
+      </p>
+
+      <div
+        className="animate-fade-up ad-4 mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+        <button
+          onClick={_ => navigateTo("mailto:" ++ t.header.contactViaEmail)}
+          className="group inline-flex items-center gap-2 transition-colors hover:text-primary">
+          <LucideReact.AtSign className="h-4 w-4 text-primary" />
+          {React.string(t.header.contactViaEmail)}
+        </button>
+        <a
+          href={normalizeUrl(t.header.website)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex items-center gap-2 transition-colors hover:text-primary">
+          <LucideReact.Globe className="h-4 w-4 text-primary" />
+          {React.string(t.header.website)}
+          <LucideReact.ArrowUpRight
+            className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100"
+          />
+        </a>
+      </div>
+
+      <div className="animate-fade-up ad-5 mt-9 flex flex-wrap gap-3">
+        <button
+          type_="button"
+          onClick={_ => handleDownload(language, "pdf")}
+          className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-[1.03]">
+          <LucideReact.FileDown className="h-4 w-4" />
+          {React.string(
+            switch t.header.downloadPdf {
+            | Some(label) => label
+            | None => "PDF"
+            },
+          )}
+        </button>
+        <button
+          type_="button"
+          onClick={_ => handleDownload(language, "docx")}
+          className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
+          <LucideReact.FileText className="h-4 w-4" />
+          {React.string(
+            switch t.header.downloadDocx {
+            | Some(label) => label
+            | None => "DOCX"
+            },
+          )}
+        </button>
+      </div>
+
+      <div
+        className="animate-fade-up ad-6 mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border pt-6">
+        {statChip(<LucideReact.Code2 className="h-3.5 w-3.5 text-primary" />, "Go · Ruby · Python")}
+        {statChip(<LucideReact.Cpu className="h-3.5 w-3.5 text-primary" />, "AWS · GCP · Docker")}
+        {statChip(<LucideReact.Languages className="h-3.5 w-3.5 text-primary" />, "EN · JA · TR")}
       </div>
     </div>
   </header>

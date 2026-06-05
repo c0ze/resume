@@ -32,7 +32,7 @@ let make = () => {
 
   <button
     onClick=cycleTheme
-    className="flex items-center justify-center w-9 h-9 rounded-full bg-secondary border border-border text-muted-foreground hover:bg-primary/20 hover:text-primary hover:border-primary/50 transition-all"
+    className="theme-toggle flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
     ariaLabel={`Current theme: ${name}. Click to change.`}
     title=name>
     {icon}

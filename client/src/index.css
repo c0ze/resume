@@ -2,42 +2,227 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Derived "atmosphere" tokens. These reference the *active* theme's --primary /
+  --card / --foreground (defined in the generated theme.css), so they re-tint
+  automatically for every theme without per-theme duplication. Kept intentionally
+  restrained — one navy accent, hairline borders, soft depth. No rainbow.
+*/
+:root {
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted) / 0.4));
+  --gradient-primary: linear-gradient(120deg, hsl(var(--primary)) 0%, hsl(var(--foreground)) 72%);
+
+  --glass-bg: hsl(var(--card) / 0.62);
+  --glass-border: hsl(var(--foreground) / 0.08);
+
+  --shadow-soft: 0 1px 2px hsl(var(--foreground) / 0.04), 0 4px 14px -8px hsl(var(--foreground) / 0.14);
+  --shadow-medium: 0 2px 6px -2px hsl(var(--foreground) / 0.08), 0 12px 30px -12px hsl(var(--foreground) / 0.22);
+  --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.14), 0 18px 40px -16px hsl(var(--primary) / 0.4);
+}
+
 @layer base {
   * {
     @apply border-border;
   }
 
-  body {
-    @apply font-sans antialiased bg-background text-foreground text-[1.0125rem] leading-relaxed;
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
-  .container {
-    max-width: 52rem;
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--foreground) / 0.22);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--foreground) / 0.34); background-clip: content-box; }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+    border-radius: 6px;
   }
 }
 
+@layer components {
+  /* Frosted-glass surface for the nav, accent cards + pills. */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-strong {
+    background: hsl(var(--card) / 0.82);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Hairline dotted grid behind the hero — the "engineering paper" texture. */
+  .dossier-grid {
+    background-image: radial-gradient(circle, hsl(var(--foreground) / 0.10) 1px, transparent 1.4px);
+    background-size: 30px 30px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 30%, transparent 78%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 30%, transparent 78%);
+  }
+}
+
+@layer utilities {
+  /* Restrained two-stop gradient on the name — the only "decorative" type. */
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Horizontal sliding rails: hidden native scrollbar, momentum on touch. */
+  .rail-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .rail-scroll::-webkit-scrollbar { display: none; }
+  .rail-scroll.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+  .rail-scroll.is-dragging * { pointer-events: none; }
+
+  /* Fade the rail's left/right edges so peeking cards read as "more, slide me". */
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 94%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 94%, transparent 100%);
+  }
+
+  /* Auto-scrolling competency ticker. Pauses on hover + reduced-motion. */
+  .marquee-track { width: max-content; animation: marquee 42s linear infinite; }
+  .marquee-track:hover { animation-play-state: paused; }
+
+  /* Scroll-reveal. Content is visible by default (no-JS / print friendly); the
+     inline <head> script adds `.js` to <html>, which lets us hide-then-reveal
+     only when we can actually animate it back in. */
+  .reveal { opacity: 1; transform: none; }
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.7s var(--ease-spring) var(--reveal-delay, 0ms),
+      transform 0.7s var(--ease-spring) var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  html.js .reveal.is-visible { opacity: 1; transform: none; }
+
+  /* Hero entrance — staggered fade-up. CSS-only, so it plays without JS too. */
+  .animate-fade-up { animation: fade-up 0.6s var(--ease-spring) both; }
+  .ad-1 { animation-delay: 0.05s; }
+  .ad-2 { animation-delay: 0.12s; }
+  .ad-3 { animation-delay: 0.2s; }
+  .ad-4 { animation-delay: 0.3s; }
+  .ad-5 { animation-delay: 0.42s; }
+  .ad-6 { animation-delay: 0.55s; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* Respect reduced-motion: freeze ambient motion, always show revealed content. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+}
+
+/*
+  Print: collapse the interactive chrome and unroll every sliding rail into a
+  plain stacked list so the resume prints as a complete, readable document.
+*/
 @media print {
   body {
-    font-size: 11pt;
+    font-size: 10.5pt;
     line-height: 1.4;
     color: #000;
     background: #fff;
   }
 
   nav,
-  footer button,
+  .no-print,
+  .marquee-band,
+  .rail-controls,
+  .scroll-cue,
   .theme-toggle {
     display: none !important;
   }
 
-  footer {
-    border-top: 1px solid #ccc;
-    padding: 0.5rem 0;
+  /* Unroll rails: stack the cards full width instead of scrolling them. */
+  .rail-scroll {
+    display: block !important;
+    overflow: visible !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  .rail-scroll > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 0.6rem 0 !important;
+    scroll-snap-align: none !important;
+  }
+  .mask-fade-x { -webkit-mask-image: none !important; mask-image: none !important; }
+
+  .reveal { opacity: 1 !important; transform: none !important; }
+
+  .glass,
+  .glass-strong {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-color: #ccc !important;
   }
 
   header,
   section,
-  main {
+  main,
+  article {
     break-inside: avoid;
   }
 
@@ -54,13 +239,9 @@
 
   a[href^="#"]::after,
   a[href^="mailto"]::after,
-  a[href^="javascript"]::after {
+  a[href^="javascript"]::after,
+  a[href^="tel"]::after {
     content: "";
-  }
-
-  .container {
-    max-width: 100%;
-    padding: 0;
   }
 
   * {
