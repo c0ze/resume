@@ -188,6 +188,7 @@ let make = () => {
   let idRef = React.useRef(0)
   let listRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
+  let launcherRef = React.useRef(Nullable.null)
 
   let nextId = () => {
     let id = idRef.current
@@ -210,14 +211,26 @@ let make = () => {
     None
   }, [Int.toString(Array.length(messages)) ++ ":" ++ Int.toString(lastLen) ++ ":" ++ (busy ? "1" : "0")])
 
-  // On open: focus the input and wire Escape-to-close.
+  // On open: focus the input and wire Escape-to-close. On close, the cleanup
+  // returns focus to the launcher so keyboard users aren't stranded (the dialog
+  // is non-modal — a floating helpdesk widget — so we restore focus rather than
+  // trap it).
   React.useEffect1(() => {
     if isOpen {
       switch inputRef.current->Nullable.toOption {
       | Some(el) => focusEl(el)
       | None => ()
       }
-      Some(onEscape(() => setIsOpen(_ => false)))
+      let removeEscape = onEscape(() => setIsOpen(_ => false))
+      Some(
+        () => {
+          removeEscape()
+          switch launcherRef.current->Nullable.toOption {
+          | Some(el) => focusEl(el)
+          | None => ()
+          }
+        },
+      )
     } else {
       None
     }
@@ -299,9 +312,11 @@ let make = () => {
     {isOpen
       ? React.null
       : <button
+          ref={ReactDOM.Ref.domRef(launcherRef)}
           type_="button"
           onClick={_ => setIsOpen(_ => true)}
           ariaLabel={c.launcher}
+          ariaHaspopup=#dialog
           className="no-print fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center gap-2 rounded-full bg-primary px-0 text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-105 sm:w-auto sm:px-5">
           <LucideReact.MessageCircle className="h-6 w-6 shrink-0" />
           <span className="hidden text-sm font-medium sm:inline"> {React.string(c.launcher)} </span>
@@ -336,7 +351,11 @@ let make = () => {
             </button>
           </div>
 
-          <div ref={ReactDOM.Ref.domRef(listRef)} className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+          <div
+            ref={ReactDOM.Ref.domRef(listRef)}
+            role="log"
+            ariaLive=#polite
+            className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
             <div className="flex justify-start">
               <div
                 className="max-w-[85%] rounded-2xl rounded-bl-md bg-secondary px-3.5 py-2 text-sm leading-relaxed text-foreground">
