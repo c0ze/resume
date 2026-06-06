@@ -35,6 +35,8 @@ type aboutContent = {
 
 type job = {
   title: string,
+  abstract: option<string>,
+  logo: option<string>,
   company: string,
   period: string,
   responsibilities: array<string>,
@@ -42,6 +44,8 @@ type job = {
 
 type experienceContent = {
   title: string,
+  viewDetails: string,
+  close: string,
   jobs: array<job>,
 }
 
@@ -50,11 +54,18 @@ type additionalInfo = {
   items: array<string>,
 }
 
+type educationLink = {
+  label: string,
+  url: string,
+}
+
 type educationEntry = {
   degree: string,
   institution: string,
   period: string,
+  logo: option<string>,
   description: Js.Nullable.t<string>,
+  links: option<array<educationLink>>,
   additionalInfo: Js.Nullable.t<additionalInfo>,
 }
 
@@ -73,10 +84,12 @@ type projectEntry = {
   title: string,
   technologies: string,
   description: string,
+  repo: Js.Nullable.t<string>,
 }
 
 type projectsContent = {
   title: string,
+  viewSource: string,
   entries: array<projectEntry>,
 }
 

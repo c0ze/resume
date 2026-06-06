@@ -1,50 +1,66 @@
 {
   "title": "Projects",
+  "viewSource": "View source on GitHub",
   "entries": [
     {
-      "title": "Warex (Backend Development)",
-      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
-      "description": "Backend development for the Warex project while at Gaussy."
+      "title": "MCP + OAuth 2.1 AI Platform",
+      "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
+      "description": "Lead author of Veltra's platform exposing the travel-activity catalog to AI assistants — a standards-compliant OAuth 2.1 authorization server (Clean Architecture) plus MCP servers dual-compatible with Claude and ChatGPT apps.",
+      "repo": null
     },
     {
-      "title": "LINE Fund Information Platform",
-      "technologies": "Ruby on Rails, LINE API, Reuters API",
-      "description": "Fullstack development of a fund information platform integrated with LINE, including API development and data fetching/processing from Reuters, at Robotfund."
+      "title": "WareX — Logistics SaaS API",
+      "technologies": "Go, Echo, GORM, MySQL, JWT/RBAC, Minio/S3, GKE, CircleCI",
+      "description": "Senior backend engineer and top-3 author on the Go API of WareX, a production logistics 'warehouse-exchange' SaaS at Gaussy — owned the warehouse, contract, workspace, document and pricing verticals plus the team's integration-test harness.",
+      "repo": null
     },
     {
-      "title": "Fund Information Platform 'Better World'",
-      "technologies": "Ruby on Rails, Reuters API",
-      "description": "Fullstack development of a fund information platform with Reuters API integration, at Robotfund."
+      "title": "golem — LINE-bot Fund Analytics",
+      "technologies": "Ruby on Rails 5, React, JSON:API, LINE Messaging API, gnuplot",
+      "description": "Lead author of a multi-tenant Rails 5 + React platform that delivers fund and bond analytics (net-asset-value graphs, factor analysis) to users as LINE Flex Messages and generated charts, with HMAC webhook verification, at Robotfund.",
+      "repo": null
     },
     {
-      "title": "Custom Audio Caching Service",
-      "technologies": "Golang, Docker, AWS, Text-to-Voice Service Integration",
-      "description": "Developed a Go-based service to compress, cache, and serve audio generated from text-to-voice, reducing API usage, at Robotfund."
+      "title": "bumblebee — Race-free TTS Caching Service",
+      "technologies": "Go, CSP concurrency, LAME (PCM→MP3), Docker, AWS",
+      "description": "Solo Go service fronting a pool of text-to-speech servers — race-free by design (channel-owned state), with PCM-to-MP3 transcoding, content-digest caching and per-host load distribution, verified with `go test -race`, at Robotfund.",
+      "repo": null
     },
     {
-      "title": "Content Sharing and Publishing Platform (e.g., Kidint)",
-      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
-      "description": "API and backend development for a content sharing platform, including AWS integration and social media logins, at Allm Inc."
+      "title": "Reuters Market-Data Pipeline",
+      "technologies": "Go, AWS Lambda, DynamoDB, S3, Reuters DataScope Select",
+      "description": "Solo Go AWS Lambda that ingests daily Reuters DataScope Select market data into an idempotent DynamoDB/S3 state machine, built on an extracted MIT-licensed Reuters DSS Go client library, at Robotfund.",
+      "repo": "https://github.com/c0ze/dss_reuters_go"
     },
     {
-      "title": "Retail BI Customer Tracking Platform (Followup)",
-      "technologies": "Go, Raspberry Pi, BLE Beacons",
-      "description": "Developed a WiFi-based customer tracking platform for retail business intelligence, including IoT service development on Raspberry Pi and BLE beacon integration, at Allm Inc."
+      "title": "FupIntuition — IoT/Edge People Analytics",
+      "technologies": "Go (amd64 + ARM), BLE beacons, WiFi sniffing, HashiCorp Vault, GPG-signed OTA, S3 apt repo",
+      "description": "Sole author of an end-to-end Go daemon for in-store edge devices — staff counting via BLE, repeat-customer counting via WiFi, and face recognition — with a web UI and a full signed over-the-air update pipeline, at Allm.",
+      "repo": null
     },
     {
-      "title": "Triage Application 'JoinTriage' (API)",
-      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
-      "description": "API and frontend development for a triage application, including CI/CD setup, at Allm Inc."
+      "title": "FAST-ED Clinical Triage API",
+      "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
+      "description": "Lead author of a versioned stroke/cardiac triage API for hospitals (Grape + GraphQL + Pundit) with HMAC request signing and hardened authentication, plus its Vue 2 + Apollo admin SPA, at Allm.",
+      "repo": null
     },
     {
-      "title": "MMORPG API Backend 'Gentosenki Griffin'",
-      "technologies": "Padrino (Ruby)",
-      "description": "Developed the API backend for the mobile MMORPG 'Gentosenki Griffin' (幻塔戦記グリフォン), at Aiming Inc."
+      "title": "Griffon — Mobile MMORPG Backend",
+      "technologies": "Ruby, Padrino, ActiveRecord, MySQL, Resque, RSpec",
+      "description": "Backend engineer on the live Ruby/Padrino backend of the published mobile MMORPG 'Griffon' (幻塔戦記グリフォン, Japan + Korea) — independently owned the achievements, friendship, reward-distribution and guild-battle matchmaking systems with database-level idempotency, at Aiming.",
+      "repo": null
     },
     {
-      "title": "Portfolio Website (This Project)",
-      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
-      "description": "A multilingual, SSR-enabled portfolio website with dynamic PDF resume generation."
+      "title": "IronFunctions — Open-source Serverless Platform",
+      "technologies": "Go, Docker, Vue, Express, JWT, CircleCI",
+      "description": "Open-source contributor to IronFunctions, an early Docker-based FaaS platform (later the Fn Project) — added JWT auth and the CI/CD release pipeline to its web UI and contributed engine features such as a payload-as-stdin runner, at iron.io.",
+      "repo": "https://github.com/iron-io/functions"
+    },
+    {
+      "title": "This Résumé Site",
+      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "description": "A static, multilingual (EN/JA/TR) résumé site prerendered to HTML, generating language-specific PDF and DOCX résumés at build time from a single content source, deployed to GitHub Pages.",
+      "repo": "https://github.com/c0ze/resume"
     }
   ]
 }

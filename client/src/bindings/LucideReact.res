@@ -122,3 +122,13 @@ module Github = {
   @module("lucide-react") @react.component
   external make: (~className: string=?) => React.element = "Github"
 }
+
+module X = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "X"
+}
+
+module Check = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "Check"
+}

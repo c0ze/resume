@@ -1,25 +1,56 @@
-let entry = (index, isLast, edu: Translations.educationEntry) =>
-  <Reveal key={Int.toString(index)} delay={index * 80} className="grid grid-cols-[auto_1fr] gap-x-4">
-    <div className="flex flex-col items-center" ariaHidden=true>
-      <span className="h-3.5 w-3.5 shrink-0 rounded-full border-2 border-primary bg-background" />
-      {isLast ? React.null : <span className="mt-1 w-px flex-1 bg-border" />}
-    </div>
-    <div className={isLast ? "pb-0" : "pb-10"}>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-        <h3 className="font-display text-lg font-bold leading-none text-foreground">
-          {React.string(edu.degree)}
-        </h3>
-        <span className="font-mono text-xs text-muted-foreground"> {React.string(edu.period)} </span>
+let entry = (index, edu: Translations.educationEntry) =>
+  <Reveal key={Int.toString(index)} delay={index * 80}>
+    <article
+      className="rounded-2xl border border-border bg-card p-6 shadow-soft transition-all duration-300 hover:border-primary/40 hover:shadow-medium sm:p-7">
+      <div className="flex items-start gap-4">
+        <UI.Logo
+          logo={edu.logo}
+          tile="h-12 w-12 rounded-xl"
+          fallback={<LucideReact.GraduationCap className="h-6 w-6" />}
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h3 className="font-display text-lg font-bold leading-tight text-foreground">
+              {React.string(edu.degree)}
+            </h3>
+            <span className="shrink-0 font-mono text-xs text-muted-foreground">
+              {React.string(edu.period)}
+            </span>
+          </div>
+          <p className="mt-1 text-sm font-medium text-primary"> {React.string(edu.institution)} </p>
+        </div>
       </div>
-      <p className="mt-1.5 text-sm font-medium text-primary"> {React.string(edu.institution)} </p>
+
       {switch edu.description->Js.Nullable.toOption {
       | Some(desc) if desc !== "" =>
-        <p className="mt-2 leading-relaxed text-muted-foreground"> {React.string(desc)} </p>
+        <p className="mt-4 leading-relaxed text-muted-foreground"> {React.string(desc)} </p>
       | _ => React.null
       }}
+
+      {switch edu.links {
+      | Some(links) if Array.length(links) > 0 =>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {links
+          ->Array.map(link =>
+            <a
+              key={link.url}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary">
+              <LucideReact.Github className="h-3.5 w-3.5" />
+              {React.string(link.label)}
+              <LucideReact.ArrowUpRight className="h-3 w-3 opacity-60" />
+            </a>
+          )
+          ->React.array}
+        </div>
+      | _ => React.null
+      }}
+
       {switch edu.additionalInfo->Js.Nullable.toOption {
       | Some(info) =>
-        <div className="mt-3 rounded-xl border border-border bg-secondary/40 p-4">
+        <div className="mt-4 rounded-xl border border-border bg-secondary/40 p-4">
           <h4
             className="mb-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
             {React.string(info.title)}
@@ -41,22 +72,19 @@ let entry = (index, isLast, edu: Translations.educationEntry) =>
         </div>
       | None => React.null
       }}
-    </div>
+    </article>
   </Reveal>
 
 @react.component
 let make = () => {
   let {translations: t} = LanguageContext.useLanguage()
-  let lastIndex = Array.length(t.education.entries) - 1
 
   <section id="education" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
     <Reveal>
       <SectionHeading index="03" title={t.education.title} />
     </Reveal>
-    <div>
-      {t.education.entries
-      ->Array.mapWithIndex((edu, i) => entry(i, i == lastIndex, edu))
-      ->React.array}
+    <div className="space-y-5">
+      {t.education.entries->Array.mapWithIndex((edu, i) => entry(i, edu))->React.array}
     </div>
   </section>
 }

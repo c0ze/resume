@@ -4,14 +4,18 @@
     {
       "degree": "情報学部修士",
       "institution": "慶應義塾大学",
-      "period": "2006 - 2008",
-      "description": "情報学部博士課程 2008-2011 (未卒業)。専門 : エンベデッドプロセッサー開発。",
+      "period": "2006 - 2011",
+      "logo": "keio.png",
+      "description": "天野研究室での大学院研究（コンピュータアーキテクチャ／組込みシステム／VLSI）。2008年に修士課程を修了し、2011年まで博士課程の研究を継続（博士は未取得）。組込みプロセッサ向けのコード圧縮技術「Echoインストラクション」に関する筆頭著者の査読付き論文を4本発表。Verilogで32ビットMIPS R3000コアに実装し、90nmプロセスで合成した後、業界へ移行。",
+      "links": [
+        { "label": "修士論文", "url": "https://github.com/c0ze/masters-thesis" }
+      ],
       "additionalInfo": {
         "title": "論文:",
         "items": [
-          "2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology(TSLDM7))",
+          "2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology, T-SLDM)",
           "2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)",
-          "2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg Germany, 2009)"
+          "2009: Design and Implementation of Echo Instructions for Embedded Processors (Embedded World Conference, Nuremberg, Germany)"
         ]
       }
     },
@@ -19,7 +23,11 @@
       "degree": "情報学部",
       "institution": "Istanbul Bilgi 大学",
       "period": "2000 - 2004",
-      "description": "",
+      "logo": "bilgi.png",
+      "description": "卒業論文：Linuxクラスタ（MPI）上での量子回路の並列シミュレーション。分散状態ベクトルシミュレータでQFT、Grover、Shorの各アルゴリズムを実装。",
+      "links": [
+        { "label": "卒業論文", "url": "https://github.com/c0ze/dissertation-thesis" }
+      ],
       "additionalInfo": null
     }
   ]

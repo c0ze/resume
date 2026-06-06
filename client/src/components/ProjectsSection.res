@@ -6,15 +6,29 @@ let techTags = technologies =>
     trimmed === "" ? None : Some(trimmed)
   })
 
-let card = (index, project: Translations.projectEntry) =>
+let card = (index, viewSource, project: Translations.projectEntry) =>
   <article
     key={Int.toString(index)}
     className="group flex h-full w-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-medium">
-    <span
-      className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-      ariaHidden=true>
-      <LucideReact.FolderGit2 className="h-5 w-5" />
-    </span>
+    <div className="mb-4 flex items-start justify-between gap-3">
+      <span
+        className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+        ariaHidden=true>
+        <LucideReact.FolderGit2 className="h-5 w-5" />
+      </span>
+      {switch project.repo->Js.Nullable.toOption {
+      | Some(url) =>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          ariaLabel={viewSource}
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
+          <LucideReact.Github className="h-4 w-4" />
+        </a>
+      | None => React.null
+      }}
+    </div>
     <h3 className="font-display text-base font-bold leading-snug text-foreground">
       {React.string(project.title)}
     </h3>
@@ -46,7 +60,9 @@ let make = () => {
       <Carousel
         ariaLabel={t.projects.title}
         itemClassName="flex w-[85%] sm:w-[22rem]"
-        items={t.projects.entries->Array.mapWithIndex((project, i) => card(i, project))}
+        items={t.projects.entries->Array.mapWithIndex((project, i) =>
+          card(i, t.projects.viewSource, project)
+        )}
       />
     </Reveal>
   </section>

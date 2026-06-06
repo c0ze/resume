@@ -18,39 +18,55 @@ let scrollRail: (Dom.element, float) => unit = %raw(`
   }
 `)
 
-// Wires drag-to-scroll + a scroll/resize listener; returns its teardown.
+// Wires mouse drag-to-scroll + a scroll/resize listener; returns its teardown.
+// Touch is left to native scroll-snap (taps + swipes already work there). For
+// the mouse we only treat a press as a drag once it moves past a threshold, so
+// a plain click always passes through to open the card's modal.
 let setupRail: (Dom.element, unit => unit) => (unit => unit) = %raw(`
   function (el, onScroll) {
-    var isDown = false, startX = 0, startScroll = 0, moved = false;
+    var isDown = false, startX = 0, startScroll = 0, dragging = false;
+    var DRAG_THRESHOLD = 10;
     function down(e) {
+      // Mouse only; let touch/pen use native scrolling. Primary button only.
+      if (e.pointerType !== "mouse" || e.button !== 0) return;
       isDown = true;
-      moved = false;
+      dragging = false;
       startX = e.pageX;
       startScroll = el.scrollLeft;
-      el.classList.add("is-dragging");
     }
     function move(e) {
       if (!isDown) return;
       var dx = e.pageX - startX;
-      if (Math.abs(dx) > 4) moved = true;
+      if (!dragging) {
+        if (Math.abs(dx) <= DRAG_THRESHOLD) return; // still a click, not a drag
+        dragging = true;
+        el.classList.add("is-dragging");
+      }
+      e.preventDefault();
       el.scrollLeft = startScroll - dx;
     }
     function up() {
       if (!isDown) return;
       isDown = false;
-      el.classList.remove("is-dragging");
+      if (dragging) {
+        el.classList.remove("is-dragging");
+        // Keep the flag through the click that immediately follows a drag so
+        // releasing a drag doesn't open a card; clear it right after.
+        setTimeout(function () { dragging = false; }, 0);
+      }
     }
-    // Swallow the click that ends a drag so cards aren't accidentally opened.
+    // Capture-phase: only swallow the click that ends a REAL drag. A plain
+    // click never sets dragging, so it reaches the card button.
     function onClick(e) {
-      if (moved) {
+      if (dragging) {
         e.preventDefault();
         e.stopPropagation();
-        moved = false;
       }
     }
     el.addEventListener("pointerdown", down);
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up);
     el.addEventListener("click", onClick, true);
     el.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -58,6 +74,7 @@ let setupRail: (Dom.element, unit => unit) => (unit => unit) = %raw(`
       el.removeEventListener("pointerdown", down);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
       el.removeEventListener("click", onClick, true);
       el.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);

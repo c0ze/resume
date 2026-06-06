@@ -1,50 +1,66 @@
 {
   "title": "Projeler",
+  "viewSource": "Kaynağı GitHub'da gör",
   "entries": [
     {
-      "title": "Warex (Backend Geliştirme)",
-      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
-      "description": "Gaussy'de Warex projesi için backend geliştirme."
+      "title": "MCP + OAuth 2.1 Yapay Zeka Platformu",
+      "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
+      "description": "Veltra'da, seyahat-aktivite kataloğunu yapay zeka asistanlarına sunan platformun baş yazarı — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu (Clean Architecture) ve Claude ile ChatGPT uygulamalarıyla uyumlu MCP sunucuları.",
+      "repo": null
     },
     {
-      "title": "LINE Fon Bilgi Platformu",
-      "technologies": "Ruby on Rails, LINE API, Reuters API",
-      "description": "Robotfund'da, LINE ile entegre bir fon bilgi platformunun fullstack geliştirmesi, API geliştirme ve Reuters'tan veri çekme/işleme dahil."
+      "title": "WareX — Lojistik SaaS API",
+      "technologies": "Go, Echo, GORM, MySQL, JWT/RBAC, Minio/S3, GKE, CircleCI",
+      "description": "Gaussy'de, üretimdeki bir lojistik 'depo borsası' SaaS'ı olan WareX'in Go API'sinde kıdemli arka uç mühendisi ve ilk 3 yazardan biri — depo, sözleşme, çalışma alanı, belge ve fiyatlandırma dikeyleri ile ekibin entegrasyon test altyapısı sahiplenildi.",
+      "repo": null
     },
     {
-      "title": "Fon Bilgi Platformu 'Better World'",
-      "technologies": "Ruby on Rails, Reuters API",
-      "description": "Robotfund'da, Reuters API entegrasyonu ile bir fon bilgi platformunun fullstack geliştirmesi."
+      "title": "golem — LINE-bot Fon Analitiği",
+      "technologies": "Ruby on Rails 5, React, JSON:API, LINE Messaging API, gnuplot",
+      "description": "Robotfund'da, fon ve tahvil analizlerini (net varlık değeri grafikleri, faktör analizi) kullanıcılara LINE Flex Mesajları ve üretilen grafikler olarak sunan, çok kiracılı Rails 5 + React platformunun baş yazarı; LINE webhook HMAC doğrulaması uygulandı.",
+      "repo": null
     },
     {
-      "title": "Özel Ses Önbellekleme Servisi",
-      "technologies": "Golang, Docker, AWS, Metin-Konuşma Servisi Entegrasyonu",
-      "description": "Robotfund'da, metinden sese dönüştürülmüş sesi sıkıştırmak, önbelleğe almak ve sunmak için Go tabanlı bir servis geliştirildi, API kullanımı azaltıldı."
+      "title": "bumblebee — Yarış Koşulsuz TTS Önbellekleme Servisi",
+      "technologies": "Go, CSP concurrency, LAME (PCM→MP3), Docker, AWS",
+      "description": "Robotfund'da, metin-konuşma sunucu havuzunun önünde duran bir Go servisi tek başına geliştirildi — tasarımı gereği yarış koşulsuz (kanal-sahipli durum), PCM'den MP3'e dönüştürme, içerik-özeti önbellekleme ve sunucu başına yük dağıtımı ile, `go test -race` ile doğrulandı.",
+      "repo": null
     },
     {
-      "title": "İçerik Paylaşım ve Yayınlama Platformu (Kidint)",
-      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
-      "description": "Allm Inc.'de, AWS entegrasyonu ve sosyal medya girişleri dahil olmak üzere bir içerik paylaşım platformu için API ve backend geliştirme."
+      "title": "Reuters Piyasa Verisi Hattı",
+      "technologies": "Go, AWS Lambda, DynamoDB, S3, Reuters DataScope Select",
+      "description": "Robotfund'da, günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine alan bir Go AWS Lambda tek başına geliştirildi; çıkarılan MIT lisanslı bir Reuters DSS Go istemci kütüphanesi üzerine inşa edildi.",
+      "repo": "https://github.com/c0ze/dss_reuters_go"
     },
     {
-      "title": "Perakende BI Müşteri Takip Platformu (Followup)",
-      "technologies": "Go, Raspberry Pi, BLE Beacons",
-      "description": "Allm Inc.'de, perakende iş zekası için WiFi tabanlı bir müşteri takip platformu geliştirildi, Raspberry Pi üzerinde IoT servis geliştirme ve BLE beacon entegrasyonu dahil."
+      "title": "FupIntuition — IoT/Uç İnsan Analitiği",
+      "technologies": "Go (amd64 + ARM), BLE beacons, WiFi sniffing, HashiCorp Vault, GPG-signed OTA, S3 apt repo",
+      "description": "Allm'de, mağaza içi uç cihazlar için uçtan uca bir Go arka plan servisi tek başına geliştirildi — BLE ile personel sayımı, WiFi ile tekrar eden müşteri sayımı ve yüz tanıma — bir web arayüzü ve tam imzalı kablosuz (OTA) güncelleme hattı ile.",
+      "repo": null
     },
     {
-      "title": "Triyaj Uygulaması 'JoinTriage' (API)",
-      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
-      "description": "Allm Inc.'de, CI/CD kurulumu dahil bir triyaj uygulaması için API ve frontend geliştirme."
+      "title": "FAST-ED Klinik Triyaj API'si",
+      "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
+      "description": "Allm'de, hastaneler için sürümlenmiş bir inme/kalp triyaj API'sinin (Grape + GraphQL + Pundit) baş yazarı; HMAC istek imzalama ve sağlamlaştırılmış kimlik doğrulama ile birlikte Vue 2 + Apollo yönetici SPA'sı geliştirildi.",
+      "repo": null
     },
     {
-      "title": "MMORPG API Backend 'Gentosenki Griffin'",
-      "technologies": "Padrino (Ruby)",
-      "description": "Aiming Inc.'de mobil MMORPG 'Gentosenki Griffin' (幻塔戦記グリフォン) için API backend geliştirildi."
+      "title": "Griffon — Mobil MMORPG Arka Ucu",
+      "technologies": "Ruby, Padrino, ActiveRecord, MySQL, Resque, RSpec",
+      "description": "Aiming'de, yayınlanmış mobil MMORPG 'Griffon'un (幻塔戦記グリフォン, Japonya + Kore) canlı Ruby/Padrino arka ucunda mühendis — başarımlar, arkadaşlık, ödül dağıtımı ve lonca-savaşı eşleştirme sistemleri veritabanı düzeyinde idempotentlik ile bağımsız olarak sahiplenildi.",
+      "repo": null
     },
     {
-      "title": "Portföy Web Sitesi (Bu Proje)",
-      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
-      "description": "Dinamik PDF özgeçmiş oluşturma özelliğine sahip, çok dilli, SSR özellikli bir portföy web sitesi."
+      "title": "IronFunctions — Açık Kaynak Sunucusuz Platform",
+      "technologies": "Go, Docker, Vue, Express, JWT, CircleCI",
+      "description": "iron.io'da, erken bir Docker tabanlı FaaS platformu olan IronFunctions'a (sonradan Fn Project) açık kaynak katkıda bulunuldu — web arayüzüne JWT kimlik doğrulaması ve CI/CD sürüm hattı eklendi, yüke stdin veren çalıştırıcı gibi motor özellikleri katıldı.",
+      "repo": "https://github.com/iron-io/functions"
+    },
+    {
+      "title": "Bu Özgeçmiş Sitesi",
+      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "description": "Tek bir içerik kaynağından HTML'e ön-render edilen ve derleme sırasında dile özgü PDF ve DOCX özgeçmişleri üreten, statik ve çok dilli (EN/JA/TR) bir özgeçmiş sitesi; GitHub Pages'e dağıtıldı.",
+      "repo": "https://github.com/c0ze/resume"
     }
   ]
 }

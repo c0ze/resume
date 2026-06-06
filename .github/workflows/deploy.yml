@@ -27,7 +27,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Or your preferred/project's Node.js version
+          node-version: '24' # Matches the arda.tr portfolio build
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
