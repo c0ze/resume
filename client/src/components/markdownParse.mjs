@@ -19,7 +19,12 @@ function tokenizeInline(input) {
   const tokens = [];
   let rest = s;
   let guard = 0;
-  while (rest.length > 0 && guard++ < 5000) {
+  while (rest.length > 0) {
+    // Safety bound: preserve the remainder as text rather than dropping it.
+    if (guard++ >= 5000) {
+      tokens.push({ t: "text", v: rest });
+      break;
+    }
     const m = INLINE.exec(rest);
     if (!m) {
       tokens.push({ t: "text", v: rest });

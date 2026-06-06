@@ -88,12 +88,16 @@ let postChatStream: (
         var full = "";
         function pump() {
           return reader.read().then(function (r) {
-            if (r.done) { finish(full); return; }
-            buffer += decoder.decode(r.value, { stream: true });
-            var events = buffer.split("\n\n");
-            buffer = events.pop(); // keep the trailing partial event
+            if (r.done) {
+              buffer += decoder.decode(); // flush any trailing multi-byte char
+            } else {
+              buffer += decoder.decode(r.value, { stream: true });
+            }
+            // SSE events are blank-line separated; tolerate LF or CRLF framing.
+            var events = buffer.split(/\r?\n\r?\n/);
+            buffer = r.done ? "" : (events.pop() || ""); // keep the trailing partial event
             for (var k = 0; k < events.length; k++) {
-              var dataLines = events[k].split("\n").filter(function (l) {
+              var dataLines = events[k].split(/\r?\n/).filter(function (l) {
                 return l.indexOf("data:") === 0;
               });
               if (dataLines.length === 0) continue;
@@ -114,6 +118,8 @@ let postChatStream: (
                 return;
               }
             }
+            // Stream ended without an explicit done event — settle with what we have.
+            if (r.done) { finish(full); return; }
             return pump();
           });
         }
