@@ -11,7 +11,7 @@
     "build": "node scripts/build-static.mjs",
     "preview": "vite preview --config config/vite.config.ts",
     "check": "rescript build",
-    "test:static": "node --test tests/static-output.test.mjs"
+    "test:static": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.268.0",
