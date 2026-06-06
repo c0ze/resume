@@ -132,3 +132,13 @@ module Check = {
   @module("lucide-react") @react.component
   external make: (~className: string=?) => React.element = "Check"
 }
+
+module MessageCircle = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "MessageCircle"
+}
+
+module Send = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "Send"
+}
