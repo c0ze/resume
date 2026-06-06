@@ -44,6 +44,85 @@ let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %
   }
 `)
 
+// Streaming variant: POSTs to the SSE /api/chat/stream endpoint and calls
+// onChunk(fullTextSoFar) as tokens arrive, onDone(fullText) at the end, or
+// onError() if the stream fails before any token (caller falls back to postChat).
+// Aborts after 45s. SSE shape: `data: {"type":"thinking"|"chunk"|"done","text"?}`.
+let postChatStream: (
+  string,
+  array<chatMsg>,
+  string => unit,
+  string => unit,
+  unit => unit,
+) => unit = %raw(`
+  function (message, history, onChunk, onDone, onError) {
+    var hist = (history || []).map(function (m) {
+      return { role: m.role, content: m.content };
+    });
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 45000);
+    var settled = false;
+    function fail() {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      onError();
+    }
+    function finish(full) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      onDone(full);
+    }
+    fetch("https://ai-arda-tr-api-599610058688.asia-northeast1.run.app/api/chat/stream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+      body: JSON.stringify({ message: message, history: hist }),
+      signal: controller.signal,
+    })
+      .then(function (res) {
+        if (!res.ok || !res.body) { fail(); return; }
+        var reader = res.body.getReader();
+        var decoder = new TextDecoder();
+        var buffer = "";
+        var full = "";
+        function pump() {
+          return reader.read().then(function (r) {
+            if (r.done) { finish(full); return; }
+            buffer += decoder.decode(r.value, { stream: true });
+            var events = buffer.split("\n\n");
+            buffer = events.pop(); // keep the trailing partial event
+            for (var k = 0; k < events.length; k++) {
+              var dataLines = events[k].split("\n").filter(function (l) {
+                return l.indexOf("data:") === 0;
+              });
+              if (dataLines.length === 0) continue;
+              var payload = dataLines
+                .map(function (l) { return l.slice(5).replace(/^ /, ""); })
+                .join("\n");
+              var obj;
+              try { obj = JSON.parse(payload); } catch (e) { continue; }
+              if (obj.type === "chunk" && typeof obj.text === "string") {
+                full += obj.text;
+                onChunk(full);
+              } else if (obj.type === "done") {
+                if (typeof obj.text === "string" && obj.text.length > 0) full = obj.text;
+                finish(full);
+                return;
+              } else if (obj.type === "error") {
+                fail();
+                return;
+              }
+            }
+            return pump();
+          });
+        }
+        return pump();
+      })
+      .catch(function () { fail(); });
+  }
+`)
+
 let scrollToBottom: Dom.element => unit = %raw(`function (el) { if (el) el.scrollTop = el.scrollHeight; }`)
 let focusEl: Dom.element => unit = %raw(`function (el) { if (el) el.focus(); }`)
 
@@ -73,21 +152,23 @@ let listenForOpen: (unit => unit) => (unit => unit) = %raw(`
   }
 `)
 
-let bubble = (msg: chatMsg) =>
+let bubble = (msg: chatMsg) => {
+  let isModel = msg.role != "user" && !msg.isError
   <div
     key={Int.toString(msg.id)}
     className={"flex " ++ (msg.role == "user" ? "justify-end" : "justify-start")}>
     <div
-      className={"max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2 text-sm leading-relaxed " ++ (
+      className={"max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed " ++ (
         msg.role == "user"
-          ? "rounded-br-md bg-primary text-primary-foreground"
+          ? "whitespace-pre-wrap rounded-br-md bg-primary text-primary-foreground"
           : msg.isError
-          ? "rounded-bl-md border border-destructive/40 bg-destructive/10 text-foreground"
+          ? "whitespace-pre-wrap rounded-bl-md border border-destructive/40 bg-destructive/10 text-foreground"
           : "rounded-bl-md bg-secondary text-foreground"
       )}>
-      {React.string(msg.content)}
+      {isModel ? <Markdown text={msg.content} /> : React.string(msg.content)}
     </div>
   </div>
+}
 
 @react.component
 let make = () => {
@@ -97,6 +178,7 @@ let make = () => {
   let (input, setInput) = React.useState(() => "")
   let (messages, setMessages) = React.useState(() => [])
   let (busy, setBusy) = React.useState(() => false)
+  let (streaming, setStreaming) = React.useState(() => false)
   let idRef = React.useRef(0)
   let listRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
@@ -108,13 +190,19 @@ let make = () => {
   }
 
   // Keep the transcript pinned to the latest message / thinking indicator.
-  React.useEffect2(() => {
+  // The key folds in the last message's length so streaming updates (same
+  // message, growing content) keep the view scrolled to the bottom.
+  let lastLen = switch messages->Array.get(Array.length(messages) - 1) {
+  | Some(m) => String.length(m.content)
+  | None => 0
+  }
+  React.useEffect1(() => {
     switch listRef.current->Nullable.toOption {
     | Some(el) => scrollToBottom(el)
     | None => ()
     }
     None
-  }, (Array.length(messages), busy))
+  }, [Int.toString(Array.length(messages)) ++ ":" ++ Int.toString(lastLen) ++ ":" ++ (busy ? "1" : "0")])
 
   // On open: focus the input and wire Escape-to-close.
   React.useEffect1(() => {
@@ -137,25 +225,63 @@ let make = () => {
     if trimmed !== "" && !busy {
       // Don't replay client-side error bubbles back to the model as history.
       let history = messages->Array.filter(m => !m.isError)
+      let modelId = nextId()
+      let started = ref(false)
+      // Add the model bubble on the first token, then update it in place as more
+      // tokens stream in.
+      let addOrUpdate = full =>
+        setMessages(prev =>
+          if started.contents {
+            prev->Array.map(m => m.id == modelId ? {...m, content: full} : m)
+          } else {
+            started := true
+            Array.concat(prev, [{id: modelId, role: "model", content: full, isError: false}])
+          }
+        )
       setMessages(prev =>
         Array.concat(prev, [{id: nextId(), role: "user", content: trimmed, isError: false}])
       )
       setInput(_ => "")
       setBusy(_ => true)
-      postChat(
+      setStreaming(_ => false)
+      postChatStream(
         trimmed,
         history,
-        reply => {
-          setMessages(prev =>
-            Array.concat(prev, [{id: nextId(), role: "model", content: reply, isError: false}])
-          )
+        full => {
+          if !started.contents {
+            setStreaming(_ => true)
+          }
+          addOrUpdate(full)
+        },
+        full => {
+          addOrUpdate(full)
+          setStreaming(_ => false)
           setBusy(_ => false)
         },
         () => {
-          setMessages(prev =>
-            Array.concat(prev, [{id: nextId(), role: "model", content: c.error, isError: true}])
-          )
-          setBusy(_ => false)
+          if started.contents {
+            // A partial answer is already on screen — keep it, just stop busy.
+            setStreaming(_ => false)
+            setBusy(_ => false)
+          } else {
+            // Stream failed before any token — fall back to the non-streaming call.
+            postChat(
+              trimmed,
+              history,
+              reply => {
+                setMessages(prev =>
+                  Array.concat(prev, [{id: modelId, role: "model", content: reply, isError: false}])
+                )
+                setBusy(_ => false)
+              },
+              () => {
+                setMessages(prev =>
+                  Array.concat(prev, [{id: modelId, role: "model", content: c.error, isError: true}])
+                )
+                setBusy(_ => false)
+              },
+            )
+          }
         },
       )
     }
@@ -227,7 +353,7 @@ let make = () => {
                 </div>
               : React.null}
             {messages->Array.map(bubble)->React.array}
-            {busy
+            {busy && !streaming
               ? <div className="flex justify-start" ariaLabel={c.thinking}>
                   <div className="flex gap-1 rounded-2xl rounded-bl-md bg-secondary px-3.5 py-3">
                     <span
