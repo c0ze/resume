@@ -1,0 +1,15 @@
+{
+  "launcher": "Ask about Arda",
+  "title": "Ask about Arda",
+  "greeting": "Hi! I'm Arda's AI assistant — ask me anything about his experience, skills, or projects.",
+  "placeholder": "Ask a question…",
+  "send": "Send",
+  "close": "Close chat",
+  "thinking": "Thinking…",
+  "error": "Sorry, I couldn't reach the assistant right now. Please try again in a moment.",
+  "suggestions": [
+    "Does Arda have experience with Go?",
+    "How long has he used Python?",
+    "What did he build at Veltra?"
+  ]
+}

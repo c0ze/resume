@@ -15,5 +15,6 @@ let make = () => {
       </div>
     </main>
     <Footer />
+    <ChatWidget />
   </div>
 }

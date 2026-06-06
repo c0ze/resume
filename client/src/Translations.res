@@ -120,6 +120,18 @@ type navigationContent = {
   contact: string,
 }
 
+type chatContent = {
+  launcher: string,
+  title: string,
+  greeting: string,
+  placeholder: string,
+  send: string,
+  close: string,
+  thinking: string,
+  error: string,
+  suggestions: array<string>,
+}
+
 type pdfMetaContent = {
   title: string,
   author: string,
@@ -138,6 +150,7 @@ type translations = {
   contact: contactContent,
   footer: footerContent,
   navigation: navigationContent,
+  chat: chatContent,
   @as("pdf_meta") pdfMeta: pdfMetaContent,
 }
 
@@ -165,6 +178,7 @@ let getTranslations = (language: language): translations => {
     contact: loadSection(lang, "contact"),
     footer: loadSection(lang, "footer"),
     navigation: loadSection(lang, "navigation"),
+    chat: loadSection(lang, "chat"),
     pdfMeta: loadSection(lang, "pdf_meta"),
   }
 }
