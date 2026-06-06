@@ -1,7 +1,6 @@
 let baseUrl: string = %raw(`import.meta.env.BASE_URL`)
 
 let openUrl: string => unit = %raw(`function(url) { window.open(url, '_blank') }`)
-let navigateTo: string => unit = %raw(`function(url) { window.location.href = url }`)
 
 let handleDownload = (language, ext) => {
   let lang = Translations.languageToString(language)
@@ -57,10 +56,10 @@ let make = () => {
       <div
         className="animate-fade-up ad-4 mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
         <button
-          onClick={_ => navigateTo("mailto:" ++ t.header.contactViaEmail)}
+          onClick={_ => ChatWidget.openChat()}
           className="group inline-flex items-center gap-2 transition-colors hover:text-primary">
-          <LucideReact.AtSign className="h-4 w-4 text-primary" />
-          {React.string(t.header.contactViaEmail)}
+          <LucideReact.MessageCircle className="h-4 w-4 text-primary" />
+          {React.string(t.chat.launcher)}
         </button>
         <a
           href={normalizeUrl(t.header.website)}
