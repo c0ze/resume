@@ -89,6 +89,7 @@ type projectEntry = {
 
 type projectsContent = {
   title: string,
+  viewSource: string,
   entries: array<projectEntry>,
 }
 

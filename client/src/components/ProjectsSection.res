@@ -6,7 +6,7 @@ let techTags = technologies =>
     trimmed === "" ? None : Some(trimmed)
   })
 
-let card = (index, project: Translations.projectEntry) =>
+let card = (index, viewSource, project: Translations.projectEntry) =>
   <article
     key={Int.toString(index)}
     className="group flex h-full w-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-medium">
@@ -22,7 +22,7 @@ let card = (index, project: Translations.projectEntry) =>
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          ariaLabel="View source on GitHub"
+          ariaLabel={viewSource}
           className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
           <LucideReact.Github className="h-4 w-4" />
         </a>
@@ -60,7 +60,9 @@ let make = () => {
       <Carousel
         ariaLabel={t.projects.title}
         itemClassName="flex w-[85%] sm:w-[22rem]"
-        items={t.projects.entries->Array.mapWithIndex((project, i) => card(i, project))}
+        items={t.projects.entries->Array.mapWithIndex((project, i) =>
+          card(i, t.projects.viewSource, project)
+        )}
       />
     </Reveal>
   </section>
