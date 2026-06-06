@@ -6,23 +6,24 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 
 ## Features
 
-- Static site output under `dist/client`
-- Server-rendered initial HTML for the homepage
-- Multi-language content sourced from JSON in `content/en`, `content/ja`, and `content/tr`
+- Static site output under `dist/client`, with the homepage prerendered to HTML
+- Multi-language content (English, Japanese, Turkish) sourced from JSON in `content/{en,ja,tr}`
 - Generated PDF/DOCX resumes in `public/resume-{en,ja,tr}.{pdf,docx}`
-- Generated `sitemap.xml` included in the production build
-- Theme generation driven by `config/theme.json`
+- A web-only `abstract` per experience (card preview + detail modal) that the PDF/DOCX deliberately ignore
+- "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
+- Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
+- SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
+- Multiple selectable themes generated from `config/theme.json`
 
 ## Tech Stack
 
+- ReScript 11 (compiled to JS, rendered by React 18)
 - React 18
-- TypeScript
-- Vite 8
-- Tailwind CSS
-- Wouter
-- TanStack Query
-- PDFKit
-- GitHub Pages for deployment
+- Vite 8 (client build + SSR prerender)
+- Tailwind CSS (with `@tailwindcss/typography`)
+- PDFKit (PDF resumes) and `docx` (DOCX resumes)
+- Lucide icons
+- GitHub Actions + GitHub Pages for deployment
 
 ## Repository Layout
 
@@ -63,7 +64,7 @@ Do not commit exported resume artifacts such as ad-hoc `.txt` or `.docx` exports
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24 (matches CI)
 - npm
 
 ### Install
@@ -88,13 +89,15 @@ npm run build
 
 The build pipeline:
 
-1. builds the client bundle
-2. builds the SSR entry
-3. prerenders the homepage into static HTML
-4. regenerates the PDF and DOCX resumes
-5. copies public assets into `dist/client`
-6. writes `artifact-status.json`
-7. writes `sitemap.xml`
+1. generates theme CSS from `config/theme.json`
+2. compiles ReScript sources to `.res.mjs`
+3. builds the client bundle
+4. builds the SSR entry
+5. prerenders the homepage into static HTML
+6. regenerates the PDF and DOCX resumes
+7. writes `artifact-status.json`
+8. copies public assets into `dist/client`
+9. writes `sitemap.xml`
 
 ### Preview
 
@@ -109,7 +112,7 @@ npm run check
 npm run test:static
 ```
 
-`npm run test:static` verifies that the generated homepage contains real content, that the sitemap includes the homepage plus all generated PDF/DOCX resumes, and that `artifact-status.json` reports all generated artifacts.
+`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX resumes, `artifact-status.json` reports all generated artifacts, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output.
 
 ## Content Workflow
 

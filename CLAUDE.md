@@ -12,8 +12,8 @@ This file provides repository-specific guidance to Claude Code when working here
 - React 18
 - ReScript 11
 - Tailwind CSS
-- PDFKit
-- GitHub Actions + GitHub Pages
+- PDFKit + docx (PDF/DOCX resumes)
+- GitHub Actions + GitHub Pages (CI runs Node 24)
 
 ## Source of Truth
 
@@ -24,7 +24,8 @@ This file provides repository-specific guidance to Claude Code when working here
 - PDF generator: `scripts/generate-resume.mjs`
 - DOCX generator: `scripts/generate-docx.mjs`
 - Static build pipeline: `scripts/build-static.mjs`
-- Static smoke tests: `tests/static-output.test.mjs`
+- Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
+- Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)
 
 ## Important Directories
 
@@ -44,10 +45,17 @@ npm run dev           # ReScript watch + Vite dev server (requires concurrently)
 npm run build         # Full static build (ReScript → Vite → SSR → PDF/DOCX)
 npm run preview       # Preview built site
 npm run check         # ReScript type check (rescript build)
-npm run test:static   # Smoke tests for build output
+npm run test:static   # Smoke tests: static output + Markdown renderer (tests/*.test.mjs)
 npm run res:build     # ReScript compile only
 npm run res:clean     # Clean ReScript build artifacts
 ```
+
+## Key Features
+
+- **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
+- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs` deliberately ignore it; keep it out of PDF/DOCX rendering.
+- **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the PDF/DOCX (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
+- **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
 
 ## Build Expectations
 

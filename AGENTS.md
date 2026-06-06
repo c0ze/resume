@@ -20,8 +20,9 @@ Read these files first when relevant:
 - Resume content lives in `content/en`, `content/ja`, and `content/tr`
 - Theme configuration lives in `config/theme.json`
 - Tooling config lives in `config/`
-- PDF generation lives in `scripts/generate-resume.mjs`
-- Static output validation lives in `tests/static-output.test.mjs`
+- PDF/DOCX generation lives in `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs`
+- The "Ask about Arda" chat widget (`client/src/components/ChatWidget.res`) calls the ai.arda.tr bot; chat Markdown is rendered by `Markdown.res` + `markdownParse.mjs`
+- Static + unit validation lives in `tests/*.test.mjs` (run via `npm run test:static`)
 
 ## Validation Checklist
 
@@ -50,6 +51,8 @@ Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
 
 - Keep language files structurally aligned.
 - If you add a new field in one language, update the others in the same pass unless there is a good reason not to.
+- Each experience has a web-only `abstract` (card preview + modal) that the PDF/DOCX generators ignore — do not render it into the downloads.
+- The email (`header.contactViaEmail`) is intentionally kept out of the web page and only appears in the PDF/DOCX — do not surface it in the UI.
 - Rebuild after content changes so the PDF/DOCX artifacts and sitemap stay in sync.
 
 ## Build Notes
