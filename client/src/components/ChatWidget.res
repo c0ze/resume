@@ -11,25 +11,36 @@ type chatMsg = {
 }
 
 // POST the message + prior history; calls onReply(text) or onError().
+// Aborts after 30s so a hung request can't pin the widget in its busy state.
 let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %raw(`
   function (message, history, onReply, onError) {
     var hist = (history || []).map(function (m) {
       return { role: m.role, content: m.content };
     });
+    var controller = new AbortController();
+    var timer = setTimeout(function () { controller.abort(); }, 30000);
+    var done = false;
+    function finish(fn, arg) {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      fn(arg);
+    }
     fetch("https://ai-arda-tr-api-599610058688.asia-northeast1.run.app/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: message, history: hist }),
+      signal: controller.signal,
     })
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (j && typeof j.reply === "string" && j.reply.length > 0) {
-          onReply(j.reply);
+          finish(onReply, j.reply);
         } else {
-          onError();
+          finish(onError);
         }
       })
-      .catch(function () { onError(); });
+      .catch(function () { finish(onError); });
   }
 `)
 
@@ -103,7 +114,8 @@ let make = () => {
   let submit = text => {
     let trimmed = String.trim(text)
     if trimmed !== "" && !busy {
-      let history = messages
+      // Don't replay client-side error bubbles back to the model as history.
+      let history = messages->Array.filter(m => !m.isError)
       setMessages(prev =>
         Array.concat(prev, [{id: nextId(), role: "user", content: trimmed, isError: false}])
       )
