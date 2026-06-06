@@ -84,6 +84,7 @@ type projectEntry = {
   title: string,
   technologies: string,
   description: string,
+  repo: Js.Nullable.t<string>,
 }
 
 type projectsContent = {

@@ -2,49 +2,64 @@
   "title": "プロジェクト",
   "entries": [
     {
-      "title": "Warex（バックエンド開発）",
-      "technologies": "Golang, Gorm, Echo, MySQL, Hubspot, Mailgun, Bugsnag, Goose Migrations, Testify Suite",
-      "description": "株式会社Gaussyにて、Warexプロジェクトのバックエンド開発。"
+      "title": "MCP + OAuth 2.1 AIプラットフォーム",
+      "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
+      "description": "株式会社Veltraにて、旅行アクティビティカタログをAIアシスタントに公開するプラットフォームの主担当者。標準準拠のOAuth 2.1認可サーバー（クリーンアーキテクチャ）と、ClaudeおよびChatGPTのアプリに両対応するMCPサーバーを構築。",
+      "repo": null
     },
     {
-      "title": "LINEファンド情報プラットフォーム",
-      "technologies": "Ruby on Rails, LINE API, Reuters API",
-      "description": "株式会社Robotfundにて、LINEと連携したファンド情報プラットフォームのフルスタック開発。API開発およびReutersからのデータ取得・処理を含む。"
+      "title": "WareX — 物流SaaS API",
+      "technologies": "Go, Echo, GORM, MySQL, JWT/RBAC, Minio/S3, GKE, CircleCI",
+      "description": "株式会社Gaussyにて、物流「倉庫取引」SaaS本番システムWareXのGo製APIのシニアバックエンドエンジニア兼著者上位3名の一人。倉庫・契約・ワークスペース・ドキュメント・価格の各機能領域と、チームの統合テスト基盤を担当。",
+      "repo": null
     },
     {
-      "title": "ファンド情報プラットフォーム 'Better World'",
-      "technologies": "Ruby on Rails, Reuters API",
-      "description": "株式会社Robotfundにて、Reuters API連携によるファンド情報プラットフォームのフルスタック開発。"
+      "title": "golem — LINEボット・ファンド分析",
+      "technologies": "Ruby on Rails 5, React, JSON:API, LINE Messaging API, gnuplot",
+      "description": "株式会社Robotfundにて、ファンド・債券の分析（基準価額グラフ、要因分析）をLINE Flexメッセージや生成チャートとして提供する、マルチテナントのRails 5 + Reactプラットフォームの主担当者。LINE WebhookのHMAC検証を実装。",
+      "repo": null
     },
     {
-      "title": "カスタムオーディオキャッシングサービス",
-      "technologies": "Golang, Docker, AWS, テキスト音声変換サービス連携",
-      "description": "株式会社Robotfundにて、テキスト音声変換で生成された音声を圧縮・キャッシュ・配信するGoベースのサービスを開発し、API使用量を削減。"
+      "title": "bumblebee — データ競合のないTTSキャッシュサービス",
+      "technologies": "Go, CSP concurrency, LAME (PCM→MP3), Docker, AWS",
+      "description": "株式会社Robotfundにて、音声合成サーバー群の前段に立つGoサービスを単独で構築。設計上データ競合がなく（チャネル所有の状態管理）、PCMからMP3への変換、コンテンツダイジェストキャッシュ、ホスト単位の負荷分散を備え、`go test -race`で検証。",
+      "repo": null
     },
     {
-      "title": "コンテンツ共有・配信プラットフォーム（Kidint）",
-      "technologies": "Ruby On Rails, AWS (S3, SNS), Angular, Facebook API, Google API",
-      "description": "株式会社Allmにて、AWS連携やソーシャルメディアログインを含むコンテンツ共有プラットフォームのAPI・バックエンド開発。"
+      "title": "Reuters マーケットデータ・パイプライン",
+      "technologies": "Go, AWS Lambda, DynamoDB, S3, Reuters DataScope Select",
+      "description": "株式会社Robotfundにて、Reuters DataScope Selectの日次市場データを冪等なDynamoDB/S3ステートマシンに取り込むGo製AWS Lambdaを単独で開発。MITライセンスのReuters DSS用Goクライアントライブラリを切り出して構築。",
+      "repo": "https://github.com/c0ze/dss_reuters_go"
     },
     {
-      "title": "リテールBI顧客追跡プラットフォーム（Followup）",
-      "technologies": "Go, Raspberry Pi, BLE Beacons",
-      "description": "株式会社Allmにて、リテールビジネスインテリジェンス向けのWiFiベース顧客追跡プラットフォームを開発。Raspberry Pi上のIoTサービス開発やBLEビーコン連携を含む。"
+      "title": "FupIntuition — IoT/エッジ人流分析",
+      "technologies": "Go (amd64 + ARM), BLE beacons, WiFi sniffing, HashiCorp Vault, GPG-signed OTA, S3 apt repo",
+      "description": "株式会社Allmにて、店舗内エッジデバイス向けのエンドツーエンドなGoデーモンを単独で開発。BLEによるスタッフ計数、WiFiによるリピーター計数、顔認識を、Web UIと署名付きの完全なOTA更新パイプラインとともに実装。",
+      "repo": null
     },
     {
-      "title": "トリアージアプリ 'JoinTriage'（API）",
-      "technologies": "Grape (Ruby), Angular 1.x, Bootstrap, GitlabCI, Docker",
-      "description": "株式会社Allmにて、CI/CDセットアップを含むトリアージアプリのAPI・フロントエンド開発。"
+      "title": "FAST-ED 臨床トリアージAPI",
+      "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
+      "description": "株式会社Allmにて、病院向けのバージョン管理された脳卒中/心疾患トリアージAPI（Grape + GraphQL + Pundit）の主担当者。HMACリクエスト署名と堅牢な認証、ならびにVue 2 + Apollo製の管理SPAを構築。",
+      "repo": null
     },
     {
-      "title": "MMORPG APIバックエンド '幻塔戦記グリフォン'",
-      "technologies": "Padrino (Ruby)",
-      "description": "株式会社Aimingにて、モバイルMMORPG '幻塔戦記グリフォン' のAPIバックエンド開発。"
+      "title": "Griffon — モバイルMMORPGバックエンド",
+      "technologies": "Ruby, Padrino, ActiveRecord, MySQL, Resque, RSpec",
+      "description": "株式会社Aimingにて、配信中のモバイルMMORPG「幻塔戦記グリフォン」（日本＋韓国）のRuby/Padrino製バックエンドのエンジニア。実績・フレンド・報酬付与・ギルドバトルのマッチメイキングを、DBレベルの冪等性とともに独立して担当。",
+      "repo": null
     },
     {
-      "title": "ポートフォリオウェブサイト（このプロジェクト）",
-      "technologies": "React, TypeScript, Vite, Tailwind CSS, Node.js, PDFKit",
-      "description": "動的なPDF履歴書生成機能を備えた、多言語対応のSSR対応ポートフォリオウェブサイト。"
+      "title": "IronFunctions — オープンソースのサーバーレス基盤",
+      "technologies": "Go, Docker, Vue, Express, JWT, CircleCI",
+      "description": "iron.ioにて、初期のDockerベースのFaaS基盤IronFunctions（後のFn Project）にオープンソースで貢献。Web UIにJWT認証とCI/CDリリースパイプラインを追加し、ペイロードをstdinに渡すランナーなどのエンジン機能を実装。",
+      "repo": "https://github.com/iron-io/functions"
+    },
+    {
+      "title": "この履歴書サイト",
+      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "description": "単一のコンテンツソースから、HTMLへのプリレンダリングと、言語別のPDF・DOCX履歴書をビルド時に生成する、静的で多言語対応（EN/JA/TR）の履歴書サイト。GitHub Pagesにデプロイ。",
+      "repo": "https://github.com/c0ze/resume"
     }
   ]
 }
