@@ -18,8 +18,12 @@ test("static output contains real resume content instead of loading placeholders
     "expected the static output to include the translated header subtitle"
   );
   assert.ok(
-    html.includes("akaraduman@gmail.com"),
+    html.includes("Get In Touch"),
     "expected the static output to include contact content"
+  );
+  assert.ok(
+    !html.includes("akaraduman@gmail.com"),
+    "expected the email to be hidden from the web page (kept only in the downloadable PDF/DOCX)"
   );
   assert.ok(
     !html.includes("animate-pulse"),

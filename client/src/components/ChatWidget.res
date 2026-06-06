@@ -55,6 +55,24 @@ let onEscape: (unit => unit) => (unit => unit) = %raw(`
   }
 `)
 
+// Lets any other part of the page open the widget (Contact section / hero CTA)
+// without sharing React state — a tiny window-event bus.
+let openChat: unit => unit = %raw(`
+  function () {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("arda:open-chat"));
+    }
+  }
+`)
+
+let listenForOpen: (unit => unit) => (unit => unit) = %raw(`
+  function (cb) {
+    function handler() { cb(); }
+    window.addEventListener("arda:open-chat", handler);
+    return function () { window.removeEventListener("arda:open-chat", handler); };
+  }
+`)
+
 let bubble = (msg: chatMsg) =>
   <div
     key={Int.toString(msg.id)}
@@ -110,6 +128,9 @@ let make = () => {
       None
     }
   }, [isOpen])
+
+  // Open when another part of the page requests it (Contact section / hero CTA).
+  React.useEffect0(() => Some(listenForOpen(() => setIsOpen(_ => true))))
 
   let submit = text => {
     let trimmed = String.trim(text)

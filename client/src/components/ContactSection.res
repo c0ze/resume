@@ -1,7 +1,6 @@
 let baseUrl: string = %raw(`import.meta.env.BASE_URL`)
 
 let openUrl: string => unit = %raw(`function(url) { window.open(url, '_blank') }`)
-let navigateTo: string => unit = %raw(`function(url) { window.location.href = url }`)
 
 let handleDownload = (language, ext) => {
   let lang = Translations.languageToString(language)
@@ -56,16 +55,14 @@ let make = () => {
             <h3 className="font-display text-lg font-bold text-foreground">
               {React.string(t.contact.getInTouch)}
             </h3>
-            <div className="mt-5 space-y-4">
-              {contactRow(
-                <LucideReact.AtSign className="h-5 w-5" />,
-                "Email",
-                <button
-                  onClick={_ => navigateTo("mailto:" ++ t.header.contactViaEmail)}
-                  className="text-primary transition-colors hover:underline">
-                  {React.string(t.contact.emailMe)}
-                </button>,
-              )}
+            <button
+              type_="button"
+              onClick={_ => ChatWidget.openChat()}
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-[1.03]">
+              <LucideReact.MessageCircle className="h-4 w-4" />
+              {React.string(t.chat.launcher)}
+            </button>
+            <div className="mt-6 space-y-4">
               {contactRow(
                 <LucideReact.MapPin className="h-5 w-5" />,
                 "Location",
