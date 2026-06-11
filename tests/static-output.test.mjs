@@ -14,7 +14,7 @@ test("static output contains real resume content instead of loading placeholders
   const html = fs.readFileSync(staticHtmlPath, "utf8");
 
   assert.ok(
-    html.includes("Senior Developer | AI Enthusiast"),
+    html.includes("Systems Architect | AI Enthusiast"),
     "expected the static output to include the translated header subtitle"
   );
   assert.ok(
@@ -82,16 +82,17 @@ test("generated theme CSS contains all selectable themes", () => {
 
   const themeCss = fs.readFileSync(themeCssPath, "utf8");
 
+  // The professional subset of the shared catalogue (see DESIGN-SYSTEM.md):
+  // Ivory, Paper (HC light), Steel, Carbon (HC dark).
+  for (const selector of [".alucard", ".paper", ".van-helsing", ".carbon"]) {
+    assert.ok(
+      themeCss.includes(selector),
+      `expected the generated theme CSS to include the ${selector} selector`
+    );
+  }
+
   assert.ok(
-    themeCss.includes(".van-helsing"),
-    "expected the generated theme CSS to include the van-helsing selector"
-  );
-  assert.ok(
-    themeCss.includes(".dracula"),
-    "expected the generated theme CSS to include the dracula selector"
-  );
-  assert.ok(
-    themeCss.includes(".alucard"),
-    "expected the generated theme CSS to include the alucard selector"
+    !themeCss.includes(".dracula"),
+    "dracula was removed from the resume's theme set and should not be emitted"
   );
 });

@@ -142,3 +142,8 @@ module Send = {
   @module("lucide-react") @react.component
   external make: (~className: string=?) => React.element = "Send"
 }
+
+module Contrast = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "Contrast"
+}

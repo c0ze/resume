@@ -1,25 +1,27 @@
-type theme = VanHelsing | Dracula | Alucard
+type theme = Alucard | Paper | VanHelsing | Carbon
 
 let themeToString = theme =>
   switch theme {
-  | VanHelsing => "van-helsing"
-  | Dracula => "dracula"
   | Alucard => "alucard"
+  | Paper => "paper"
+  | VanHelsing => "van-helsing"
+  | Carbon => "carbon"
   }
 
 let themeFromString = str =>
   switch str {
+  | "paper" => Paper
   | "van-helsing" => VanHelsing
-  | "dracula" => Dracula
+  | "carbon" => Carbon
   | _ => Alucard
   }
 
-let themes = [VanHelsing, Dracula, Alucard]
+let themes = [Alucard, Paper, VanHelsing, Carbon]
 
 let isDark = theme =>
   switch theme {
-  | VanHelsing | Dracula => true
-  | Alucard => false
+  | VanHelsing | Carbon => true
+  | Alucard | Paper => false
   }
 
 type contextValue = {
@@ -49,7 +51,7 @@ let getStoredTheme = (): theme => {
 let applyThemeToDOM: (string, bool) => unit = %raw(`
   function(themeStr, dark) {
     var root = document.documentElement;
-    root.classList.remove("van-helsing", "dracula", "alucard", "dark");
+    root.classList.remove("alucard", "paper", "van-helsing", "carbon", "dracula", "dark");
     root.classList.add(themeStr);
     if (dark) {
       root.classList.add("dark");

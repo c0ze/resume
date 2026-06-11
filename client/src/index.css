@@ -159,6 +159,30 @@
   }
 }
 
+/*
+  High-contrast themes (Paper / Carbon): no translucency, no soft depth,
+  no decorative texture — strong edges and AAA ink only.
+*/
+.paper .glass,
+.paper .glass-strong,
+.carbon .glass,
+.carbon .glass-strong {
+  background: hsl(var(--card));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: hsl(var(--border));
+}
+.paper, .carbon {
+  --shadow-soft: none;
+  --shadow-medium: none;
+  --shadow-glow: 0 0 0 1px hsl(var(--border));
+  --gradient-primary: linear-gradient(120deg, hsl(var(--primary)), hsl(var(--primary)));
+}
+.paper .dossier-grid,
+.carbon .dossier-grid {
+  background-image: none;
+}
+
 /* Respect reduced-motion: freeze ambient motion, always show revealed content. */
 @media (prefers-reduced-motion: reduce) {
   *,

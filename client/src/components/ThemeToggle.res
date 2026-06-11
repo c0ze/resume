@@ -4,10 +4,13 @@ type themeInfo = {
   icon: React.element,
 }
 
+/* Curated professional subset of the shared catalogue (see DESIGN-SYSTEM.md):
+   Ivory (light) · Paper (HC light) · Steel (dark) · Carbon (HC dark). */
 let themeInfos = [
-  {id: ThemeContext.VanHelsing, name: "Van Helsing", icon: <LucideReact.Moon className="w-4 h-4" />},
-  {id: Dracula, name: "Dracula", icon: <LucideReact.Sparkles className="w-4 h-4" />},
-  {id: Alucard, name: "Alucard", icon: <LucideReact.Sun className="w-4 h-4" />},
+  {id: ThemeContext.Alucard, name: "Ivory", icon: <LucideReact.Sun className="w-4 h-4" />},
+  {id: Paper, name: "Paper (high contrast)", icon: <LucideReact.Contrast className="w-4 h-4" />},
+  {id: VanHelsing, name: "Steel", icon: <LucideReact.Moon className="w-4 h-4" />},
+  {id: Carbon, name: "Carbon (high contrast)", icon: <LucideReact.Contrast className="w-4 h-4" />},
 ]
 
 @react.component
@@ -27,7 +30,7 @@ let make = () => {
   let current = themeInfos->Array.find(t => t.id == theme)
   let (name, icon) = switch current {
   | Some(t) => (t.name, t.icon)
-  | None => ("Alucard", <LucideReact.Sun className="w-4 h-4" />)
+  | None => ("Ivory", <LucideReact.Sun className="w-4 h-4" />)
   }
 
   <button

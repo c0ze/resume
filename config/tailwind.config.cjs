@@ -17,7 +17,7 @@ module.exports = {
     extend: {
       fontFamily: {
         // Geometric, confident display face for headings + the name.
-        display: ['"Space Grotesk"', "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ['"Archivo"', "ui-sans-serif", "system-ui", "sans-serif"],
         // Humanist, highly legible body face for prose.
         sans: ['"Manrope"', "ui-sans-serif", "system-ui", "-apple-system", "sans-serif"],
         // Engineer-signal mono for dates, eyebrows, tags + stats.
