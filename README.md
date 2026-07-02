@@ -140,3 +140,10 @@ GitHub Actions builds the site and deploys `dist/client` to GitHub Pages using `
 
 - `public/resume-*.pdf` and `public/resume-*.docx` are generated artifacts and are expected to change when the build runs.
 - exported `.txt` and `.docx` resume files are intentionally not kept in the repository.
+
+## License
+
+The code — build pipeline, chat widget, PDF/DOCX generators — is
+[MIT-licensed](./LICENSE). The résumé content (`content/`) and the generated
+resume artifacts (`public/resume-*`) are © Arda Karaduman, all rights
+reserved: fork the tech, not the career.
