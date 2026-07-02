@@ -26,6 +26,7 @@ This file provides repository-specific guidance to Claude Code when working here
 - DOCX generator: `scripts/generate-docx.mjs`
 - JSON Resume generator: `scripts/generate-json-resume.mjs`
 - vCard generator: `scripts/generate-vcard.mjs`
+- Theme contract check (names vs the shared arda.tr catalogue): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
 - Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)

@@ -22,6 +22,7 @@ Read these files first when relevant:
 - Tooling config lives in `config/`
 - PDF/DOCX generation lives in `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs`
 - JSON Resume and vCard generation lives in `scripts/generate-json-resume.mjs` and `scripts/generate-vcard.mjs`
+- `scripts/check-theme-contract.mjs` verifies the theme names against the shared arda.tr catalogue (separate, non-blocking `.github/workflows/theme-contract.yml`)
 - The "Ask about Arda" chat widget (`client/src/components/ChatWidget.res`) calls the ai.arda.tr bot; chat Markdown is rendered by `Markdown.res` + `markdownParse.mjs`
 - Static + unit validation lives in `tests/*.test.mjs` (run via `npm run test:static`)
 

@@ -134,6 +134,8 @@ When you update content:
 
 The theme palette catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base variant settings (variant, primary, appearance, radius) consumed by the generator, and theme selector state lives in `client/src/contexts/ThemeContext.res`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
 
+The themes are a professional subset of the shared "Ink & Ledger" catalogue published by the arda.tr portfolio repo. `scripts/check-theme-contract.mjs` verifies the theme display names (from `themeInfos` in `client/src/components/ThemeToggle.res`) still map into that canonical catalogue; `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
+
 ## Deployment
 
 GitHub Actions builds the site and deploys `dist/client` to GitHub Pages using `.github/workflows/deploy.yml`.

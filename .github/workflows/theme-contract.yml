@@ -1,0 +1,31 @@
+name: Theme contract check
+
+# Verifies that this site's theme names still map into the canonical 9-theme
+# catalogue published by the arda.tr portfolio repo (config/themes.json).
+# Runs as a separate workflow so it never blocks deploys.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Run JavaScript actions on Node 24 (matches deploy.yml).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - name: Check theme names against the shared catalogue
+        run: node scripts/check-theme-contract.mjs
