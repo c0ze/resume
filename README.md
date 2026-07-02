@@ -13,7 +13,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
-- Multiple selectable themes generated from `config/theme.json`
+- Multiple selectable themes generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`
 
 ## Tech Stack
 
@@ -89,7 +89,7 @@ npm run build
 
 The build pipeline:
 
-1. generates theme CSS from `config/theme.json`
+1. generates theme CSS via `scripts/generate-theme.mjs` (base settings from `config/theme.json`)
 2. compiles ReScript sources to `.res.mjs`
 3. builds the client bundle
 4. builds the SSR entry
@@ -130,7 +130,7 @@ When you update content:
 
 ## Theme Workflow
 
-Theme source is stored in `config/theme.json`. The generated CSS lands in `client/src/theme.css` through `scripts/generate-theme.mjs`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
+The theme palette catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base variant settings (variant, primary, appearance, radius) consumed by the generator, and theme selector state lives in `client/src/contexts/ThemeContext.res`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
 
 ## Deployment
 

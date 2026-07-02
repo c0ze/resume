@@ -18,7 +18,7 @@ Read these files first when relevant:
 ## Source of Truth
 
 - Resume content lives in `content/en`, `content/ja`, and `content/tr`
-- Theme configuration lives in `config/theme.json`
+- The theme palette catalogue lives in `themePalettes` inside `scripts/generate-theme.mjs`, which generates `client/src/theme.css` (never edit the generated CSS directly); `config/theme.json` holds the base variant settings consumed by the generator
 - Tooling config lives in `config/`
 - PDF/DOCX generation lives in `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs`
 - The "Ask about Arda" chat widget (`client/src/components/ChatWidget.res`) calls the ai.arda.tr bot; chat Markdown is rendered by `Markdown.res` + `markdownParse.mjs`

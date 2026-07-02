@@ -18,7 +18,8 @@ This file provides repository-specific guidance to Claude Code when working here
 ## Source of Truth
 
 - Website content: `content/{en,ja,tr}/*.json`
-- Theme config: `config/theme.json`
+- Theme palette catalogue: `themePalettes` in `scripts/generate-theme.mjs` — generates `client/src/theme.css` (never edit the generated CSS directly)
+- Theme base settings: `config/theme.json` (variant, primary, appearance, radius — consumed by the generator)
 - Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
 - ReScript config: `rescript.json`
 - PDF generator: `scripts/generate-resume.mjs`
