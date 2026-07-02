@@ -23,6 +23,8 @@ type headerContent = {
   downloadResume: string,
   downloadPdf: option<string>,
   downloadDocx: option<string>,
+  downloadJson: option<string>,
+  downloadVcard: option<string>,
 }
 
 type aboutContent = {

@@ -4,7 +4,7 @@ This file provides repository-specific guidance to Claude Code when working here
 
 ## Project Overview
 
-`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF and DOCX resumes, and deploys the final output to GitHub Pages.
+`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF, DOCX, and JSON Resume files plus a vCard, and deploys the final output to GitHub Pages.
 
 ## Current Stack
 
@@ -24,6 +24,8 @@ This file provides repository-specific guidance to Claude Code when working here
 - ReScript config: `rescript.json`
 - PDF generator: `scripts/generate-resume.mjs`
 - DOCX generator: `scripts/generate-docx.mjs`
+- JSON Resume generator: `scripts/generate-json-resume.mjs`
+- vCard generator: `scripts/generate-vcard.mjs`
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
 - Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)
@@ -54,8 +56,8 @@ npm run res:clean     # Clean ReScript build artifacts
 ## Key Features
 
 - **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
-- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs` deliberately ignore it; keep it out of PDF/DOCX rendering.
-- **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the PDF/DOCX (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
+- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
+- **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
 - **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
 
 ## Build Expectations
@@ -67,9 +69,10 @@ npm run res:clean     # Clean ReScript build artifacts
 3. build the SSR entry
 4. prerender `/` into static HTML
 5. regenerate `public/resume-{en,ja,tr}.pdf` and `public/resume-{en,ja,tr}.docx`
-6. write `dist/client/artifact-status.json`
-7. copy public assets into `dist/client`
-8. generate `dist/client/sitemap.xml`
+6. regenerate `public/resume-{en,ja,tr}.json` (JSON Resume) and `public/arda.vcf` (vCard)
+7. write `dist/client/artifact-status.json`
+8. copy public assets into `dist/client`
+9. generate `dist/client/sitemap.xml`
 
 If content, theme configuration, or build scripts change, run:
 
@@ -93,7 +96,7 @@ npm run test:static
 - Keep `en`, `ja`, and `tr` content files structurally aligned.
 - Treat `content/` as the canonical source for visible resume content.
 - Do not hand-edit generated files in `dist/`.
-- Expect `public/resume-*.pdf` and `public/resume-*.docx` to change after builds because they are generated artifacts.
+- Expect `public/resume-*.{pdf,docx,json}` and `public/arda.vcf` to change after builds because they are generated (gitignored) artifacts.
 
 ## Repository Hygiene
 

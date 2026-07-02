@@ -9,6 +9,12 @@ let handleDownload = (language, ext) => {
   openUrl(fullPath)
 }
 
+/* The vCard is a single language-independent artifact. */
+let handleVcardDownload = () => {
+  let fullPath = `${baseUrl}arda.vcf?t=${Int.toString(Date.now()->Float.toInt)}`
+  openUrl(fullPath)
+}
+
 let normalizeUrl = url =>
   if Js.String2.startsWith(url, "http") {
     url
@@ -96,6 +102,30 @@ let make = () => {
             switch t.header.downloadDocx {
             | Some(label) => label
             | None => "DOCX"
+            },
+          )}
+        </button>
+        <button
+          type_="button"
+          onClick={_ => handleDownload(language, "json")}
+          className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
+          <LucideReact.FileJson className="h-4 w-4" />
+          {React.string(
+            switch t.header.downloadJson {
+            | Some(label) => label
+            | None => "JSON"
+            },
+          )}
+        </button>
+        <button
+          type_="button"
+          onClick={_ => handleVcardDownload()}
+          className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
+          <LucideReact.Contact className="h-4 w-4" />
+          {React.string(
+            switch t.header.downloadVcard {
+            | Some(label) => label
+            | None => "vCard"
             },
           )}
         </button>

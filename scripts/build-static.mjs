@@ -44,7 +44,7 @@ function buildSitemapXml(entries) {
   ].join('\n');
 }
 
-async function writeSitemap(outputPath, resumeArtifacts) {
+async function writeSitemap(outputPath, resumeArtifacts, vcardExists) {
   const homepageEntry = {
     loc: new URL('/', siteUrl).toString(),
     lastmod: new Date().toISOString(),
@@ -70,6 +70,16 @@ async function writeSitemap(outputPath, resumeArtifacts) {
         })
     )
   );
+
+  if (vcardExists) {
+    const vcardStats = await fs.stat(path.join(publicPath, 'arda.vcf'));
+    artifactEntries.push({
+      loc: new URL('/arda.vcf', siteUrl).toString(),
+      lastmod: vcardStats.mtime.toISOString(),
+      changefreq: 'monthly',
+      priority: '0.7',
+    });
+  }
 
   const sitemapPath = path.join(outputPath, 'sitemap.xml');
   const sitemapXml = buildSitemapXml([homepageEntry, ...artifactEntries]);
@@ -144,6 +154,14 @@ async function build() {
     console.log('Generating DOCX resumes...');
     execSync('node scripts/generate-docx.mjs', { stdio: 'inherit', cwd: projectRoot });
 
+    // Generate JSON Resume exports for all languages.
+    console.log('Generating JSON Resume exports...');
+    execSync('node scripts/generate-json-resume.mjs', { stdio: 'inherit', cwd: projectRoot });
+
+    // Generate the vCard.
+    console.log('Generating vCard...');
+    execSync('node scripts/generate-vcard.mjs', { stdio: 'inherit', cwd: projectRoot });
+
     // 10. Check for generated resume files and create artifact-status.json
     console.log('Checking for generated resume files...');
     const pdfFiles = {
@@ -156,9 +174,15 @@ async function build() {
       ja: await fs.pathExists(path.join(publicPath, 'resume-ja.docx')),
       tr: await fs.pathExists(path.join(publicPath, 'resume-tr.docx')),
     };
-    const resumeArtifacts = { pdf: pdfFiles, docx: docxFiles };
+    const jsonFiles = {
+      en: await fs.pathExists(path.join(publicPath, 'resume-en.json')),
+      ja: await fs.pathExists(path.join(publicPath, 'resume-ja.json')),
+      tr: await fs.pathExists(path.join(publicPath, 'resume-tr.json')),
+    };
+    const vcardExists = await fs.pathExists(path.join(publicPath, 'arda.vcf'));
+    const resumeArtifacts = { pdf: pdfFiles, docx: docxFiles, json: jsonFiles };
     const artifactStatusPath = path.join(clientDistPath, 'artifact-status.json');
-    await fs.writeJson(artifactStatusPath, resumeArtifacts);
+    await fs.writeJson(artifactStatusPath, { ...resumeArtifacts, vcf: { arda: vcardExists } });
     console.log(`Artifact status saved to ${artifactStatusPath}`);
 
     // 11. Copy public directory contents to dist/client
@@ -180,7 +204,7 @@ async function build() {
 
     // 12. Generate sitemap.xml for the homepage and downloadable resumes
     console.log('Generating sitemap.xml...');
-    await writeSitemap(clientDistPath, resumeArtifacts);
+    await writeSitemap(clientDistPath, resumeArtifacts, vcardExists);
 
     console.log('Static site generation complete!');
     console.log(`Site generated in: ${clientDistPath}`);

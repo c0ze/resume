@@ -6,5 +6,7 @@
   "website": "https://arda.tr",
   "downloadResume": "Download Resume",
   "downloadPdf": "PDF",
-  "downloadDocx": "DOCX"
+  "downloadDocx": "DOCX",
+  "downloadJson": "JSON",
+  "downloadVcard": "vCard"
 }

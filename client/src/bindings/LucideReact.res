@@ -147,3 +147,13 @@ module Contrast = {
   @module("lucide-react") @react.component
   external make: (~className: string=?) => React.element = "Contrast"
 }
+
+module FileJson = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "FileJson"
+}
+
+module Contact = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "Contact"
+}

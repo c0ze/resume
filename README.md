@@ -1,6 +1,6 @@
 # resume.arda.tr
 
-Multi-language resume/portfolio site for Arda Karaduman. The site is built with Vite + React, prerendered into static HTML, and ships downloadable PDF and DOCX resumes for English, Japanese, and Turkish.
+Multi-language resume/portfolio site for Arda Karaduman. The site is built with Vite + React, prerendered into static HTML, and ships downloadable PDF, DOCX, and JSON Resume files for English, Japanese, and Turkish, plus a vCard.
 
 [![Deploy to GitHub Pages](https://github.com/c0ze/resume/actions/workflows/deploy.yml/badge.svg)](https://github.com/c0ze/resume/actions/workflows/deploy.yml)
 
@@ -9,7 +9,8 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Static site output under `dist/client`, with the homepage prerendered to HTML
 - Multi-language content (English, Japanese, Turkish) sourced from JSON in `content/{en,ja,tr}`
 - Generated PDF/DOCX resumes in `public/resume-{en,ja,tr}.{pdf,docx}`
-- A web-only `abstract` per experience (card preview + detail modal) that the PDF/DOCX deliberately ignore
+- Generated [JSON Resume](https://jsonresume.org/schema) exports in `public/resume-{en,ja,tr}.json` and a vCard in `public/arda.vcf`
+- A web-only `abstract` per experience (card preview + detail modal) that the PDF/DOCX/JSON exports deliberately ignore
 - "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
@@ -95,9 +96,10 @@ The build pipeline:
 4. builds the SSR entry
 5. prerenders the homepage into static HTML
 6. regenerates the PDF and DOCX resumes
-7. writes `artifact-status.json`
-8. copies public assets into `dist/client`
-9. writes `sitemap.xml`
+7. regenerates the JSON Resume exports (`scripts/generate-json-resume.mjs`) and the vCard (`scripts/generate-vcard.mjs`)
+8. writes `artifact-status.json`
+9. copies public assets into `dist/client`
+10. writes `sitemap.xml`
 
 ### Preview
 
@@ -112,7 +114,7 @@ npm run check
 npm run test:static
 ```
 
-`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX resumes, `artifact-status.json` reports all generated artifacts, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output.
+`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX/JSON resumes and the vCard, `artifact-status.json` reports all generated artifacts, the JSON Resume exports carry the basics but none of the web-only abstracts, the vCard is well-formed, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output.
 
 ## Content Workflow
 
@@ -138,7 +140,7 @@ GitHub Actions builds the site and deploys `dist/client` to GitHub Pages using `
 
 ## Notes
 
-- `public/resume-*.pdf` and `public/resume-*.docx` are generated artifacts and are expected to change when the build runs.
+- `public/resume-*.{pdf,docx,json}` and `public/arda.vcf` are generated artifacts (gitignored) and are expected to change when the build runs.
 - exported `.txt` and `.docx` resume files are intentionally not kept in the repository.
 
 ## License
