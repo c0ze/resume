@@ -4,7 +4,7 @@ let make = () => {
 
   <section id="skills" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
     <Reveal>
-      <SectionHeading index="04" title={t.skills.title} />
+      <SectionHeading index="03" title={t.skills.title} />
     </Reveal>
     {if Array.length(t.skills.technicalSkills) > 0 {
       <Reveal delay=80>

@@ -5,6 +5,7 @@ import {
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,8 +125,8 @@ function makeHelpers(FONT, language) {
 }
 
 // ── Generator ───────────────────────────────────────────────────────
-async function generateDocx(language) {
-  const raw = {
+async function generateDocx(language, flavor = null) {
+  const base = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
@@ -134,6 +135,7 @@ async function generateDocx(language) {
     projects: loadContent(language, 'projects'),
     pdf: loadContent(language, 'pdf_meta'),
   };
+  const raw = flavor ? applyFlavor(base, flavor, language) : base;
   const t = language === 'ja' ? raw : sanitizeContent(raw);
 
   const FONT = getFonts(language);
@@ -192,31 +194,6 @@ async function generateDocx(language) {
     }
   }
 
-  // ── Education ───────────────────────────────────────────────────
-  children.push(sectionHeading(t.education.title));
-  if (Array.isArray(t.education.entries)) {
-    for (const edu of t.education.entries) {
-      children.push(...jobEntry(edu.degree, edu.institution, edu.period));
-      if (edu.description) {
-        children.push(new Paragraph({
-          children: [new TextRun({ text: edu.description, size: 19, font: FONT.body, color: COLOR.dark })],
-          spacing: { after: isJa ? 50 : 30 },
-        }));
-      }
-      if (edu.additionalInfo) {
-        children.push(new Paragraph({
-          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
-          spacing: { before: 30, after: 15 },
-        }));
-        if (Array.isArray(edu.additionalInfo.items)) {
-          for (const item of edu.additionalInfo.items) {
-            children.push(bulletItem(item));
-          }
-        }
-      }
-    }
-  }
-
   // ── Skills ──────────────────────────────────────────────────────
   children.push(sectionHeading(t.skills.title));
   if (Array.isArray(t.skills.technicalSkills)) {
@@ -243,6 +220,31 @@ async function generateDocx(language) {
           spacing: { after: isJa ? 60 : 40 },
         }),
       );
+    }
+  }
+
+  // ── Education ───────────────────────────────────────────────────
+  children.push(sectionHeading(t.education.title));
+  if (Array.isArray(t.education.entries)) {
+    for (const edu of t.education.entries) {
+      children.push(...jobEntry(edu.degree, edu.institution, edu.period));
+      if (edu.description) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: edu.description, size: 19, font: FONT.body, color: COLOR.dark })],
+          spacing: { after: isJa ? 50 : 30 },
+        }));
+      }
+      if (edu.additionalInfo) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
+          spacing: { before: 30, after: 15 },
+        }));
+        if (Array.isArray(edu.additionalInfo.items)) {
+          for (const item of edu.additionalInfo.items) {
+            children.push(bulletItem(item));
+          }
+        }
+      }
     }
   }
 
@@ -278,7 +280,7 @@ async function generateDocx(language) {
     }],
   });
 
-  const outputFile = path.join(projectRoot, 'public', `resume-${language}.docx`);
+  const outputFile = path.join(projectRoot, 'public', `${artifactBase(flavor?.name, language)}.docx`);
   try {
     const buffer = await Packer.toBuffer(doc);
     fs.writeFileSync(outputFile, buffer);
@@ -291,4 +293,5 @@ async function generateDocx(language) {
 // ── Run ─────────────────────────────────────────────────────────────
 console.log('Starting DOCX resume generation...');
 await Promise.all([generateDocx('en'), generateDocx('ja'), generateDocx('tr')]);
+await Promise.all(flavorTargets().map(({ flavor, language }) => generateDocx(language, flavor)));
 console.log('DOCX generation complete.');

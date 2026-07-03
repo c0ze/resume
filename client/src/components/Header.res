@@ -1,20 +1,3 @@
-let baseUrl: string = %raw(`import.meta.env.BASE_URL`)
-
-let openUrl: string => unit = %raw(`function(url) { window.open(url, '_blank') }`)
-
-let handleDownload = (language, ext) => {
-  let lang = Translations.languageToString(language)
-  let fileName = `resume-${lang}.${ext}`
-  let fullPath = `${baseUrl}${fileName}?t=${Int.toString(Date.now()->Float.toInt)}`
-  openUrl(fullPath)
-}
-
-/* The vCard is a single language-independent artifact. */
-let handleVcardDownload = () => {
-  let fullPath = `${baseUrl}arda.vcf?t=${Int.toString(Date.now()->Float.toInt)}`
-  openUrl(fullPath)
-}
-
 let normalizeUrl = url =>
   if Js.String2.startsWith(url, "http") {
     url
@@ -78,12 +61,33 @@ let make = () => {
             className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100"
           />
         </a>
+        {switch t.contact.socialLinks {
+        | Some(links) =>
+          links
+          ->Array.map(link =>
+            <a
+              key={link.name}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 transition-colors hover:text-primary">
+              {switch link.name {
+              | "LinkedIn" => <LucideReact.Linkedin className="h-4 w-4 text-primary" />
+              | "GitHub" => <LucideReact.Github className="h-4 w-4 text-primary" />
+              | _ => React.null
+              }}
+              {React.string(link.name)}
+            </a>
+          )
+          ->React.array
+        | None => React.null
+        }}
       </div>
 
       <div className="animate-fade-up ad-5 mt-9 flex flex-wrap gap-3">
         <button
           type_="button"
-          onClick={_ => handleDownload(language, "pdf")}
+          onClick={_ => Download.handleDownload(language, "pdf")}
           className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-[1.03]">
           <LucideReact.FileDown className="h-4 w-4" />
           {React.string(
@@ -95,7 +99,7 @@ let make = () => {
         </button>
         <button
           type_="button"
-          onClick={_ => handleDownload(language, "docx")}
+          onClick={_ => Download.handleDownload(language, "docx")}
           className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
           <LucideReact.FileText className="h-4 w-4" />
           {React.string(
@@ -107,7 +111,7 @@ let make = () => {
         </button>
         <button
           type_="button"
-          onClick={_ => handleDownload(language, "json")}
+          onClick={_ => Download.handleDownload(language, "json")}
           className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
           <LucideReact.FileJson className="h-4 w-4" />
           {React.string(
@@ -119,7 +123,7 @@ let make = () => {
         </button>
         <button
           type_="button"
-          onClick={_ => handleVcardDownload()}
+          onClick={_ => Download.handleVcardDownload()}
           className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:scale-[1.03] hover:text-primary">
           <LucideReact.Contact className="h-4 w-4" />
           {React.string(
@@ -134,7 +138,12 @@ let make = () => {
       <div
         className="animate-fade-up ad-6 mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border pt-6">
         {statChip(<LucideReact.Code2 className="h-3.5 w-3.5 text-primary" />, "Go · Ruby · Python")}
+        {statChip(<LucideReact.Shield className="h-3.5 w-3.5 text-primary" />, "OAuth 2.1 · MCP")}
         {statChip(<LucideReact.Cpu className="h-3.5 w-3.5 text-primary" />, "AWS · GCP · Docker")}
+        {statChip(
+          <LucideReact.CalendarDays className="h-3.5 w-3.5 text-primary" />,
+          "Tokyo since 2004",
+        )}
         {statChip(<LucideReact.Languages className="h-3.5 w-3.5 text-primary" />, "EN · JA · TR")}
       </div>
     </div>

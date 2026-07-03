@@ -3,14 +3,15 @@
   "technicalSkillsTitle": "Teknik Yetenekler",
   "technicalSkills": [
     "Go, Ruby ve Python'da yetkin. Yeni dilleri hızlıca öğrenebilir.",
-    "Arch Linux (CachyOS) & Emacs kullanıcısı. Unix ortamlarında ve shell scripting'de çok rahat.",
+    "AI/LLM entegrasyonu — Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",
+    "Güvenlik odaklı platform çalışması: OAuth 2.1 / OIDC (PKCE, JWKS, refresh-token rotasyonu, PAR, dinamik istemci kaydı), SSO ve RBAC.",
     "AWS & GCP'de kapsamlı deneyim. EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase ile uygulamalı deneyim.",
-    "React, Vue ve Astro ile frontend geliştirme. Tüm projelerde Tailwind CSS kullanımı.",
     "Node.js/Express ve Go/Echo ile backend geliştirme. Web ve mobil için RESTful ve GraphQL API tasarım deneyimi.",
-    "AI/LLM entegrasyonu — Gemini API, Anthropic API, TTS motorları (Edge TTS, Coqui), MCP araçları ile çalışma.",
     "Docker konteynerizasyonu ve CI/CD. Sürekli entegrasyon ve dağıtım uygulamalarının erken benimseyicisi.",
+    "React, Vue ve Astro ile frontend geliştirme. Tüm projelerde Tailwind CSS kullanımı.",
     "Playwright ve go-rod ile tarayıcı otomasyonu ve web scraping.",
+    "Arch Linux (CachyOS) & Emacs kullanıcısı. Unix ortamlarında ve shell scripting'de çok rahat.",
     "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi.",
-    "Vibe kodlama becerileri, kısa sürede çok iş yapabilir. Mevcut kodu bozmadan."
+    "Güçlü regresyon disipliniyle AI-hızlandırmalı geliştirme — testleri, gözden geçirilebilirliği ve üretim güvenliğini korurken LLM'lerle hızlı geliştirme."
   ]
 }

@@ -17,7 +17,7 @@ module Provider = {
 @react.component
 let make = (~initialLanguage=Translations.En, ~children) => {
   let (language, setLanguage) = React.useState(() => initialLanguage)
-  let translations = Translations.getTranslations(language)
+  let translations = Translations.getTranslations(~flavor=?Flavor.currentName(), language)
 
   let value = {
     language,

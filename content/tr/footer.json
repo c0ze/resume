@@ -1,4 +1,6 @@
 {
   "copyright": "© {year} Arda Karaduman. Tüm hakları saklıdır.",
-  "backToTop": "Yukarı Dön"
+  "backToTop": "Yukarı Dön",
+  "colophon": "ReScript + React ile geliştirildi, statik ön-render · PDF/DOCX/JSON/vCard dışa aktarım · MCP tabanlı “Arda'ya Sor” sohbeti",
+  "source": "kaynak"
 }

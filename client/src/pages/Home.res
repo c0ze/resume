@@ -8,9 +8,9 @@ let make = () => {
       <div className="mx-auto w-full max-w-5xl px-6">
         <AboutSection />
         <ExperienceSection />
-        <EducationSection />
         <SkillsSection />
         <ProjectsSection />
+        <EducationSection />
         <ContactSection />
       </div>
     </main>

@@ -35,6 +35,28 @@ let make = () => {
           <LucideReact.ArrowUp className="h-4 w-4" />
         </button>
       </div>
+      {switch t.footer.colophon {
+      | Some(colophon) =>
+        <p
+          className="no-print mt-6 border-t border-border/60 pt-5 text-center font-mono text-[0.7rem] leading-relaxed text-muted-foreground">
+          {React.string(colophon)}
+          {React.string(" · ")}
+          <a
+            href="https://github.com/c0ze/resume"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary transition-colors hover:underline">
+            {React.string(
+              switch t.footer.source {
+              | Some(source) => source
+              | None => "source"
+              },
+            )}
+            {React.string(" ↗")}
+          </a>
+        </p>
+      | None => React.null
+      }}
     </div>
   </footer>
 }

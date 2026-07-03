@@ -1,7 +1,7 @@
 {
   "title": "About Me",
-  "paragraph1": "A Systems Architect living in Japan since 2004. I like programming, tinkering, hacking. Checking new languages, frameworks, trying new ideas.",
-  "paragraph2": "",
+  "paragraph1": "I build backend and platform systems where production software, cloud infrastructure, and AI agents meet. Most recently I lead Veltra's AI platform — a standards-compliant OAuth 2.1 authorization server and Model Context Protocol services that expose a live travel-activity catalog to assistants like Claude and ChatGPT.",
+  "paragraph2": "Before that, Go/Ruby/Python systems across logistics, fintech, medical IT, and games — shipped and operated in Tokyo since 2004. I work as a bridge between overseas and Japan teams, in English and Japanese.",
   "languages": "Spoken languages:",
   "languagesContent": "Turkish (Native), English (Near Native), Japanese (Business)"
 }

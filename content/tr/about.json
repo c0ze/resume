@@ -1,7 +1,7 @@
 {
   "title": "Hakkımda",
-  "paragraph1": "2004'ten beri Japonya'da yaşayan bir Sistem Mimarıyım. Programlamayı, kurcalamayı, hacklemeyi severim. Yeni dilleri, frameworkleri kontrol eder, yeni fikirler denerim.",
-  "paragraph2": "",
+  "paragraph1": "Üretim yazılımı, bulut altyapısı ve yapay zeka ajanlarının kesiştiği yerde backend ve platform sistemleri kuruyorum. Şu anda Veltra'nın yapay zeka platformuna liderlik ediyorum — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu ve seyahat-aktivite kataloğunu Claude ile ChatGPT gibi asistanlara açan Model Context Protocol servisleri.",
+  "paragraph2": "Öncesinde lojistik, fintech, medikal BT ve oyun alanlarında Go/Ruby/Python sistemleri geliştirdim ve işlettim — 2004'ten beri Tokyo'da. Yurt dışı ve Japonya ekipleri arasında, İngilizce ve Japonca köprü mühendisi olarak çalışıyorum.",
   "languages": "Konuşulan diller:",
   "languagesContent": "Türkçe (Anadil), İngilizce (Anadile Yakın), Japonca (İş)"
 }

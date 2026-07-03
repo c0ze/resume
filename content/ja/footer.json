@@ -1,4 +1,6 @@
 {
   "copyright": "© {year} Arda Karaduman. 全著作権所有。",
-  "backToTop": "トップに戻る"
+  "backToTop": "トップに戻る",
+  "colophon": "ReScript + Reactで構築、静的プリレンダリング · PDF/DOCX/JSON/vCard出力 · MCP連携の「Ardaについて聞く」チャット",
+  "source": "ソース"
 }

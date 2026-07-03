@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,8 +124,8 @@ function setupFonts(doc, language) {
 }
 
 // ── Generator ───────────────────────────────────────────────────────
-function generateResume(language) {
-  const raw = {
+function generateResume(language, flavor = null) {
+  const base = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
@@ -133,6 +134,7 @@ function generateResume(language) {
     projects: loadContent(language, 'projects'),
     pdf: loadContent(language, 'pdf_meta'),
   };
+  const raw = flavor ? applyFlavor(base, flavor, language) : base;
   // Strip CJK from EN/TR since those fonts don't support Japanese characters
   const t = language === 'ja' ? raw : sanitizeContent(raw);
 
@@ -153,7 +155,7 @@ function generateResume(language) {
     fontSubsetting: language !== 'ja',
   });
 
-  const outputFile = path.join(projectRoot, 'public', `resume-${language}.pdf`);
+  const outputFile = path.join(projectRoot, 'public', `${artifactBase(flavor?.name, language)}.pdf`);
   const stream = fs.createWriteStream(outputFile);
   doc.pipe(stream);
 
@@ -287,6 +289,46 @@ function generateResume(language) {
   }
   doc.moveDown(0.3);
 
+  // ── Skills ──────────────────────────────────────────────────────
+  sectionHeader(t.skills.title);
+
+  if (Array.isArray(t.skills.technicalSkills)) {
+    doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+    for (const skill of t.skills.technicalSkills) {
+      ensureSpace(20);
+      doc.x = PAGE.margin.left;
+      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
+    }
+  }
+  doc.moveDown(0.3);
+
+  // ── Projects ────────────────────────────────────────────────────
+  sectionHeader(t.projects.title);
+
+  if (Array.isArray(t.projects.entries)) {
+    t.projects.entries.forEach((project, i) => {
+      ensureSpace(40);
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(project.title, { width: contentWidth });
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
+      doc.text(project.technologies, { width: contentWidth });
+      doc.moveDown(0.1);
+
+      if (project.description) {
+        doc.x = PAGE.margin.left;
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
+      }
+
+      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
+    });
+  }
+  doc.moveDown(0.3);
+
   // ── Education ───────────────────────────────────────────────────
   sectionHeader(t.education.title);
 
@@ -327,46 +369,6 @@ function generateResume(language) {
       if (i < t.education.entries.length - 1) doc.moveDown(0.4);
     });
   }
-  doc.moveDown(0.3);
-
-  // ── Skills ──────────────────────────────────────────────────────
-  sectionHeader(t.skills.title);
-
-  if (Array.isArray(t.skills.technicalSkills)) {
-    doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-    for (const skill of t.skills.technicalSkills) {
-      ensureSpace(20);
-      doc.x = PAGE.margin.left;
-      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
-    }
-  }
-  doc.moveDown(0.3);
-
-  // ── Projects ────────────────────────────────────────────────────
-  sectionHeader(t.projects.title);
-
-  if (Array.isArray(t.projects.entries)) {
-    t.projects.entries.forEach((project, i) => {
-      ensureSpace(40);
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      doc.text(project.title, { width: contentWidth });
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      doc.text(project.technologies, { width: contentWidth });
-      doc.moveDown(0.1);
-
-      if (project.description) {
-        doc.x = PAGE.margin.left;
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
-      }
-
-      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
-    });
-  }
 
   // ── Footer ──────────────────────────────────────────────────────
   const footerText = `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`;
@@ -393,4 +395,5 @@ console.log('Starting resume generation...');
 generateResume('en');
 generateResume('ja');
 generateResume('tr');
+for (const { flavor, language } of flavorTargets()) generateResume(language, flavor);
 console.log('Resume generation complete.');

@@ -20,6 +20,8 @@ let techs = [
   "Gemini API",
   "Anthropic API",
   "MCP",
+  "OAuth 2.1",
+  "OIDC",
   "Playwright",
   "Linux",
 ]

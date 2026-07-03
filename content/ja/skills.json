@@ -3,14 +3,15 @@
   "technicalSkillsTitle": "テクニカルスキル",
   "technicalSkills": [
     "Go、Ruby、Pythonに精通。新しい言語の習得も得意。",
-    "Arch Linux（CachyOS）& Emacsユーザー。Unix環境やシェルスクリプトに精通。",
+    "AI/LLM連携 — Anthropic APIやGemini API、Model Context Protocol（MCP）ツール、TTSエンジン（Edge TTS、Coqui）の活用。",
+    "セキュリティを重視したプラットフォーム開発：OAuth 2.1 / OIDC（PKCE、JWKS、リフレッシュトークンのローテーション、PAR、動的クライアント登録）、SSO、RBAC。",
     "AWS & GCPの豊富な経験。EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebaseの実務経験。",
-    "React、Vue、Astroでのフロントエンド開発。全プロジェクトでTailwind CSSを使用。",
     "Node.js/ExpressおよびGo/Echoでのバックエンド開発。Web・モバイル向けRESTfulおよびGraphQL APIの設計経験。",
-    "AI/LLM連携 — Gemini API、Anthropic API、TTSエンジン（Edge TTS、Coqui）、MCPツールの活用。",
     "Dockerコンテナ化とCI/CD。継続的インテグレーション・デプロイメントの早期採用者。",
+    "React、Vue、Astroでのフロントエンド開発。全プロジェクトでTailwind CSSを使用。",
     "PlaywrightおよびGo-rodによるブラウザ自動化とWebスクレイピング。",
+    "Arch Linux（CachyOS）& Emacsユーザー。Unix環境やシェルスクリプトに精通。",
     "TDD、BDD、アジャイル、GitHub駆動開発の経験。",
-    "Vibeコーディングスキル、短時間で多くの成果を出せる。既存のコードを壊さずに。"
+    "回帰（デグレード）防止を徹底したAI活用開発 — LLMでスピーディーに実装しつつ、テスト・レビュー可能性・本番環境の安全性を維持。"
   ]
 }

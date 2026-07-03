@@ -54,7 +54,7 @@ let make = () => {
 
   <section id="projects" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
     <Reveal>
-      <SectionHeading index="05" title={t.projects.title} />
+      <SectionHeading index="04" title={t.projects.title} />
     </Reveal>
     <Reveal delay=80>
       <Carousel
