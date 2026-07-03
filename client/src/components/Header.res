@@ -78,6 +78,27 @@ let make = () => {
             className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100"
           />
         </a>
+        {switch t.contact.socialLinks {
+        | Some(links) =>
+          links
+          ->Array.map(link =>
+            <a
+              key={link.name}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 transition-colors hover:text-primary">
+              {switch link.name {
+              | "LinkedIn" => <LucideReact.Linkedin className="h-4 w-4 text-primary" />
+              | "GitHub" => <LucideReact.Github className="h-4 w-4 text-primary" />
+              | _ => React.null
+              }}
+              {React.string(link.name)}
+            </a>
+          )
+          ->React.array
+        | None => React.null
+        }}
       </div>
 
       <div className="animate-fade-up ad-5 mt-9 flex flex-wrap gap-3">
@@ -134,7 +155,12 @@ let make = () => {
       <div
         className="animate-fade-up ad-6 mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-border pt-6">
         {statChip(<LucideReact.Code2 className="h-3.5 w-3.5 text-primary" />, "Go · Ruby · Python")}
+        {statChip(<LucideReact.Shield className="h-3.5 w-3.5 text-primary" />, "OAuth 2.1 · MCP")}
         {statChip(<LucideReact.Cpu className="h-3.5 w-3.5 text-primary" />, "AWS · GCP · Docker")}
+        {statChip(
+          <LucideReact.CalendarDays className="h-3.5 w-3.5 text-primary" />,
+          "Tokyo since 2004",
+        )}
         {statChip(<LucideReact.Languages className="h-3.5 w-3.5 text-primary" />, "EN · JA · TR")}
       </div>
     </div>

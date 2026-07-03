@@ -111,6 +111,8 @@ type contactContent = {
 type footerContent = {
   copyright: string,
   backToTop: option<string>,
+  colophon: option<string>,
+  source: option<string>,
 }
 
 type navigationContent = {

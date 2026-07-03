@@ -54,9 +54,9 @@ let make = () => {
   let sections = [
     ("about", t.navigation.about),
     ("experience", t.navigation.experience),
-    ("education", t.navigation.education),
     ("skills", t.navigation.skills),
     ("projects", t.navigation.projects),
+    ("education", t.navigation.education),
     ("contact", t.navigation.contact),
   ]
 

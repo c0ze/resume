@@ -157,3 +157,13 @@ module Contact = {
   @module("lucide-react") @react.component
   external make: (~className: string=?) => React.element = "Contact"
 }
+
+module Shield = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "Shield"
+}
+
+module CalendarDays = {
+  @module("lucide-react") @react.component
+  external make: (~className: string=?) => React.element = "CalendarDays"
+}

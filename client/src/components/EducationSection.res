@@ -81,7 +81,7 @@ let make = () => {
 
   <section id="education" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
     <Reveal>
-      <SectionHeading index="03" title={t.education.title} />
+      <SectionHeading index="05" title={t.education.title} />
     </Reveal>
     <div className="space-y-5">
       {t.education.entries->Array.mapWithIndex((edu, i) => entry(i, edu))->React.array}
