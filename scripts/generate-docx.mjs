@@ -194,31 +194,6 @@ async function generateDocx(language, flavor = null) {
     }
   }
 
-  // ── Education ───────────────────────────────────────────────────
-  children.push(sectionHeading(t.education.title));
-  if (Array.isArray(t.education.entries)) {
-    for (const edu of t.education.entries) {
-      children.push(...jobEntry(edu.degree, edu.institution, edu.period));
-      if (edu.description) {
-        children.push(new Paragraph({
-          children: [new TextRun({ text: edu.description, size: 19, font: FONT.body, color: COLOR.dark })],
-          spacing: { after: isJa ? 50 : 30 },
-        }));
-      }
-      if (edu.additionalInfo) {
-        children.push(new Paragraph({
-          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
-          spacing: { before: 30, after: 15 },
-        }));
-        if (Array.isArray(edu.additionalInfo.items)) {
-          for (const item of edu.additionalInfo.items) {
-            children.push(bulletItem(item));
-          }
-        }
-      }
-    }
-  }
-
   // ── Skills ──────────────────────────────────────────────────────
   children.push(sectionHeading(t.skills.title));
   if (Array.isArray(t.skills.technicalSkills)) {
@@ -245,6 +220,31 @@ async function generateDocx(language, flavor = null) {
           spacing: { after: isJa ? 60 : 40 },
         }),
       );
+    }
+  }
+
+  // ── Education ───────────────────────────────────────────────────
+  children.push(sectionHeading(t.education.title));
+  if (Array.isArray(t.education.entries)) {
+    for (const edu of t.education.entries) {
+      children.push(...jobEntry(edu.degree, edu.institution, edu.period));
+      if (edu.description) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: edu.description, size: 19, font: FONT.body, color: COLOR.dark })],
+          spacing: { after: isJa ? 50 : 30 },
+        }));
+      }
+      if (edu.additionalInfo) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
+          spacing: { before: 30, after: 15 },
+        }));
+        if (Array.isArray(edu.additionalInfo.items)) {
+          for (const item of edu.additionalInfo.items) {
+            children.push(bulletItem(item));
+          }
+        }
+      }
     }
   }
 

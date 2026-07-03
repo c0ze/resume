@@ -1,14 +1,3 @@
-let baseUrl: string = %raw(`import.meta.env.BASE_URL`)
-
-let openUrl: string => unit = %raw(`function(url) { window.open(url, '_blank') }`)
-
-let handleDownload = (language, ext) => {
-  let lang = Translations.languageToString(language)
-  let fileName = `resume-${Flavor.artifactPrefix(lang)}${lang}.${ext}`
-  let fullPath = `${baseUrl}${fileName}?t=${Int.toString(Date.now()->Float.toInt)}`
-  openUrl(fullPath)
-}
-
 let normalizeUrl = url =>
   if Js.String2.startsWith(url, "http") {
     url
@@ -120,7 +109,7 @@ let make = () => {
                 | Some(label) => label
                 | None => "PDF"
                 },
-                _ => handleDownload(language, "pdf"),
+                _ => Download.handleDownload(language, "pdf"),
               )}
               {downloadButton(
                 <LucideReact.FileText className="h-4 w-4" />,
@@ -128,7 +117,7 @@ let make = () => {
                 | Some(label) => label
                 | None => "DOCX"
                 },
-                _ => handleDownload(language, "docx"),
+                _ => Download.handleDownload(language, "docx"),
               )}
             </div>
           </div>

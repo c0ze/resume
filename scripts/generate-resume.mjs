@@ -289,6 +289,46 @@ function generateResume(language, flavor = null) {
   }
   doc.moveDown(0.3);
 
+  // ── Skills ──────────────────────────────────────────────────────
+  sectionHeader(t.skills.title);
+
+  if (Array.isArray(t.skills.technicalSkills)) {
+    doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+    for (const skill of t.skills.technicalSkills) {
+      ensureSpace(20);
+      doc.x = PAGE.margin.left;
+      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
+    }
+  }
+  doc.moveDown(0.3);
+
+  // ── Projects ────────────────────────────────────────────────────
+  sectionHeader(t.projects.title);
+
+  if (Array.isArray(t.projects.entries)) {
+    t.projects.entries.forEach((project, i) => {
+      ensureSpace(40);
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(project.title, { width: contentWidth });
+
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
+      doc.text(project.technologies, { width: contentWidth });
+      doc.moveDown(0.1);
+
+      if (project.description) {
+        doc.x = PAGE.margin.left;
+        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
+      }
+
+      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
+    });
+  }
+  doc.moveDown(0.3);
+
   // ── Education ───────────────────────────────────────────────────
   sectionHeader(t.education.title);
 
@@ -327,46 +367,6 @@ function generateResume(language, flavor = null) {
       }
 
       if (i < t.education.entries.length - 1) doc.moveDown(0.4);
-    });
-  }
-  doc.moveDown(0.3);
-
-  // ── Skills ──────────────────────────────────────────────────────
-  sectionHeader(t.skills.title);
-
-  if (Array.isArray(t.skills.technicalSkills)) {
-    doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-    for (const skill of t.skills.technicalSkills) {
-      ensureSpace(20);
-      doc.x = PAGE.margin.left;
-      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
-    }
-  }
-  doc.moveDown(0.3);
-
-  // ── Projects ────────────────────────────────────────────────────
-  sectionHeader(t.projects.title);
-
-  if (Array.isArray(t.projects.entries)) {
-    t.projects.entries.forEach((project, i) => {
-      ensureSpace(40);
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      doc.text(project.title, { width: contentWidth });
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      doc.text(project.technologies, { width: contentWidth });
-      doc.moveDown(0.1);
-
-      if (project.description) {
-        doc.x = PAGE.margin.left;
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
-      }
-
-      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
     });
   }
 

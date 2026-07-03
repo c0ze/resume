@@ -1,7 +1,7 @@
 # Resume site revamp — positioning, structure & proof
 
 **Date:** 2026-07-03
-**Status:** Approved design, pending implementation plan
+**Status:** Implemented — SP1 + SP2 complete (see PR)
 **Scope:** `resume.arda.tr` only (static site). No backend work.
 
 ## Goal
@@ -16,7 +16,8 @@ top and surface the proof that already exists in the codebase.
 
 - **Spine:** AI Platform + Backend. AI-platform is the hook; backend/cloud/auth are proof.
 - **Ambition:** copy + light structure & proof. No visual redesign, no résumé variants.
-- **Contact:** LinkedIn only. No email exposed. No contact form (explicitly dropped).
+- **Contact:** LinkedIn-first (alongside the existing GitHub link). No email exposed. No contact
+  form (explicitly dropped).
 
 ## In scope
 
