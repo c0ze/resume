@@ -170,9 +170,38 @@ let loadSection = (lang: string, section: string): 'a => {
   }
 }
 
-let getTranslations = (language: language): translations => {
+// Overlay a flavor's per-language summary (subtitle + About) onto the base
+// translations. Applies only for languages the flavor ships; otherwise the base
+// is returned unchanged, so switching to a non-shipped language shows the base.
+let applyFlavor = (base: translations, name: string, lang: string): translations =>
+  switch Flavor.get(name) {
+  | Some(flavor) if flavor.exportLangs->Array.includes(lang) =>
+    switch flavor.overrides->Dict.get(lang) {
+    | Some(ov) =>
+      let header = switch ov.subtitle {
+      | Some(subtitle) => {...base.header, subtitle}
+      | None => base.header
+      }
+      let about = switch ov.about {
+      | Some(a) => {
+          ...base.about,
+          paragraph1: a.paragraph1->Option.getOr(base.about.paragraph1),
+          paragraph2: switch a.paragraph2 {
+          | Some(p) => Some(p)
+          | None => base.about.paragraph2
+          },
+        }
+      | None => base.about
+      }
+      {...base, header, about}
+    | None => base
+    }
+  | _ => base
+  }
+
+let getTranslations = (~flavor=?, language: language): translations => {
   let lang = languageToString(language)
-  {
+  let base = {
     header: loadSection(lang, "header"),
     about: loadSection(lang, "about"),
     experience: loadSection(lang, "experience"),
@@ -184,5 +213,9 @@ let getTranslations = (language: language): translations => {
     navigation: loadSection(lang, "navigation"),
     chat: loadSection(lang, "chat"),
     pdfMeta: loadSection(lang, "pdf_meta"),
+  }
+  switch flavor {
+  | Some(name) => applyFlavor(base, name, lang)
+  | None => base
   }
 }

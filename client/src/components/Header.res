@@ -4,7 +4,7 @@ let openUrl: string => unit = %raw(`function(url) { window.open(url, '_blank') }
 
 let handleDownload = (language, ext) => {
   let lang = Translations.languageToString(language)
-  let fileName = `resume-${lang}.${ext}`
+  let fileName = `resume-${Flavor.artifactPrefix(lang)}${lang}.${ext}`
   let fullPath = `${baseUrl}${fileName}?t=${Int.toString(Date.now()->Float.toInt)}`
   openUrl(fullPath)
 }

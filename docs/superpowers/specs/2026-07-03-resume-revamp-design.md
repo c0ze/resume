@@ -148,24 +148,37 @@ Documented workflow, unchanged:
 - Footer colophon links the repo.
 - `npm run build` and `npm run test:static` pass.
 
-## Sub-project 2 (planned): flavored résumés — overlay engine
+## Sub-project 2 (implemented): flavored résumés — overlay engine
 
-Decided in principle; **detailed spec + plan come after SP1's default copy is locked**, because
-each flavor is a *diff against that copy* — designing the deltas before the base text is final
-would be premature.
+Role-targeted variants as a thin overlay on the shared SP1 base, delivered as targeted artifacts
+to **send** — not a public switcher.
 
-- **Model:** targeted artifacts to **send**, not a public switcher. The live site keeps one sharp
-  AI-platform default; flavors are for outreach (attach a role-specific PDF / send a deep-link).
-- **Flavors:** `ai-platform` (= the SP1 default, i.e. flavor #0), `backend` (Go/Cloud),
-  `japan-bridge` (Technical Lead). Adjustable.
-- **Overlay = thin patch on shared base.** A flavor overrides only `subtitle`, `about` positioning,
-  skills ordering/emphasis, and the *featured ordering* of experience/projects. It does **not**
-  rewrite per-job bullets — the base content (`content/{en,ja,tr}`) stays single-source, so a bullet
-  edited once is inherited by every flavor. This is what defuses the maintenance/drift objection.
-- **Delivery:** `?flavor=<name>` applies the overlay client-side (no param → default); the build
-  fans out per-flavor exports, the same way it already fans out per language.
-- **Artifact matrix (proposed, adjustable):** default flavor → PDF/DOCX/JSON in EN/JA/TR (as today);
-  non-default flavors → EN, plus JA for `japan-bridge`, to bound build cost. Generated artifacts stay
-  gitignored.
+- **Model:** the live site keeps one sharp AI-platform default. Flavors are for outreach: send a
+  `?flavor=<name>` deep-link, or attach a role-specific `resume-<flavor>-<lang>.{pdf,docx,json}`.
+- **Flavors:** `ai-platform` = the SP1 default (flavor #0, no overlay file); `backend` (Go/Cloud);
+  `japan-bridge` (Technical Lead / bridge). Defined in `content/flavors/{backend,japan-bridge}.json`.
+- **Overlay = summary only.** A flavor overrides just `header.subtitle` and the two `about`
+  paragraphs, per language. It does **not** touch skills, experience, projects, or per-job bullets —
+  the base `content/{en,ja,tr}` stays single-source, so a bullet edited once is inherited by every
+  flavor. Per-flavor skills/projects emphasis was considered and **deferred (YAGNI)**; the summary
+  carries the positioning and is the cheapest thing to keep aligned.
+- **Active scope = `exportLangs`.** A flavor is active only for the languages it ships. Outside
+  those (e.g. `?flavor=backend` + Turkish) both the on-page text **and** the download fall back to
+  the base, so the two never disagree. Unknown `?flavor=` values fall back to the base too.
+- **Delivery / mechanism:**
+  - Data + application shared via `scripts/flavors.mjs` (generators) and `client/src/Flavor.res`
+    (client). The generators loop `flavorTargets()` = each flavor × its `exportLangs`.
+  - Client: `Flavor.currentName()` reads `?flavor=`; `Translations.getTranslations(~flavor?)` applies
+    the overlay; `Header`/`ContactSection` download buttons resolve `resume-<flavor>-<lang>` when the
+    flavor ships that language. SSR/prerender has no `window`, so the static homepage is always base.
+- **Artifact matrix:** base → PDF/DOCX/JSON in EN/JA/TR (unchanged); `backend` → EN; `japan-bridge`
+  → EN + JA. Generated artifacts stay gitignored; `public/` is copied into `dist/client` by the
+  existing build step, so no orchestrator change was needed.
+- **Deliberately NOT in the sitemap or `artifact-status.json`.** Flavor artifacts are for targeted
+  sending, not SEO; keeping them out avoids a "backend résumé" competing with the default in search,
+  and keeps the fixed `artifact-status` shape (and its test) intact.
+- **Verification:** `npm run test:static` (18/18, incl. `tests/flavors.test.mjs`) covers overlay
+  shape, per-flavor exports, and the summary-applied/abstract-excluded invariants; the `?flavor=`
+  deep-link + unknown-flavor fallback were confirmed live in a browser.
 - **On brand:** the overlay + fan-out engine is itself proof of the data-pipeline discipline the
   positioning sells — the same argument as the colophon.

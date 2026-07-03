@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,8 +66,8 @@ function profileUsername(url) {
 }
 
 // ── Generator ───────────────────────────────────────────────────────
-function generateJsonResume(language) {
-  const t = {
+function generateJsonResume(language, flavor = null) {
+  const base = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
@@ -75,6 +76,7 @@ function generateJsonResume(language) {
     projects: loadContent(language, 'projects'),
     contact: loadContent(language, 'contact'),
   };
+  const t = flavor ? applyFlavor(base, flavor, language) : base;
 
   const summary = [t.about.paragraph1, t.about.paragraph2]
     .filter((paragraph) => typeof paragraph === 'string' && paragraph.trim() !== '')
@@ -132,7 +134,7 @@ function generateJsonResume(language) {
     if (Array.isArray(value) && value.length === 0) delete resume[section];
   }
 
-  const outputFile = path.join(projectRoot, 'public', `resume-${language}.json`);
+  const outputFile = path.join(projectRoot, 'public', `${artifactBase(flavor?.name, language)}.json`);
   fs.writeFileSync(outputFile, `${JSON.stringify(resume, null, 2)}\n`);
   console.log(`[${language}] Successfully generated: ${outputFile}`);
 }
@@ -142,4 +144,5 @@ console.log('Starting JSON Resume generation...');
 generateJsonResume('en');
 generateJsonResume('ja');
 generateJsonResume('tr');
+for (const { flavor, language } of flavorTargets()) generateJsonResume(language, flavor);
 console.log('JSON Resume generation complete.');

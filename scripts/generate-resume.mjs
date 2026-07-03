@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,8 +124,8 @@ function setupFonts(doc, language) {
 }
 
 // ── Generator ───────────────────────────────────────────────────────
-function generateResume(language) {
-  const raw = {
+function generateResume(language, flavor = null) {
+  const base = {
     header: loadContent(language, 'header'),
     about: loadContent(language, 'about'),
     experience: loadContent(language, 'experience'),
@@ -133,6 +134,7 @@ function generateResume(language) {
     projects: loadContent(language, 'projects'),
     pdf: loadContent(language, 'pdf_meta'),
   };
+  const raw = flavor ? applyFlavor(base, flavor, language) : base;
   // Strip CJK from EN/TR since those fonts don't support Japanese characters
   const t = language === 'ja' ? raw : sanitizeContent(raw);
 
@@ -153,7 +155,7 @@ function generateResume(language) {
     fontSubsetting: language !== 'ja',
   });
 
-  const outputFile = path.join(projectRoot, 'public', `resume-${language}.pdf`);
+  const outputFile = path.join(projectRoot, 'public', `${artifactBase(flavor?.name, language)}.pdf`);
   const stream = fs.createWriteStream(outputFile);
   doc.pipe(stream);
 
@@ -393,4 +395,5 @@ console.log('Starting resume generation...');
 generateResume('en');
 generateResume('ja');
 generateResume('tr');
+for (const { flavor, language } of flavorTargets()) generateResume(language, flavor);
 console.log('Resume generation complete.');
