@@ -6,13 +6,13 @@
     {
       "title": "Systems Architect",
       "logo": "veltra.png",
-      "abstract": "Lead engineer on Veltra's AI platform — built a standards-compliant OAuth 2.1 authorization server and Model Context Protocol services that expose the travel-activity catalog to AI assistants like Claude and ChatGPT.",
+      "abstract": "Lead engineer on Veltra's AI platform — built a standards-compliant OAuth 2.1 authorization server and Model Context Protocol services that expose the travel-activity catalog to AI assistants like Claude and ChatGPT. The activity-search connector is approved by Anthropic and live in the public Claude connector directory.",
       "company": "Veltra (Tokyo, Remote)",
       "period": "2024 - Present",
       "responsibilities": [
         "Principal author of Veltra's MCP + OAuth 2.1 platform, exposing the travel-activity catalog to AI assistants (Claude MCP Apps and ChatGPT Apps) and giving staff internal AI tooling.",
         "Built a standards-compliant OAuth 2.1 / OIDC authorization server in Python/FastAPI — PKCE, RS256 JWKS, refresh-token rotation, PAR / revocation / introspection, dynamic client registration, Google Workspace SSO and RBAC — on a clean, hexagonal architecture.",
-        "Built a stateless 'activity search' MCP server dual-compatible with Claude and OpenAI app hosts, plus internal Google Analytics and AWS read-only MCP tools.",
+        "Built a stateless 'activity search' MCP server dual-compatible with Claude and OpenAI app hosts — approved by Anthropic and now publicly listed in the Claude connector directory — plus internal Google Analytics and AWS read-only MCP tools.",
         "Migrated image delivery from a paid CDN to a self-developed solution on AWS CloudFront.",
         "General application and infrastructure architecture and planning across Python, Go and Node services, deployed on AWS ECS with Terraform and GitHub Actions CI/CD.",
         "Acted as bridge engineer between the overseas and Japan teams, and led MCP integration of legacy systems."

@@ -5,7 +5,7 @@
     {
       "title": "MCP + OAuth 2.1 AI Platform",
       "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "Lead author of Veltra's platform exposing the travel-activity catalog to AI assistants — a standards-compliant OAuth 2.1 authorization server (Clean Architecture) plus MCP servers dual-compatible with Claude and ChatGPT apps.",
+      "description": "Lead author of Veltra's platform exposing the travel-activity catalog to AI assistants — a standards-compliant OAuth 2.1 authorization server (Clean Architecture) plus MCP servers dual-compatible with Claude and ChatGPT apps; the activity-search connector is now live in Anthropic's public Claude connector directory.",
       "repo": null
     },
     {

@@ -5,7 +5,7 @@
     {
       "title": "MCP + OAuth 2.1 Yapay Zeka Platformu",
       "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "Veltra'da, seyahat-aktivite kataloğunu yapay zeka asistanlarına sunan platformun baş yazarı — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu (Clean Architecture) ve Claude ile ChatGPT uygulamalarıyla uyumlu MCP sunucuları.",
+      "description": "Veltra'da, seyahat-aktivite kataloğunu yapay zeka asistanlarına sunan platformun baş yazarı — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu (Clean Architecture) ve Claude ile ChatGPT uygulamalarıyla uyumlu MCP sunucuları; aktivite arama konektörü artık Anthropic'in herkese açık Claude konektör dizininde yayında.",
       "repo": null
     },
     {

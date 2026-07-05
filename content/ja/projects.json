@@ -5,7 +5,7 @@
     {
       "title": "MCP + OAuth 2.1 AIプラットフォーム",
       "technologies": "Python, FastAPI, OAuth 2.1 / OIDC, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "株式会社Veltraにて、旅行アクティビティカタログをAIアシスタントに公開するプラットフォームの主担当者。標準準拠のOAuth 2.1認可サーバー（クリーンアーキテクチャ）と、ClaudeおよびChatGPTのアプリに両対応するMCPサーバーを構築。",
+      "description": "株式会社Veltraにて、旅行アクティビティカタログをAIアシスタントに公開するプラットフォームの主担当者。標準準拠のOAuth 2.1認可サーバー（クリーンアーキテクチャ）と、ClaudeおよびChatGPTのアプリに両対応するMCPサーバーを構築。アクティビティ検索コネクタはAnthropicの審査を経て、Claudeの公開コネクタディレクトリで提供中。",
       "repo": null
     },
     {
