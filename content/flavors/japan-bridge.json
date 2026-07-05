@@ -7,14 +7,14 @@
       "subtitle": "Technical Lead & Bridge Engineer — Tokyo · EN/JA · Backend & AI Platforms",
       "about": {
         "paragraph1": "A backend and platform engineer who works at the boundary between overseas and Japan teams. In Tokyo since 2004 — Turkish, near-native English, business Japanese — I translate between business and engineering, and between offshore and local orgs, without losing technical depth.",
-        "paragraph2": "Most recently I led Veltra's AI platform — an OAuth 2.1 authorization server and MCP services exposing a live travel catalog to Claude and ChatGPT — as the bridge between the overseas and Japan teams. 15+ years across logistics, fintech, medical IT, and games — Go, Ruby, Python on AWS and GCP."
+        "paragraph2": "Most recently I led Veltra's AI platform — an OAuth 2.1 authorization server and MCP services exposing a live travel catalog to Claude and ChatGPT, now published in Anthropic's Claude connector directory — as the bridge between the overseas and Japan teams. 15+ years across logistics, fintech, medical IT, and games — Go, Ruby, Python on AWS and GCP."
       }
     },
     "ja": {
       "subtitle": "テクニカルリード／ブリッジエンジニア — 東京・日英・バックエンド／AIプラットフォーム",
       "about": {
         "paragraph1": "海外チームと日本チームの境界で働く、バックエンド／プラットフォームエンジニアです。2004年より東京在住 — トルコ語（母語）、英語（ネイティブに近い）、日本語（ビジネス）。技術的な深さを保ったまま、ビジネスとエンジニアリング、オフショアと国内組織の間を橋渡しします。",
-        "paragraph2": "近年はVeltraのAIプラットフォーム（旅行カタログをClaudeやChatGPTに公開するOAuth 2.1認可サーバーとMCPサービス）を、海外チームと日本チームのブリッジとしてリードしました。物流・フィンテック・医療IT・ゲーム分野で15年以上 — AWS・GCP上のGo・Ruby・Python。"
+        "paragraph2": "近年はVeltraのAIプラットフォーム（旅行カタログをClaudeやChatGPTに公開するOAuth 2.1認可サーバーとMCPサービス）を、海外チームと日本チームのブリッジとしてリードしました。MCPコネクタはAnthropicのClaudeコネクタディレクトリで一般公開されています。物流・フィンテック・医療IT・ゲーム分野で15年以上 — AWS・GCP上のGo・Ruby・Python。"
       }
     }
   }

@@ -6,13 +6,13 @@
     {
       "title": "Sistem Mimarı",
       "logo": "veltra.png",
-      "abstract": "Veltra'nın yapay zeka platformunda baş mühendis — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu ve seyahat-aktivite kataloğunu Claude ve ChatGPT gibi yapay zeka asistanlarına sunan Model Context Protocol (MCP) servisleri geliştirdim.",
+      "abstract": "Veltra'nın yapay zeka platformunda baş mühendis — standartlara uygun bir OAuth 2.1 yetkilendirme sunucusu ve seyahat-aktivite kataloğunu Claude ve ChatGPT gibi yapay zeka asistanlarına sunan Model Context Protocol (MCP) servisleri geliştirdim. Aktivite arama konektörü, Anthropic tarafından onaylanıp Claude'un herkese açık konektör dizininde yayında.",
       "company": "Veltra (Tokyo, Uzaktan)",
       "period": "2024 - Halen",
       "responsibilities": [
         "Veltra'nın MCP + OAuth 2.1 platformunun baş yazarı olarak seyahat-aktivite kataloğunu yapay zeka asistanlarına (Claude MCP Apps ve ChatGPT Apps) sundum ve ekip için dahili yapay zeka araçları sağladım.",
         "Python/FastAPI ile standartlara uygun bir OAuth 2.1 / OIDC yetkilendirme sunucusu geliştirdim — PKCE, RS256 JWKS, yenileme belirteci rotasyonu, PAR / iptal / introspection, dinamik istemci kaydı, Google Workspace SSO ve RBAC — temiz, hexagonal bir mimari üzerinde.",
-        "Claude ve OpenAI uygulama ana bilgisayarlarıyla uyumlu, durumsuz bir 'aktivite arama' MCP sunucusunun yanı sıra dahili Google Analytics ve AWS salt-okunur MCP araçları geliştirdim.",
+        "Claude ve OpenAI uygulama ana bilgisayarlarıyla uyumlu, durumsuz bir 'aktivite arama' MCP sunucusu (Anthropic tarafından onaylanıp Claude konektör dizininde yayında) ve dahili Google Analytics ile AWS salt-okunur MCP araçları geliştirdim.",
         "Görsel dağıtımını ücretli bir CDN'den AWS CloudFront üzerinde kendi geliştirdiğim bir çözüme taşıdım.",
         "Python, Go ve Node servisleri genelinde genel uygulama ve altyapı mimarisi ve planlaması; AWS ECS'ye Terraform ve GitHub Actions CI/CD ile dağıtım.",
         "Denizaşırı ve Japonya ekipleri arasında köprü mühendisi olarak görev yaptım ve eski sistemlerin MCP entegrasyonunu yönettim."

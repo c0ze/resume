@@ -6,13 +6,13 @@
     {
       "title": "システムアーキテクト",
       "logo": "veltra.png",
-      "abstract": "VeltraのAIプラットフォームのリードエンジニア。標準準拠のOAuth 2.1認可サーバーと、旅行アクティビティカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを構築。",
+      "abstract": "VeltraのAIプラットフォームのリードエンジニア。標準準拠のOAuth 2.1認可サーバーと、旅行アクティビティカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを構築。アクティビティ検索コネクタはAnthropicの審査を経て、Claudeの公開コネクタディレクトリで提供中。",
       "company": "Veltra (東京, リモート)",
       "period": "2024 - 現在",
       "responsibilities": [
         "VeltraのMCP + OAuth 2.1プラットフォームの主担当者として、旅行アクティビティカタログをAIアシスタント（Claude MCP AppsおよびChatGPT Apps）に公開し、社内向けAIツールを提供。",
         "Python/FastAPIで標準準拠のOAuth 2.1 / OIDC認可サーバーを構築（PKCE、RS256 JWKS、リフレッシュトークンのローテーション、PAR / 失効 / イントロスペクション、動的クライアント登録、Google Workspace SSO、RBAC）。クリーンなヘキサゴナルアーキテクチャを採用。",
-        "ClaudeとOpenAIの両アプリホストに対応するステートレスな「アクティビティ検索」MCPサーバー、および社内向けGoogle AnalyticsとAWS読み取り専用のMCPツールを構築。",
+        "ClaudeとOpenAIの両アプリホストに対応するステートレスな「アクティビティ検索」MCPサーバー（Anthropicの審査を経てClaudeコネクタディレクトリで一般公開）、および社内向けGoogle AnalyticsとAWS読み取り専用のMCPツールを構築。",
         "画像配信を有料CDNからAWS CloudFront上の自社開発ソリューションへ移行。",
         "Python・Go・Nodeの各サービスにわたるアプリケーションとインフラの全般的なアーキテクチャ設計と計画。AWS ECSにTerraformとGitHub Actions CI/CDでデプロイ。",
         "海外チームと日本チームのブリッジエンジニアとして活動し、レガシーシステムのMCP連携を主導。"
