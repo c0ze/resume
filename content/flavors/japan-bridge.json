@@ -1,7 +1,9 @@
 {
   "name": "japan-bridge",
-  "label": "Technical Lead & Bridge Engineer",
-  "exportLangs": ["en", "ja"],
+  "exportLangs": [
+    "en",
+    "ja"
+  ],
   "overrides": {
     "en": {
       "subtitle": "Technical Lead & Bridge Engineer — Tokyo · EN/JA · Backend & AI Platforms",

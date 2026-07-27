@@ -1,6 +1,5 @@
 {
   "title": "Skills",
-  "technicalSkillsTitle": "Technical Skills",
   "technicalSkills": [
     "Proficient in Go, Ruby, and Python. Comfortable picking up new languages quickly.",
     "AI/LLM integration — working with the Anthropic and Gemini APIs, Model Context Protocol (MCP) tooling, and TTS engines (Edge TTS, Coqui).",

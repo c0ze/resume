@@ -7,19 +7,47 @@
     <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
     <link rel="canonical" href="https://resume.arda.tr/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#1f375c" />
+    <meta name="theme-color" content="#EEF0EA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#14131A" media="(prefers-color-scheme: dark)" />
 
-    <!-- Mark JS as available before first paint so scroll-reveal styles only
-         hide content when we can actually animate it back in. No-JS / print
-         keep everything visible. -->
+    <!--
+      Rendition + language bootstrap. Blocking on purpose: without it a reader
+      who chose a dark rendition gets a full flash of light stock before React
+      mounts, and screen readers announce Japanese and Turkish content as
+      English until the first render. Both were live defects.
+    -->
     <script>
-      document.documentElement.classList.add("js");
+      (function () {
+        var root = document.documentElement;
+        var RENDITIONS = { ruled: 0, "ruled-hc": 0, "carbon-copy": 1, "carbon-copy-hc": 1 };
+        try {
+          var t = localStorage.getItem("resume-theme");
+          if (!(t in RENDITIONS)) t = "ruled";
+          root.classList.add(t);
+          if (RENDITIONS[t]) {
+            root.classList.add("dark");
+            root.style.colorScheme = "dark";
+          } else {
+            root.style.colorScheme = "light";
+          }
+          var l = localStorage.getItem("resume-lang");
+          if (l === "en" || l === "ja" || l === "tr") root.lang = l;
+        } catch (e) {
+          root.classList.add("ruled");
+        }
+      })();
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Morisawa BIZ UD — Japanese universal-design business-document faces.
+      One system covers CJK, Latin and latin-ext (Turkish ı İ ğ ş ç ö ü), which
+      fixes the live defect where /ja had no web font at all and fell through
+      to the OS at a mismatched optical weight.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@400;700&display=swap"
       rel="stylesheet"
     />
 

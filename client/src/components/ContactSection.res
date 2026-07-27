@@ -1,128 +1,93 @@
-let normalizeUrl = url =>
-  if Js.String2.startsWith(url, "http") {
-    url
-  } else {
-    "https://" ++ url
-  }
+// Entry 06 — Countersign & Issue, the closing entry.
+//
+// No address is printed on this record: the email lives only in the downloads
+// (repo rule and test assertion). Reaching Arda is the chat, the two public
+// profiles, and the four files.
 
-let contactRow = (icon, label, value) =>
-  <div className="flex items-center gap-3">
-    <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-      ariaHidden=true>
-      {icon}
-    </span>
-    <div className="min-w-0">
-      <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-        {React.string(label)}
-      </p>
-      <div className="text-foreground"> {value} </div>
-    </div>
-  </div>
-
-let downloadButton = (icon, label, onClick) =>
-  <button
-    type_="button"
-    onClick
-    className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform duration-200 hover:scale-[1.03]">
-    {icon}
-    {React.string(label)}
-  </button>
+let normalizeUrl = url => Js.String2.startsWith(url, "http") ? url : "https://" ++ url
 
 @react.component
-let make = () => {
-  let {language, translations: t} = LanguageContext.useLanguage()
+let make = (~folios: Folio.t) => {
+  let {translations: t} = LanguageContext.useLanguage()
+  let r = t.record
+  let (certOpen, setCertOpen) = React.useState(() => false)
 
-  <section id="contact" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
-    <Reveal>
-      <SectionHeading index="06" title={t.contact.title} />
-    </Reveal>
-    <Reveal delay=80>
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
-        <div className="grid md:grid-cols-2">
-          <div className="p-6 sm:p-8">
-            <h3 className="font-display text-lg font-bold text-foreground">
-              {React.string(t.contact.getInTouch)}
-            </h3>
-            <button
-              type_="button"
-              onClick={_ => ChatWidget.openChat()}
-              className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-[1.03]">
-              <LucideReact.MessageCircle className="h-4 w-4" />
-              {React.string(t.chat.launcher)}
-            </button>
-            <div className="mt-6 space-y-4">
-              {contactRow(
-                <LucideReact.MapPin className="h-5 w-5" />,
-                "Location",
-                <span className="text-muted-foreground"> {React.string(t.header.location)} </span>,
-              )}
-              {contactRow(
-                <LucideReact.Globe className="h-5 w-5" />,
-                "Website",
-                <a
-                  href={normalizeUrl(t.header.website)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary transition-colors hover:underline">
-                  {React.string(t.header.website)}
-                </a>,
-              )}
-            </div>
-          </div>
+  <Entry id="contact" number="06" folio={folios.issue} major=true>
+    <Entry.Head
+      title={t.contact.title}
+      meta={<span className="stamp"> {React.string(r.closingEntry)} </span>}
+    />
 
-          <div className="border-t border-border bg-secondary/40 p-6 sm:border-l sm:border-t-0 sm:p-8">
-            <h3 className="font-display text-lg font-bold text-foreground">
-              {React.string(t.contact.findMeOn)}
-            </h3>
-            <div className="mt-5 flex gap-3">
-              {switch t.contact.socialLinks {
-              | Some(links) =>
-                links
-                ->Array.map(link =>
-                  <a
-                    key={link.name}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-card text-foreground transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
-                    ariaLabel={link.name}>
-                    {switch link.name {
-                    | "LinkedIn" => <LucideReact.Linkedin className="h-5 w-5" />
-                    | "GitHub" => <LucideReact.Github className="h-5 w-5" />
-                    | name => React.string(name)
-                    }}
-                  </a>
-                )
-                ->React.array
-              | None => React.null
-              }}
-            </div>
+    <p className="measure t-body my-q"> {React.string(r.issueNote)} </p>
 
-            <p className="mt-7 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
-              {React.string(t.header.downloadResume)}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {downloadButton(
-                <LucideReact.FileDown className="h-4 w-4" />,
-                switch t.header.downloadPdf {
-                | Some(label) => label
-                | None => "PDF"
-                },
-                _ => Download.handleDownload(language, "pdf"),
-              )}
-              {downloadButton(
-                <LucideReact.FileText className="h-4 w-4" />,
-                switch t.header.downloadDocx {
-                | Some(label) => label
-                | None => "DOCX"
-                },
-                _ => Download.handleDownload(language, "docx"),
-              )}
-            </div>
-          </div>
+    <IssueBlock
+      title={<span className="t-label"> {React.string(r.artifactsOfRecord)} </span>}
+      aside={<span className="t-data pencil"> {React.string("EN · JA · TR")} </span>}>
+      <div className="countersign">
+        <div>
+          <div className="sigline"> {React.string(t.header.title)} </div>
+          <div className="sigcap"> {React.string(r.authorOfRecord)} </div>
+        </div>
+        <div className="countersign__date">
+          <div className="sigline sigline--red t-data"> {React.string(Build.issuedOn)} </div>
+          <div className="sigcap"> {React.string(r.dateOfIssue)} </div>
         </div>
       </div>
-    </Reveal>
-  </section>
+
+      <p className="linklist px-q pt-q">
+        <span className="t-label"> {React.string(r.commit)} </span>
+        {React.string(" ")}
+        {switch Build.commitUrl {
+        | Some(url) =>
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {React.string(Build.commit)}
+          </a>
+        | None => React.string(Build.commit)
+        }}
+        {React.string(`  ·  `)}
+        <span className="t-label"> {React.string(r.issued)} </span>
+        {React.string(` ${Build.issuedAtStamp}`)}
+        {React.string(`  ·  `)}
+        <button type_="button" className="stamp" onClick={_ => setCertOpen(_ => true)}>
+          {React.string(r.certificate)}
+        </button>
+      </p>
+    </IssueBlock>
+
+    <div className="mt-q2">
+      <div className="entry__head entry__head--light">
+        <h3 className="t-entry"> {React.string(t.contact.getInTouch)} </h3>
+        <span className="t-data pencil"> {React.string(t.contact.findMeOn)} </span>
+      </div>
+
+      <p className="linklist">
+        <button type_="button" className="slip" onClick={_ => ChatWidget.openChat()}>
+          {React.string(t.chat.launcher)}
+        </button>
+      </p>
+
+      <p className="linklist">
+        {switch t.contact.socialLinks {
+        | Some(links) =>
+          links
+          ->Array.mapWithIndex((link, i) =>
+            <React.Fragment key={link.name}>
+              {i === 0 ? React.null : React.string(`  ·  `)}
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {React.string(link.url->String.replace("https://", ""))}
+              </a>
+            </React.Fragment>
+          )
+          ->React.array
+        | None => React.null
+        }}
+        {React.string(`  ·  `)}
+        <a href={normalizeUrl(t.header.website)} rel="me">
+          {React.string(t.header.website->String.replace("https://", ""))}
+        </a>
+      </p>
+    </div>
+
+    <Certificate isOpen=certOpen onClose={() => setCertOpen(_ => false)} />
+  </Entry>
 }

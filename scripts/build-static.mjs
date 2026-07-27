@@ -92,6 +92,12 @@ async function build() {
   try {
     console.log('Starting static site generation...');
 
+    // 0. Pin the issue timestamp once. The countersign block names the build as
+    //    the witness, so the client bundle and the SSR bundle — built seconds
+    //    apart — must agree on when the record was issued.
+    process.env.RESUME_BUILD_TIME = new Date().toISOString();
+    console.log(`Issue timestamp: ${process.env.RESUME_BUILD_TIME}`);
+
     // 1. Clean existing dist directory
     console.log('Cleaning dist directory...');
     await fs.emptyDir(path.resolve(projectRoot, 'dist'));
@@ -190,11 +196,20 @@ async function build() {
     // but this ensures everything from public/ is copied, like PDFs)
     // We exclude index.html from public if it exists, as we've generated our own.
     console.log(`Copying public assets from ${publicPath} to ${clientDistPath}...`);
+    const fontsPath = path.join(publicPath, 'fonts');
     await fs.copy(publicPath, clientDistPath, {
       overwrite: true,
       filter: (src) => {
         // Don't copy index.html from public if it exists, as we generate it
         if (path.basename(src) === 'index.html' && src.startsWith(publicPath)) {
+          return false;
+        }
+        // public/fonts/ holds the Noto TTFs that scripts/generate-resume.mjs
+        // embeds into the PDFs. They are *build inputs*, not site assets — the
+        // page loads BIZ UDPGothic/UDPMincho from Google Fonts and has never
+        // referenced /fonts/. Copying them shipped 86 MB to GitHub Pages for
+        // nothing.
+        if (src === fontsPath || src.startsWith(fontsPath + path.sep)) {
           return false;
         }
         return true;

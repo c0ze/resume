@@ -1,6 +1,5 @@
 {
   "title": "Yetenekler",
-  "technicalSkillsTitle": "Teknik Yetenekler",
   "technicalSkills": [
     "Go, Ruby ve Python'da yetkin. Yeni dilleri hızlıca öğrenebilir.",
     "AI/LLM entegrasyonu — Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",

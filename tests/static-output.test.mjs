@@ -144,22 +144,77 @@ test("static build emits a vCard with the contact details", () => {
   assert.ok(vcard.includes("\r\n"), "expected the vCard to use CRLF line endings per spec");
 });
 
-test("generated theme CSS contains all selectable themes", () => {
+test("generated theme CSS contains all four renditions", () => {
   assert.ok(fs.existsSync(themeCssPath), `Expected generated theme CSS at ${themeCssPath}`);
 
   const themeCss = fs.readFileSync(themeCssPath, "utf8");
 
-  // The professional subset of the shared catalogue (see DESIGN-SYSTEM.md):
-  // Ivory, Paper (HC light), Steel, Carbon (HC dark).
-  for (const selector of [".alucard", ".paper", ".van-helsing", ".carbon"]) {
+  // The four renditions of the record book (see DESIGN.md).
+  for (const selector of [".ruled", ".ruled-hc", ".carbon-copy", ".carbon-copy-hc"]) {
     assert.ok(
-      themeCss.includes(selector),
+      themeCss.includes(`${selector} {`) || themeCss.includes(`${selector},`),
       `expected the generated theme CSS to include the ${selector} selector`
     );
   }
 
-  assert.ok(
-    !themeCss.includes(".dracula"),
-    "dracula was removed from the resume's theme set and should not be emitted"
+  // Two inks on ruled stock: every rendition ships the same seven tokens.
+  for (const token of [
+    "--stock:",
+    "--stock-deep:",
+    "--grid:",
+    "--rule:",
+    "--ink:",
+    "--pencil:",
+    "--red:",
+  ]) {
+    assert.equal(
+      themeCss.split(token).length - 1,
+      4,
+      `expected every rendition to define ${token}`
+    );
+  }
+
+  assert.equal(
+    themeCss.split("--radius: 0rem;").length - 1,
+    themeCss.split("--radius:").length - 1,
+    "radius is 0 on every element — paper does not have rounded corners"
   );
+});
+
+test("the record book's chrome is translated for every language", () => {
+  const languages = ["en", "ja", "tr"];
+  const shape = (value) =>
+    typeof value === "object" && value !== null
+      ? Object.fromEntries(
+          Object.entries(value)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([k, v]) => [k, shape(v)])
+        )
+      : typeof value;
+
+  const [reference, ...rest] = languages.map((lang) =>
+    JSON.parse(
+      fs.readFileSync(path.resolve(process.cwd(), `content/${lang}/record.json`), "utf8")
+    )
+  );
+
+  for (const [index, other] of rest.entries()) {
+    assert.deepEqual(
+      shape(other),
+      shape(reference),
+      `content/${languages[index + 1]}/record.json is not structurally aligned with content/en`
+    );
+  }
+
+  // Every string must actually differ from English somewhere — a fallback that
+  // silently ships English chrome to a Japanese reader is the defect, not the fix.
+  for (const [index, other] of rest.entries()) {
+    const differing = Object.keys(reference).filter(
+      (key) => JSON.stringify(other[key]) !== JSON.stringify(reference[key])
+    );
+    assert.ok(
+      differing.length > Object.keys(reference).length / 2,
+      `content/${languages[index + 1]}/record.json looks like an untranslated copy of English`
+    );
+  }
 });

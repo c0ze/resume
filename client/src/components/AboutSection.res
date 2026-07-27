@@ -1,34 +1,66 @@
-@react.component
-let make = () => {
-  let {translations: t} = LanguageContext.useLanguage()
+// Entry 01 — the Statement, set bilingually side by side.
+//
+// The reader is often Japanese-speaking and often on a phone; a record that
+// makes them switch languages to read the opening claim has already cost them
+// time. So the statement is written twice, in parallel columns, on the same
+// ruled band.
 
-  <section id="about" className="scroll-mt-24 py-14 sm:py-16">
-    <Reveal>
-      <SectionHeading index="01" title={t.about.title} />
-    </Reveal>
-    <div className="grid gap-8 md:grid-cols-3">
-      <Reveal delay=80 className="md:col-span-2">
-        <p className="text-lg leading-relaxed text-foreground sm:text-xl">
-          {React.string(t.about.paragraph1)}
-        </p>
-        {switch t.about.paragraph2 {
-        | Some(p2) if p2 !== "" =>
-          <p className="mt-4 leading-relaxed text-muted-foreground"> {React.string(p2)} </p>
-        | _ => React.null
-        }}
-      </Reveal>
-      <Reveal delay=160>
-        <div className="glass h-full rounded-2xl p-5">
-          <div
-            className="mb-3 flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-primary">
-            <LucideReact.Languages className="h-4 w-4" />
-            {React.string(t.about.languages)}
-          </div>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            {React.string(t.about.languagesContent)}
-          </p>
-        </div>
-      </Reveal>
+let endonym = (lang: Translations.language) =>
+  switch lang {
+  | En => "English"
+  | Ja => "日本語"
+  | Tr => "Türkçe"
+  }
+
+// The companion column: Japanese for an English reader, English for everyone
+// else. Both audiences named in the product brief get their own language plus
+// the one the other side of the table reads.
+let companion = (lang: Translations.language) =>
+  switch lang {
+  | Translations.En => Translations.Ja
+  | Ja | Tr => En
+  }
+
+let statement = (t: Translations.translations) => [
+  t.about.paragraph1,
+  t.about.paragraph2->Option.getOr(""),
+]
+
+let column = (lang, t: Translations.translations) => {
+  let code = Translations.languageToString(lang)
+  <div lang=code>
+    <p className="t-label" lang=code> {React.string(endonym(lang))} </p>
+    {statement(t)
+    ->Array.filter(p => p !== "")
+    ->Array.mapWithIndex((p, i) =>
+      <p key={Int.toString(i)} className="measure t-body mt-1.5">
+        {React.string(p)}
+      </p>
+    )
+    ->React.array}
+  </div>
+}
+
+@react.component
+let make = (~folios: Folio.t) => {
+  let {language, translations: t, flavor} = LanguageContext.useLanguage()
+  let other = companion(language)
+  let otherT = Translations.getTranslations(~flavor=?flavor, other)
+
+  <Entry id="about" number="01" folio={folios.statement} major=true>
+    <Entry.Head
+      title={t.about.title}
+      meta={<span className="t-data pencil">
+        {React.string(
+          `${Translations.languageToString(language)->String.toUpperCase} / ${Translations.languageToString(
+              other,
+            )->String.toUpperCase}`,
+        )}
+      </span>}
+    />
+    <div className="bilingual">
+      {column(language, t)}
+      {column(other, otherT)}
     </div>
-  </section>
+  </Entry>
 }

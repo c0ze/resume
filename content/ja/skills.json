@@ -1,6 +1,5 @@
 {
   "title": "スキル",
-  "technicalSkillsTitle": "テクニカルスキル",
   "technicalSkills": [
     "Go、Ruby、Pythonに精通。新しい言語の習得も得意。",
     "AI/LLM連携 — Anthropic APIやGemini API、Model Context Protocol（MCP）ツール、TTSエンジン（Edge TTS、Coqui）の活用。",

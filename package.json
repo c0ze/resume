@@ -14,7 +14,6 @@
     "test:static": "node --test tests/*.test.mjs"
   },
   "dependencies": {
-    "lucide-react": "^0.268.0",
     "pdfkit": "^0.16.0",
     "pdfkit-table": "^0.1.99",
     "docx": "^9.6.1",

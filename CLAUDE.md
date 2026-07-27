@@ -2,6 +2,13 @@
 
 This file provides repository-specific guidance to Claude Code when working here.
 
+## Design System
+
+The visual system is **"The Bound Notebook"** — see `DESIGN.md`, which is
+binding. Product truth is in `PRODUCT.md`; the direction contract for the single
+`/` route is in `.impeccable/surfaces/client-src-pages-home-res.md`. Read those
+before changing anything visual.
+
 ## Project Overview
 
 `resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF, DOCX, and JSON Resume files plus a vCard, and deploys the final output to GitHub Pages.
@@ -11,15 +18,17 @@ This file provides repository-specific guidance to Claude Code when working here
 - Vite 8
 - React 18
 - ReScript 11
-- Tailwind CSS
+- Tailwind CSS (reset, token-mapped colours and the 5mm quad spacing scale only)
+- BIZ UDPGothic + BIZ UDPMincho from Google Fonts
 - PDFKit + docx (PDF/DOCX resumes)
 - GitHub Actions + GitHub Pages (CI runs Node 24)
 
 ## Source of Truth
 
-- Website content: `content/{en,ja,tr}/*.json`
+- Website content: `content/{en,ja,tr}/*.json` (12 files each, structurally
+  aligned; `record.json` holds the record book's own chrome vocabulary)
 - Theme palette catalogue: `themePalettes` in `scripts/generate-theme.mjs` — generates `client/src/theme.css` (never edit the generated CSS directly)
-- Theme base settings: `config/theme.json` (variant, primary, appearance, radius — consumed by the generator)
+- Theme base settings: `config/theme.json` (appearance, radius — consumed by the generator)
 - Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
 - ReScript config: `rescript.json`
 - PDF generator: `scripts/generate-resume.mjs`
@@ -89,8 +98,12 @@ npm run test:static
 - ReScript compiles to `.res.mjs` files in-source (same directory as `.res`).
 - The `.res.mjs` files are gitignored — Vite picks them up during build.
 - JSON content is loaded via Vite's `import.meta.glob` through `%raw` interop.
-- Lucide React icon bindings are in `client/src/bindings/LucideReact.res`.
-- UI primitives (Card, CardContent, Button) are in `client/src/UI.res`.
+- There are no icon bindings and no icon dependency: the design system uses
+  typographic marks and hairline rules (see `DESIGN.md` → Components). If an
+  icon becomes necessary, prefer inline SVG over adding a package.
+- Shared UI parts live in `client/src/components/Entry.res` (`Entry`,
+  `Entry.Head`, `Entry.Fields`) — the entry, its header rule and the ruled field
+  table that every section is built from.
 
 ## Content Rules
 

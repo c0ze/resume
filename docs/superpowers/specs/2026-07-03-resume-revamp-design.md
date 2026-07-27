@@ -1,7 +1,19 @@
 # Resume site revamp — positioning, structure & proof
 
+> **SUPERSEDED — 2026-07-27.** The visual half of this spec no longer describes
+> the site. `resume.arda.tr` was rebuilt on the "The Bound Notebook" design
+> system; the current source of truth is [`DESIGN.md`](../../../DESIGN.md), with
+> the product truth in [`PRODUCT.md`](../../../PRODUCT.md) and the direction
+> contract in `.impeccable/surfaces/client-src-pages-home-res.md`.
+>
+> Specifically, the line "**No visual redesign**, no résumé variants" below is
+> false in both halves: flavoured résumé variants shipped in SP2, and the whole
+> visual system — themes, typography, layout, components — was replaced on
+> branch `redesign/record-book`. The **positioning and copy decisions** in this
+> document still hold and were carried forward unchanged.
+
 **Date:** 2026-07-03
-**Status:** Implemented — SP1 + SP2 complete (see PR)
+**Status:** Superseded (visual scope) — SP1 + SP2 copy/structure work remains in effect
 **Scope:** `resume.arda.tr` only (static site). No backend work.
 
 ## Goal

@@ -1,96 +1,52 @@
+/* GENERATED FILE — do not edit.
+   Source: scripts/generate-theme.mjs (themePalettes) + config/theme.json.
+   Run `node scripts/generate-theme.mjs` after changing either. */
+
 :root,
-.alucard {
-  --background: 30 10% 98%;
-  --foreground: 20 14.3% 4.1%;
-  --muted: 60 4.8% 95.9%;
-  --muted-foreground: 25 8% 38%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 20 14.3% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 20 14.3% 4.1%;
-  --border: 20 6% 85%;
-  --input: 20 6% 85%;
-  --primary: 216 55% 22%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 60 4.8% 95.9%;
-  --secondary-foreground: 24 9.8% 10%;
-  --accent: 60 4.8% 95.9%;
-  --accent-foreground: 24 9.8% 10%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 20 14.3% 4.1%;
+.ruled {
+  --stock: #EEF0EA;
+  --stock-deep: #E2E5DC;
+  --grid: #C3C9BC;
+  --rule: #8E9686;
+  --ink: #1B2432;
+  --pencil: #5C6470;
+  --red: #A32B20;
   color-scheme: light;
-  --radius: 0.5rem;
+  --radius: 0rem;
 }
 
-.van-helsing {
-  --background: 20 14.3% 4.1%;
-  --foreground: 40 10% 92%;
-  --muted: 12 6.5% 12%;
-  --muted-foreground: 30 6% 68%;
-  --popover: 20 10% 7%;
-  --popover-foreground: 40 10% 92%;
-  --card: 20 10% 7%;
-  --card-foreground: 40 10% 92%;
-  --border: 20 6% 18%;
-  --input: 20 6% 18%;
-  --primary: 216 50% 58%;
-  --primary-foreground: 216 50% 8%;
-  --secondary: 12 6.5% 12%;
-  --secondary-foreground: 40 10% 92%;
-  --accent: 12 6.5% 12%;
-  --accent-foreground: 40 10% 92%;
-  --destructive: 0 62.8% 55%;
-  --destructive-foreground: 0 0% 100%;
-  --ring: 216 50% 58%;
-  color-scheme: dark;
-  --radius: 0.5rem;
-}
-
-.paper {
-  --background: 0 0% 100%;
-  --foreground: 0 0% 4%;
-  --muted: 0 0% 94%;
-  --muted-foreground: 0 0% 24%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 4%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 4%;
-  --border: 0 0% 32%;
-  --input: 0 0% 32%;
-  --primary: 216 80% 20%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 94%;
-  --secondary-foreground: 0 0% 4%;
-  --accent: 216 80% 20%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 90% 30%;
-  --destructive-foreground: 0 0% 100%;
-  --ring: 216 80% 20%;
+.ruled-hc {
+  --stock: #F4F6F1;
+  --stock-deep: #E4E8DF;
+  --grid: #AEB6A6;
+  --rule: #3F4638;
+  --ink: #0D1219;
+  --pencil: #333A44;
+  --red: #7E1A12;
   color-scheme: light;
-  --radius: 0.5rem;
+  --radius: 0rem;
 }
 
-.carbon {
-  --background: 0 0% 2%;
-  --foreground: 0 0% 98%;
-  --muted: 0 0% 12%;
-  --muted-foreground: 0 0% 80%;
-  --popover: 0 0% 5%;
-  --popover-foreground: 0 0% 98%;
-  --card: 0 0% 5%;
-  --card-foreground: 0 0% 98%;
-  --border: 0 0% 52%;
-  --input: 0 0% 52%;
-  --primary: 213 95% 78%;
-  --primary-foreground: 0 0% 2%;
-  --secondary: 0 0% 12%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 213 95% 78%;
-  --accent-foreground: 0 0% 2%;
-  --destructive: 0 100% 80%;
-  --destructive-foreground: 0 0% 2%;
-  --ring: 213 95% 78%;
+.carbon-copy {
+  --stock: #14131A;
+  --stock-deep: #1E1C26;
+  --grid: #2E2B3A;
+  --rule: #4A4658;
+  --ink: #E8E4F0;
+  --pencil: #918CA3;
+  --red: #E2705F;
   color-scheme: dark;
-  --radius: 0.5rem;
+  --radius: 0rem;
+}
+
+.carbon-copy-hc {
+  --stock: #0B0A10;
+  --stock-deep: #17151F;
+  --grid: #332F42;
+  --rule: #8C87A0;
+  --ink: #F6F4FB;
+  --pencil: #C4BFD6;
+  --red: #FF9B8A;
+  color-scheme: dark;
+  --radius: 0rem;
 }

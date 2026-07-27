@@ -1,69 +1,46 @@
-let techTags = technologies =>
-  technologies
-  ->String.split(",")
-  ->Array.filterMap(tech => {
-    let trimmed = String.trim(tech)
-    trimmed === "" ? None : Some(trimmed)
-  })
-
-let card = (index, viewSource, project: Translations.projectEntry) =>
-  <article
-    key={Int.toString(index)}
-    className="group flex h-full w-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-medium">
-    <div className="mb-4 flex items-start justify-between gap-3">
-      <span
-        className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-        ariaHidden=true>
-        <LucideReact.FolderGit2 className="h-5 w-5" />
-      </span>
-      {switch project.repo->Js.Nullable.toOption {
-      | Some(url) =>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          ariaLabel={viewSource}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
-          <LucideReact.Github className="h-4 w-4" />
-        </a>
-      | None => React.null
-      }}
-    </div>
-    <h3 className="font-display text-base font-bold leading-snug text-foreground">
-      {React.string(project.title)}
-    </h3>
-    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-      {React.string(project.description)}
-    </p>
-    <div className="mt-4 flex flex-wrap gap-1.5">
-      {techTags(project.technologies)
-      ->Array.mapWithIndex((tech, idx) =>
-        <span
-          key={Int.toString(idx)}
-          className="rounded-full border border-border bg-secondary/50 px-2 py-0.5 font-mono text-[0.7rem] text-muted-foreground">
-          {React.string(tech)}
-        </span>
-      )
-      ->React.array}
-    </div>
-  </article>
+// Entry 04 — the works. Each one is a numbered sub-record: what it is, what it
+// was built with, and where the source is when the source is public. Three of
+// the ten have public repositories; the rest say so by omission rather than by
+// a dead link.
 
 @react.component
-let make = () => {
+let make = (~folios: Folio.t) => {
   let {translations: t} = LanguageContext.useLanguage()
+  let r = t.record
+  let entries = t.projects.entries
 
-  <section id="projects" className="scroll-mt-24 border-t border-border py-14 sm:py-16">
-    <Reveal>
-      <SectionHeading index="04" title={t.projects.title} />
-    </Reveal>
-    <Reveal delay=80>
-      <Carousel
-        ariaLabel={t.projects.title}
-        itemClassName="flex w-[85%] sm:w-[22rem]"
-        items={t.projects.entries->Array.mapWithIndex((project, i) =>
-          card(i, t.projects.viewSource, project)
-        )}
-      />
-    </Reveal>
-  </section>
+  <Entry id="projects" number="04" folio={folios.works} major=true>
+    <Entry.Head
+      title={t.projects.title}
+      meta={<span className="t-data pencil">
+        {React.string(`${Int.toString(Array.length(entries))} ${r.entriesLabel}`)}
+      </span>}
+    />
+    <ul className="record">
+      {entries
+      ->Array.mapWithIndex((project, i) =>
+        <li key={Int.toString(i)}>
+          <h3 className="t-entry"> {React.string(project.title)} </h3>
+          <p className="measure t-body"> {React.string(project.description)} </p>
+          <p className="linklist">
+            <span className="t-label"> {React.string(r.fields.stack)} </span>
+            {React.string(` ${project.technologies}`)}
+          </p>
+          {switch project.repo->Js.Nullable.toOption {
+          | Some(url) =>
+            <p className="linklist">
+              <span className="t-label"> {React.string(r.fields.source)} </span>
+              {React.string(" ")}
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                {React.string(url->String.replace("https://", ""))}
+                {React.string(` ↗`)}
+              </a>
+            </p>
+          | None => React.null
+          }}
+        </li>
+      )
+      ->React.array}
+    </ul>
+  </Entry>
 }

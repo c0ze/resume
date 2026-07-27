@@ -1,7 +1,8 @@
 {
   "name": "backend",
-  "label": "Senior Backend Engineer",
-  "exportLangs": ["en"],
+  "exportLangs": [
+    "en"
+  ],
   "overrides": {
     "en": {
       "subtitle": "Senior Backend Engineer — Go · Ruby · Python, Cloud & Distributed Systems",

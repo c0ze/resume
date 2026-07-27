@@ -1,57 +1,75 @@
-type theme = Alucard | Paper | VanHelsing | Carbon
+// The four renditions of the record book (see DESIGN.md):
+//
+//   Ruled           — the native sheet: laboratory stock, pale cool green-grey
+//   Ruled HC        — the same sheet printed hard, targeting WCAG AAA
+//   Carbon Copy     — a carbon flimsy off the same desk, not an inversion
+//   Carbon Copy HC  — the flimsy read under a lamp, targeting WCAG AAA
+//
+// Palette values live in scripts/generate-theme.mjs; the ids here must match
+// its `themePalettes` keys, which are also the CSS class names.
+type theme = Ruled | RuledHc | CarbonCopy | CarbonCopyHc
 
 let themeToString = theme =>
   switch theme {
-  | Alucard => "alucard"
-  | Paper => "paper"
-  | VanHelsing => "van-helsing"
-  | Carbon => "carbon"
+  | Ruled => "ruled"
+  | RuledHc => "ruled-hc"
+  | CarbonCopy => "carbon-copy"
+  | CarbonCopyHc => "carbon-copy-hc"
   }
 
 let themeFromString = str =>
   switch str {
-  | "paper" => Paper
-  | "van-helsing" => VanHelsing
-  | "carbon" => Carbon
-  | _ => Alucard
+  | "ruled-hc" => RuledHc
+  | "carbon-copy" => CarbonCopy
+  | "carbon-copy-hc" => CarbonCopyHc
+  | _ => Ruled
   }
 
-let themes = [Alucard, Paper, VanHelsing, Carbon]
+let themes = [Ruled, RuledHc, CarbonCopy, CarbonCopyHc]
 
 let isDark = theme =>
   switch theme {
-  | VanHelsing | Carbon => true
-  | Alucard | Paper => false
+  | CarbonCopy | CarbonCopyHc => true
+  | Ruled | RuledHc => false
   }
+
+// `next` advances from the *current* state rather than from a captured value,
+// so two clicks in one tick advance two renditions instead of one.
+let next = theme => {
+  let index = themes->Array.indexOf(theme)
+  themes->Array.get(mod(index + 1, Array.length(themes)))->Option.getOr(Ruled)
+}
 
 type contextValue = {
   theme: theme,
-  setTheme: theme => unit,
+  cycleTheme: unit => unit,
 }
 
 let context = React.createContext({
-  theme: Alucard,
-  setTheme: _ => (),
+  theme: Ruled,
+  cycleTheme: () => (),
 })
 
 module Provider = {
   let make = context->React.Context.provider
 }
 
+// Read back whatever the blocking bootstrap in client/index.html already
+// applied, so React's first render agrees with the already-painted page.
 let getStoredTheme = (): theme => {
   let stored: option<string> = %raw(`
     typeof window !== "undefined" ? localStorage.getItem("resume-theme") : null
   `)
   switch stored {
   | Some(s) => themeFromString(s)
-  | None => Alucard
+  | None => Ruled
   }
 }
 
 let applyThemeToDOM: (string, bool) => unit = %raw(`
-  function(themeStr, dark) {
+  function (themeStr, dark) {
     var root = document.documentElement;
-    root.classList.remove("alucard", "paper", "van-helsing", "carbon", "dracula", "dark");
+    root.classList.remove("ruled", "ruled-hc", "carbon-copy", "carbon-copy-hc", "dark");
     root.classList.add(themeStr);
     if (dark) {
       root.classList.add("dark");
@@ -59,7 +77,7 @@ let applyThemeToDOM: (string, bool) => unit = %raw(`
     } else {
       root.style.colorScheme = "light";
     }
-    localStorage.setItem("resume-theme", themeStr);
+    try { localStorage.setItem("resume-theme", themeStr); } catch (e) {}
   }
 `)
 
@@ -72,8 +90,8 @@ let make = (~children) => {
     None
   }, [theme])
 
-  let setTheme = t => setThemeState(_ => t)
-  let value = {theme, setTheme}
+  let cycleTheme = () => setThemeState(next)
+  let value = {theme, cycleTheme}
 
   <Provider value> {children} </Provider>
 }

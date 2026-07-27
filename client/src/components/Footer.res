@@ -1,62 +1,36 @@
-let scrollToTop: unit => unit = %raw(`
-  function() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-`)
+// The colophon, printed below the closing rule the way a bound document names
+// its own making.
 
 let currentYear: string = %raw(`new Date().getFullYear().toString()`)
 
 @react.component
-let make = () => {
+let make = (~folios: Folio.t) => {
   let {translations: t} = LanguageContext.useLanguage()
 
-  <footer className="mt-auto border-t border-border py-8">
-    <div className="mx-auto w-full max-w-5xl px-6">
-      <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-        <div className="flex items-center gap-2 font-mono text-sm text-muted-foreground">
-          <span className="h-2 w-2 rounded-full bg-primary" ariaHidden=true />
-          <span>
-            {React.string("arda")}
-            <span className="text-primary"> {React.string(".tr")} </span>
-          </span>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          {React.string(String.replaceAll(t.footer.copyright, "{year}", currentYear))}
-        </div>
-        <button
-          onClick={_ => scrollToTop()}
-          className="no-print flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary">
-          {React.string(
-            switch t.footer.backToTop {
-            | Some(text) => text
-            | None => "Back to top"
-            },
-          )}
-          <LucideReact.ArrowUp className="h-4 w-4" />
-        </button>
-      </div>
+  <footer className="entry js-snap">
+    <div className="entry__marg">
+      <b> {React.string("—")} </b>
+      <span className="folio"> {React.string(Folio.ref(folios.total))} </span>
+    </div>
+    <div className="entry__body">
+      <p className="linklist">
+        {React.string(t.footer.copyright->String.replaceAll("{year}", currentYear))}
+      </p>
       {switch t.footer.colophon {
       | Some(colophon) =>
-        <p
-          className="no-print mt-6 border-t border-border/60 pt-5 text-center font-mono text-[0.7rem] leading-relaxed text-muted-foreground">
+        <p className="linklist">
           {React.string(colophon)}
-          {React.string(" · ")}
-          <a
-            href="https://github.com/c0ze/resume"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary transition-colors hover:underline">
-            {React.string(
-              switch t.footer.source {
-              | Some(source) => source
-              | None => "source"
-              },
-            )}
-            {React.string(" ↗")}
+          {React.string(`  ·  `)}
+          <a href={Build.repo} target="_blank" rel="noopener noreferrer">
+            {React.string(t.footer.source->Option.getOr("source"))}
+            {React.string(` ↗`)}
           </a>
         </p>
       | None => React.null
       }}
+      <p className="linklist no-print">
+        <a href="#top"> {React.string(t.record.backToIndex)} </a>
+      </p>
     </div>
   </footer>
 }

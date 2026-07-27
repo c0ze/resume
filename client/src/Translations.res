@@ -78,7 +78,6 @@ type educationContent = {
 
 type skillsContent = {
   title: string,
-  technicalSkillsTitle: string,
   technicalSkills: array<string>,
 }
 
@@ -103,7 +102,6 @@ type socialLink = {
 type contactContent = {
   title: string,
   getInTouch: string,
-  emailMe: string,
   findMeOn: string,
   socialLinks: option<array<socialLink>>,
 }
@@ -144,6 +142,65 @@ type pdfMetaContent = {
   generatedOn: string,
 }
 
+// The record book's own vocabulary — field labels, column heads, the issue and
+// countersign copy. Kept out of the résumé sections proper because none of it
+// is a claim about Arda; it is the apparatus of the document. Translated in
+// full for all three languages: Japanese and Turkish are not fallbacks.
+type recordFields = {
+  location: string,
+  resident: string,
+  languages: string,
+  record: string,
+  site: string,
+  organisation: string,
+  period: string,
+  engagement: string,
+  abstract: string,
+  evidence: string,
+  institution: string,
+  stack: string,
+  source: string,
+}
+
+type recordColumns = {
+  no: string,
+  period: string,
+  organisation: string,
+  title: string,
+  page: string,
+  format: string,
+  file: string,
+  generatedBy: string,
+  issued: string,
+}
+
+type recordContent = {
+  book: string,
+  volume: string,
+  contents: string,
+  entriesLabel: string,
+  pagesLabel: string,
+  issue: string,
+  artifactsOfRecord: string,
+  issued: string,
+  closingEntry: string,
+  certificate: string,
+  authorOfRecord: string,
+  dateOfIssue: string,
+  commit: string,
+  issueNote: string,
+  amendmentNote: string,
+  register: string,
+  registerNote: string,
+  residentSince: string,
+  recordSummary: string,
+  rendition: string,
+  language: string,
+  backToIndex: string,
+  fields: recordFields,
+  columns: recordColumns,
+}
+
 type translations = {
   header: headerContent,
   about: aboutContent,
@@ -155,6 +212,7 @@ type translations = {
   footer: footerContent,
   navigation: navigationContent,
   chat: chatContent,
+  record: recordContent,
   @as("pdf_meta") pdfMeta: pdfMetaContent,
 }
 
@@ -212,6 +270,7 @@ let getTranslations = (~flavor=?, language: language): translations => {
     footer: loadSection(lang, "footer"),
     navigation: loadSection(lang, "navigation"),
     chat: loadSection(lang, "chat"),
+    record: loadSection(lang, "record"),
     pdfMeta: loadSection(lang, "pdf_meta"),
   }
   switch flavor {

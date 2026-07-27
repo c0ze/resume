@@ -16,11 +16,18 @@ const projectRoot = path.resolve(__dirname, '..');
 const contractUrl = 'https://raw.githubusercontent.com/c0ze/arda.tr/main/config/themes.json';
 
 // Local display names that deliberately differ from the canonical catalogue.
-// The resume's theme toggle appends the accessibility hint to the
-// high-contrast themes ("Paper (high contrast)" is canonical "Paper").
+//
+// The résumé's renditions are named for the artifact they imitate — a bound
+// laboratory notebook: Ruled stock and its carbon flimsy (see DESIGN.md). The
+// canonical catalogue names the same four *roles* — light, high-contrast light,
+// dark, high-contrast dark — after its own world. The mapping below is the
+// contract: the roles line up one-for-one, the words do not, and the words are
+// owned by each site's design system.
 const localToCanonicalName = {
-  'Paper (high contrast)': 'Paper',
-  'Carbon (high contrast)': 'Carbon',
+  Ruled: 'Stock',
+  'Ruled HC': 'Stock HC',
+  'Carbon Copy': 'Microfiche',
+  'Carbon Copy HC': 'Microfiche HC',
 };
 
 async function loadContract() {

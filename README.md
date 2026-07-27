@@ -14,7 +14,8 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
-- Multiple selectable themes generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`
+- Four renditions of the record book — Ruled, Ruled HC, Carbon Copy, Carbon Copy HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA
+- `<html lang>` tracks the selected language, and a blocking bootstrap applies the stored rendition before first paint
 
 ## Tech Stack
 
@@ -23,7 +24,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Vite 8 (client build + SSR prerender)
 - Tailwind CSS (with `@tailwindcss/typography`)
 - PDFKit (PDF resumes) and `docx` (DOCX resumes)
-- Lucide icons
+- BIZ UDPGothic + BIZ UDPMincho (Google Fonts)
 - GitHub Actions + GitHub Pages for deployment
 
 ## Repository Layout
@@ -41,6 +42,8 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 ├── public/               # Static assets and generated PDFs
 ├── scripts/              # Build helpers, theme generation, PDF generation
 ├── tests/                # Lightweight smoke tests for static output
+├── DESIGN.md             # The design system — binding, not advisory
+├── PRODUCT.md            # Product truth, audience, and what must never be fabricated
 ├── CLAUDE.md             # Repo-specific instructions for Claude Code
 ├── AGENTS.md             # Repo-specific instructions for coding agents
 └── README.md             # Human-facing project documentation
@@ -51,7 +54,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 The root is intentionally kept for:
 
 - tool conventions that truly require the root, such as `package.json`, `package-lock.json`, `.gitignore`, and `.gitattributes`
-- repo-wide docs such as `README.md`, `CLAUDE.md`, and `AGENTS.md`
+- repo-wide docs such as `README.md`, `DESIGN.md`, `PRODUCT.md`, `CLAUDE.md`, and `AGENTS.md`
 - top-level source directories such as `client/`, `content/`, `public/`, `scripts/`, and `tests/`
 
 Do not add new loose assets or ad-hoc notes to the root. Put them in one of these places instead:
@@ -132,9 +135,9 @@ When you update content:
 
 ## Theme Workflow
 
-The theme palette catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base variant settings (variant, primary, appearance, radius) consumed by the generator, and theme selector state lives in `client/src/contexts/ThemeContext.res`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
+The rendition catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base settings (appearance, radius) consumed by the generator, and rendition state lives in `client/src/contexts/ThemeContext.res`. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
 
-The themes are a professional subset of the shared "Ink & Ledger" catalogue published by the arda.tr portfolio repo. `scripts/check-theme-contract.mjs` verifies the theme display names (from `themeInfos` in `client/src/components/ThemeToggle.res`) still map into that canonical catalogue; `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
+Each rendition is exactly seven tokens — `--stock`, `--stock-deep`, `--grid`, `--rule`, `--ink`, `--pencil`, `--red` — because the design system is two inks on ruled stock (see `DESIGN.md`). `scripts/check-theme-contract.mjs` maps the local rendition names onto the shared arda.tr catalogue by role (Ruled → Stock, Carbon Copy → Microfiche, and the two HC variants); `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
 
 ## Deployment
 

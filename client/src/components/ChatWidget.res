@@ -1,8 +1,8 @@
-// Floating "Ask about Arda" helpdesk widget. A launcher button opens a themed
-// chat panel that POSTs to the ai.arda.tr bot's /api/chat (Gemini-backed; the
-// server holds the key). Non-streaming v1. SSR-safe: the network call only runs
-// in event handlers, and the panel only mounts on the client after a click.
-// Requires the bot's CORS ALLOWED_ORIGINS to include this site's origin.
+// "Ask about Arda" — a floating enquiry slip that POSTs to the ai.arda.tr bot's
+// SSE /api/chat/stream (falling back to the non-streaming /api/chat) and renders
+// Markdown via Markdown.res. The bot holds the API key, so this static site
+// ships no secrets. Other parts of the page open it via the `arda:open-chat`
+// window event.
 type chatMsg = {
   id: int,
   role: string, // "user" | "model"
@@ -140,8 +140,7 @@ let onEscape: (unit => unit) => (unit => unit) = %raw(`
   }
 `)
 
-// Lets any other part of the page open the widget (Contact section / hero CTA)
-// without sharing React state — a tiny window-event bus.
+// Lets any other part of the page open the widget without sharing React state.
 let openChat: unit => unit = %raw(`
   function () {
     if (typeof window !== "undefined") {
@@ -164,12 +163,12 @@ let bubble = (msg: chatMsg) => {
     key={Int.toString(msg.id)}
     className={"flex " ++ (msg.role == "user" ? "justify-end" : "justify-start")}>
     <div
-      className={"max-w-[85%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed " ++ (
+      className={"chat-bubble " ++ (
         msg.role == "user"
-          ? "whitespace-pre-wrap rounded-br-md bg-primary text-primary-foreground"
+          ? "chat-bubble--user whitespace-pre-wrap"
           : msg.isError
-          ? "whitespace-pre-wrap rounded-bl-md border border-destructive/40 bg-destructive/10 text-foreground"
-          : "rounded-bl-md bg-secondary text-foreground"
+          ? "chat-bubble--err whitespace-pre-wrap"
+          : ""
       )}>
       {isModel ? <Markdown text={msg.content} /> : React.string(msg.content)}
     </div>
@@ -197,8 +196,6 @@ let make = () => {
   }
 
   // Keep the transcript pinned to the latest message / thinking indicator.
-  // The key folds in the last message's length so streaming updates (same
-  // message, growing content) keep the view scrolled to the bottom.
   let lastLen = switch messages->Array.get(Array.length(messages) - 1) {
   | Some(m) => String.length(m.content)
   | None => 0
@@ -213,7 +210,7 @@ let make = () => {
 
   // On open: focus the input and wire Escape-to-close. On close, the cleanup
   // returns focus to the launcher so keyboard users aren't stranded (the dialog
-  // is non-modal — a floating helpdesk widget — so we restore focus rather than
+  // is non-modal — a floating enquiry slip — so we restore focus rather than
   // trap it).
   React.useEffect1(() => {
     if isOpen {
@@ -236,7 +233,6 @@ let make = () => {
     }
   }, [isOpen])
 
-  // Open when another part of the page requests it (Contact section / hero CTA).
   React.useEffect0(() => Some(listenForOpen(() => setIsOpen(_ => true))))
 
   let submit = text => {
@@ -246,8 +242,6 @@ let make = () => {
       let history = messages->Array.filter(m => !m.isError)
       let modelId = nextId()
       let started = ref(false)
-      // Add the model bubble on the first token, then update it in place as more
-      // tokens stream in.
       let addOrUpdate = full =>
         setMessages(prev =>
           if started.contents {
@@ -279,11 +273,9 @@ let make = () => {
         },
         () => {
           if started.contents {
-            // A partial answer is already on screen — keep it, just stop busy.
             setStreaming(_ => false)
             setBusy(_ => false)
           } else {
-            // Stream failed before any token — fall back to the non-streaming call.
             postChat(
               trimmed,
               history,
@@ -311,43 +303,30 @@ let make = () => {
   <>
     {isOpen
       ? React.null
-      : <button
-          ref={ReactDOM.Ref.domRef(launcherRef)}
-          type_="button"
-          onClick={_ => setIsOpen(_ => true)}
-          ariaLabel={c.launcher}
-          ariaHaspopup=#dialog
-          className="no-print fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center gap-2 rounded-full bg-primary px-0 text-primary-foreground shadow-glow transition-transform duration-200 hover:scale-105 sm:w-auto sm:px-5">
-          <LucideReact.MessageCircle className="h-6 w-6 shrink-0" />
-          <span className="hidden text-sm font-medium sm:inline"> {React.string(c.launcher)} </span>
-        </button>}
+      : <div className="chat-launcher no-print">
+          <button
+            ref={ReactDOM.Ref.domRef(launcherRef)}
+            type_="button"
+            onClick={_ => setIsOpen(_ => true)}
+            ariaHaspopup=#dialog
+            className="slip">
+            {React.string(c.launcher)}
+          </button>
+        </div>}
     {isOpen
-      ? <div
-          role="dialog"
-          ariaLabel={c.title}
-          className="no-print fixed inset-x-3 bottom-3 z-40 mx-auto flex max-h-[80vh] max-w-md flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-glow ring-1 ring-foreground/5 sm:inset-x-auto sm:bottom-5 sm:right-5 sm:w-[24rem]">
-          <div
-            className="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-muted/40 px-4 py-3">
-            <div className="flex items-center gap-2.5">
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow"
-                ariaHidden=true>
-                <LucideReact.Sparkles className="h-5 w-5" />
-              </span>
-              <div className="leading-tight">
-                <p className="font-display text-sm font-bold text-foreground"> {React.string(c.title)} </p>
-                <p className="flex items-center gap-1.5 font-mono text-[0.65rem] text-muted-foreground">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary" ariaHidden=true />
-                  {React.string("AI · Gemini")}
-                </p>
-              </div>
+      ? <div role="dialog" ariaLabel={c.title} className="chat-panel no-print">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-ink bg-stock-deep px-q py-2">
+            <div>
+              <p className="t-label"> {React.string("AI · Gemini")} </p>
+              <p className="t-entry"> {React.string(c.title)} </p>
             </div>
             <button
               type_="button"
               onClick={_ => setIsOpen(_ => false)}
               ariaLabel={c.close}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
-              <LucideReact.X className="h-4 w-4" />
+              title={c.close}
+              className="modal-close modal-close--static">
+              {React.string(`×`)}
             </button>
           </div>
 
@@ -355,22 +334,19 @@ let make = () => {
             ref={ReactDOM.Ref.domRef(listRef)}
             role="log"
             ariaLive=#polite
-            className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            className="flex-1 space-y-2 overflow-y-auto px-q py-q">
             <div className="flex justify-start">
-              <div
-                className="max-w-[85%] rounded-2xl rounded-bl-md bg-secondary px-3.5 py-2 text-sm leading-relaxed text-foreground">
-                {React.string(c.greeting)}
-              </div>
+              <div className="chat-bubble"> {React.string(c.greeting)} </div>
             </div>
             {Array.length(messages) == 0
-              ? <div className="flex flex-col items-start gap-2 pt-1">
+              ? <div className="flex flex-col items-start gap-1.5 pt-1">
                   {c.suggestions
                   ->Array.mapWithIndex((s, i) =>
                     <button
                       key={Int.toString(i)}
                       type_="button"
                       onClick={_ => submit(s)}
-                      className="rounded-full border border-border bg-card px-3 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
+                      className="slip text-left">
                       {React.string(s)}
                     </button>
                   )
@@ -379,17 +355,7 @@ let make = () => {
               : React.null}
             {messages->Array.map(bubble)->React.array}
             {busy && !streaming
-              ? <div className="flex justify-start" ariaLabel={c.thinking}>
-                  <div className="flex gap-1 rounded-2xl rounded-bl-md bg-secondary px-3.5 py-3">
-                    <span
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.3s]"
-                    />
-                    <span
-                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.15s]"
-                    />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground/60" />
-                  </div>
-                </div>
+              ? <p className="t-label" ariaLabel={c.thinking}> {React.string(c.thinking)} </p>
               : React.null}
           </div>
 
@@ -398,7 +364,7 @@ let make = () => {
               ReactEvent.Form.preventDefault(e)
               submit(input)
             }}
-            className="flex shrink-0 items-center gap-2 border-t border-border p-3">
+            className="flex shrink-0 items-center gap-2 border-t border-ink p-2">
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
               type_="text"
@@ -409,14 +375,10 @@ let make = () => {
               }}
               placeholder={c.placeholder}
               disabled={busy}
-              className="min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
+              className="min-w-0 flex-1 border border-rule bg-stock px-2 py-1.5 font-gothic text-sm text-ink focus:border-ink focus:outline-none disabled:opacity-60"
             />
-            <button
-              type_="submit"
-              ariaLabel={c.send}
-              disabled={!canSend}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-200 hover:scale-105 disabled:opacity-40 disabled:hover:scale-100">
-              <LucideReact.Send className="h-4 w-4" />
+            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="slip">
+              {React.string(c.send)}
             </button>
           </form>
         </div>

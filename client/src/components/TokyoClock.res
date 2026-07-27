@@ -1,5 +1,6 @@
-// Live "based in Tokyo" time chip for the hero. Renders an em-dash placeholder
-// on the server, then ticks every 30s on the client. Brand tie to arda.tr.
+// Local time where the record is kept. Renders a placeholder on the server,
+// then ticks every 30s on the client. Tabular figures, like every other number
+// on the page.
 let startClock: (string => unit) => (unit => unit) = %raw(`
   function (setTime) {
     function fmt() {
@@ -30,7 +31,5 @@ let make = () => {
 
   React.useEffect0(() => Some(startClock(t => setTime(_ => t))))
 
-  <span className="font-mono text-[0.7rem] tracking-wider text-muted-foreground tabular-nums">
-    {React.string((time == "" ? "--:--" : time) ++ " JST")}
-  </span>
+  <span className="pencil"> {React.string((time == "" ? "--:--" : time) ++ " JST")} </span>
 }
