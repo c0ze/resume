@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
+import { fieldLabel } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -175,7 +176,7 @@ async function generateDocx(language, flavor = null) {
   if (t.about.paragraph2) children.push(bodyPara(t.about.paragraph2));
   children.push(new Paragraph({
     children: [
-      new TextRun({ text: `${t.about.languages}: `, bold: true, size: 20, font: FONT.body, color: COLOR.black }),
+      new TextRun({ text: fieldLabel(t.about.languages), bold: true, size: 20, font: FONT.body, color: COLOR.black }),
       new TextRun({ text: t.about.languagesContent, size: 20, font: FONT.body, color: COLOR.dark }),
     ],
     spacing: { after: isJa ? 80 : 60 },
