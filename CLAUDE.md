@@ -1,121 +1,93 @@
 # CLAUDE.md
 
-This file provides repository-specific guidance to Claude Code when working here.
+These rules apply to every task in this repository unless explicitly overridden.
+Bias: caution over speed on non-trivial work. Use judgment on trivial tasks.
 
-## Design System
+This file is generic and identical across projects. **It contains no project-specific
+information.** `AGENTS.md` is a symlink to this file, so Claude Code, Codex, Kimi, Cursor
+and anything else reading either name get the same rules.
 
-The visual system is **"The Bound Notebook"** — see `DESIGN.md`, which is
-binding. Product truth is in `PRODUCT.md`; the direction contract for the single
-`/` route is in `.impeccable/surfaces/client-src-pages-home-res.md`. Read those
-before changing anything visual.
+## Where knowledge lives
 
-## Project Overview
+Read in this order. Stop as soon as you have what you need.
 
-`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF, DOCX, and JSON Resume files plus a vCard, and deploys the final output to GitHub Pages.
+| Layer | File | Contains |
+|---|---|---|
+| 1. Rules | `CLAUDE.md` = `AGENTS.md` (this file) | How to work. Generic, never project-specific. |
+| 2. Project | [PROJECT.md](PROJECT.md) | This project: architecture, constraints, key files, how to run and validate. |
+| 3. Wiki | `llm-wiki/index.md` (if present) | Compounding knowledge: decisions, entities, sources. |
 
-## Current Stack
+**Before changing project behavior, read `PROJECT.md`.** It is the handoff document and
+takes precedence over anything you infer from the code.
 
-- Vite 8
-- React 18
-- ReScript 11
-- Tailwind CSS (reset, token-mapped colours and the 5mm quad spacing scale only)
-- BIZ UDPGothic + BIZ UDPMincho from Google Fonts
-- PDFKit + docx (PDF/DOCX resumes)
-- GitHub Actions + GitHub Pages (CI runs Node 24)
+If a project has an `llm-wiki/`, it follows the Karpathy LLM-wiki pattern: raw sources are
+compiled once into interlinked pages, and you query the wiki rather than re-deriving from
+sources. Start at `index.md` and `agent-rules.md`. Append to `log.md` when you change it.
+Treat archived pages as historical only — never cite them as current.
 
-## Source of Truth
+Keep the layers honest: a fact that is true of every project belongs here; a fact true of
+this project belongs in `PROJECT.md`; a fact that took real work to establish belongs in
+the wiki. Duplicating across layers is how they drift.
 
-- Website content: `content/{en,ja,tr}/*.json` (12 files each, structurally
-  aligned; `record.json` holds the record book's own chrome vocabulary)
-- Theme palette catalogue: `themePalettes` in `scripts/generate-theme.mjs` — generates `client/src/theme.css` (never edit the generated CSS directly)
-- Theme base settings: `config/theme.json` (appearance, radius — consumed by the generator)
-- Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
-- ReScript config: `rescript.json`
-- PDF generator: `scripts/generate-resume.mjs`
-- DOCX generator: `scripts/generate-docx.mjs`
-- JSON Resume generator: `scripts/generate-json-resume.mjs`
-- vCard generator: `scripts/generate-vcard.mjs`
-- Theme contract check (names vs the shared arda.tr catalogue): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
-- Static build pipeline: `scripts/build-static.mjs`
-- Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
-- Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)
+## Rule 1 — Think before coding
+State assumptions explicitly. If uncertain, ask rather than guess.
+Present multiple interpretations when ambiguity exists.
+Push back when a simpler approach exists.
+Stop when confused. Name what's unclear.
 
-## Important Directories
+## Rule 2 — Simplicity first
+Minimum code that solves the problem. Nothing speculative.
+No features beyond what was asked. No abstractions for single-use code.
+Test: would a senior engineer say this is overcomplicated? If yes, simplify.
 
-```text
-client/               React application (ReScript source in client/src/)
-content/              Language-specific JSON content
-config/               Theme and build-tool configuration
-public/               Static assets, fonts, generated resume artifacts
-scripts/              Build scripts and generators
-tests/                Smoke tests for build output
-```
+## Rule 3 — Surgical changes
+Touch only what you must. Clean up only your own mess.
+Don't "improve" adjacent code, comments, or formatting.
+Don't refactor what isn't broken. Match existing style.
 
-## Commands
+## Rule 4 — Goal-driven execution
+Define success criteria. Loop until verified.
+Don't follow steps. Define success and iterate.
+Strong success criteria let you loop independently.
 
-```bash
-npm run dev           # ReScript watch + Vite dev server (requires concurrently)
-npm run build         # Full static build (ReScript → Vite → SSR → PDF/DOCX)
-npm run preview       # Preview built site
-npm run check         # ReScript type check (rescript build)
-npm run test:static   # Smoke tests: static output + Markdown renderer (tests/*.test.mjs)
-npm run res:build     # ReScript compile only
-npm run res:clean     # Clean ReScript build artifacts
-```
+## Rule 5 — Use the model only for judgment calls
+Use the model for: classification, drafting, summarization, extraction.
+Do NOT use it for: routing, retries, deterministic transforms.
+If code can answer, code answers.
 
-## Key Features
+## Rule 6 — Token budgets are not advisory
+Per-task: 4,000 tokens. Per-session: 30,000 tokens.
+If approaching budget, summarize and start fresh.
+Surface the breach. Do not silently overrun.
 
-- **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
-- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
-- **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
-- **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
+## Rule 7 — Surface conflicts, don't average them
+If two patterns contradict, pick one (more recent / more tested).
+Explain why. Flag the other for cleanup.
+Don't blend conflicting patterns.
 
-## Build Expectations
+## Rule 8 — Read before you write
+Before adding code, read exports, immediate callers, shared utilities.
+"Looks orthogonal" is dangerous. If unsure why code is structured a way, ask.
 
-`npm run build` should:
+## Rule 9 — Tests verify intent, not just behavior
+Tests must encode WHY behavior matters, not just WHAT it does.
+A test that can't fail when business logic changes is wrong.
 
-1. compile ReScript sources to `.res.mjs`
-2. build the client bundle
-3. build the SSR entry
-4. prerender `/` into static HTML
-5. regenerate `public/resume-{en,ja,tr}.pdf` and `public/resume-{en,ja,tr}.docx`
-6. regenerate `public/resume-{en,ja,tr}.json` (JSON Resume) and `public/arda.vcf` (vCard)
-7. write `dist/client/artifact-status.json`
-8. copy public assets into `dist/client`
-9. generate `dist/client/sitemap.xml`
+## Rule 10 — Checkpoint after every significant step
+Summarize what was done, what's verified, what's left.
+Don't continue from a state you can't describe back.
+If you lose track, stop and restate.
 
-If content, theme configuration, or build scripts change, run:
+## Rule 11 — Match the codebase's conventions, even if you disagree
+Conformance > taste inside the codebase.
+If you genuinely think a convention is harmful, surface it. Don't fork silently.
 
-```bash
-npm run check
-npm run build
-npm run test:static
-```
+## Rule 12 — Fail loud
+"Completed" is wrong if anything was skipped silently.
+"Tests pass" is wrong if any were skipped.
+Default to surfacing uncertainty, not hiding it.
 
-## ReScript Notes
-
-- Source files are `.res` in `client/src/` with subdirectories for organization.
-- ReScript compiles to `.res.mjs` files in-source (same directory as `.res`).
-- The `.res.mjs` files are gitignored — Vite picks them up during build.
-- JSON content is loaded via Vite's `import.meta.glob` through `%raw` interop.
-- There are no icon bindings and no icon dependency: the design system uses
-  typographic marks and hairline rules (see `DESIGN.md` → Components). If an
-  icon becomes necessary, prefer inline SVG over adding a package.
-- Shared UI parts live in `client/src/components/Entry.res` (`Entry`,
-  `Entry.Head`, `Entry.Fields`) — the entry, its header rule and the ruled field
-  table that every section is built from.
-
-## Content Rules
-
-- Keep `en`, `ja`, and `tr` content files structurally aligned.
-- Treat `content/` as the canonical source for visible resume content.
-- Do not hand-edit generated files in `dist/`.
-- Expect `public/resume-*.{pdf,docx,json}` and `public/arda.vcf` to change after builds because they are generated (gitignored) artifacts.
-
-## Repository Hygiene
-
-- Keep the root lean.
-- Put new automation in `scripts/`.
-- Put tool config in `config/` unless a tool hard-requires the root.
-- Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
-- Do not commit `.res.mjs` files — they are build artifacts.
+## Rule 13 — Keep these documents current
+When you learn something that contradicts `PROJECT.md`, fix `PROJECT.md` in the same
+change. A stale handoff document is worse than none — the next agent will trust it.
+Never edit `AGENTS.md`: it is a symlink to this file.
