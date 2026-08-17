@@ -1,6 +1,7 @@
-// Entry 05 — education. The early end of the span is the unusual part of this
-// record, so the papers are set as citations in their own ruled list rather
-// than buried in a paragraph.
+// Education. The early end of the span is the unusual part of this record —
+// four first-author papers on a hardware code-compression technique, Verilog on
+// a MIPS R3000 core synthesised to 90nm — so the papers are set as citations in
+// their own list rather than buried in the paragraph above them.
 
 // Paper items are stored as "2011: Title (Venue)" in every language.
 let splitCitation = (item: string) =>
@@ -12,80 +13,50 @@ let splitCitation = (item: string) =>
     )
   }
 
-let anchor = i => `education-${Int.toString(i + 1)}`
-
 @react.component
-let make = (~folios: Folio.t) => {
+let make = () => {
   let {translations: t} = LanguageContext.useLanguage()
-  let r = t.record
-  let entries = t.education.entries
 
-  <>
-    <Entry id="education" number="05" folio={folios.education} major=true>
-      <Entry.Head
-        title={t.education.title}
-        meta={<span className="t-data pencil">
-          {React.string(
-            `${Int.toString(Array.length(entries))} ${r.entriesLabel} · ${Period.format(
-                entries->Array.map(e => e.period),
-              )}`,
-          )}
-        </span>}
-      />
-    </Entry>
+  <Section id="education">
+    {t.education.entries
+    ->Array.mapWithIndex((edu, i) =>
+      <article
+        key={Int.toString(i)} id={`education-${Int.toString(i + 1)}`} className="entry">
+        <div className="entry__head">
+          <h3 className="t-h3"> {React.string(edu.degree)} </h3>
+          <span className="entry__period"> {React.string(edu.period)} </span>
+        </div>
 
-    {entries
-    ->Array.mapWithIndex((edu, i) => {
-      let links = edu.links->Option.getOr([])
-      let fields = Array.concat(
-        [
-          Entry.Fields.text(r.fields.institution, edu.institution),
-          Entry.Fields.text(r.fields.period, edu.period),
-        ],
-        Array.length(links) === 0
-          ? []
-          : [
-              Entry.Fields.node(
-                r.fields.evidence,
-                <>
-                  {links
-                  ->Array.mapWithIndex((link, j) =>
-                    <React.Fragment key={link.url}>
-                      {j === 0 ? React.null : React.string(`  ·  `)}
-                      <a href={link.url} target="_blank" rel="noopener noreferrer">
-                        {React.string(link.label)}
-                        {React.string(` ↗`)}
-                      </a>
-                    </React.Fragment>
-                  )
-                  ->React.array}
-                </>,
-              ),
-            ],
-      )
+        <div className="entry__org">
+          <Mark logo={edu.logo} />
+          {React.string(edu.institution)}
+        </div>
 
-      <Entry
-        key={Int.toString(i)}
-        id={anchor(i)}
-        number={`05.${Int.toString(i + 1)}`}
-        folio={folios.degree(i)}
-        logo={edu.logo}>
-        <Entry.Head
-          sub=true
-          title={edu.degree}
-          meta={<span className="t-data"> {React.string(edu.period)} </span>}
-        />
-        <Entry.Fields rows=fields />
         {switch edu.description->Js.Nullable.toOption {
         | Some(desc) if desc !== "" =>
-          <p className="measure t-body mt-q"> {React.string(desc)} </p>
+          <p className="entry__abstract measure t-body"> {React.string(desc)} </p>
         | _ => React.null
         }}
+
+        {switch edu.links {
+        | Some(links) if Array.length(links) > 0 =>
+          <p className="linkrow mt-2">
+            {links
+            ->Array.map(link =>
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer">
+                {React.string(link.label)}
+              </a>
+            )
+            ->React.array}
+          </p>
+        | _ => React.null
+        }}
+
         {switch edu.additionalInfo->Js.Nullable.toOption {
         | Some(info) =>
           <>
-            <p className="t-label mt-q"> {React.string(info.title)} </p>
-            <ul className="papers">
+            <p className="t-label mt-4"> {React.string(info.title)} </p>
+            <ul className="papers measure">
               {info.items
               ->Array.mapWithIndex((item, j) => {
                 let (year, citation) = splitCitation(item)
@@ -99,8 +70,8 @@ let make = (~folios: Folio.t) => {
           </>
         | None => React.null
         }}
-      </Entry>
-    })
+      </article>
+    )
     ->React.array}
-  </>
+  </Section>
 }

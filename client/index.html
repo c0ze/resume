@@ -7,22 +7,25 @@
     <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
     <link rel="canonical" href="https://resume.arda.tr/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#EEF0EA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#14131A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E1013" media="(prefers-color-scheme: dark)" />
 
     <!--
       Rendition + language bootstrap. Blocking on purpose: without it a reader
-      who chose a dark rendition gets a full flash of light stock before React
-      mounts, and screen readers announce Japanese and Turkish content as
+      who chose a dark rendition gets a full flash of the light page before
+      React mounts, and screen readers announce Japanese and Turkish content as
       English until the first render. Both were live defects.
+
+      `dark` is both a rendition id and the class Tailwind's dark: variant keys
+      off, so the dark renditions carry it alongside their own id.
     -->
     <script>
       (function () {
         var root = document.documentElement;
-        var RENDITIONS = { ruled: 0, "ruled-hc": 0, "carbon-copy": 1, "carbon-copy-hc": 1 };
+        var RENDITIONS = { light: 0, "light-hc": 0, dark: 1, "dark-hc": 1 };
         try {
           var t = localStorage.getItem("resume-theme");
-          if (!(t in RENDITIONS)) t = "ruled";
+          if (!(t in RENDITIONS)) t = "light";
           root.classList.add(t);
           if (RENDITIONS[t]) {
             root.classList.add("dark");
@@ -33,7 +36,7 @@
           var l = localStorage.getItem("resume-lang");
           if (l === "en" || l === "ja" || l === "tr") root.lang = l;
         } catch (e) {
-          root.classList.add("ruled");
+          root.classList.add("light");
         }
       })();
     </script>
@@ -41,13 +44,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
-      Morisawa BIZ UD — Japanese universal-design business-document faces.
-      One system covers CJK, Latin and latin-ext (Turkish ı İ ğ ş ç ö ü), which
-      fixes the live defect where /ja had no web font at all and fell through
-      to the OS at a mismatched optical weight.
+      M PLUS 2 — one family covers CJK, Latin and the Turkish latin-ext glyphs
+      (ı İ ğ Ğ ş Ş ç ö ü). Keeping all three scripts in one system is what stops
+      Japanese falling through to the OS at a mismatched optical weight.
+
+      The face was chosen by testing what Chrome ACTUALLY paints with, via
+      CSS.getPlatformFontsForNode, not by reading @font-face unicode-range. A
+      declared range is a subset declaration, not a coverage guarantee: Zen Kaku
+      Gothic New and Noto Sans JP both DECLARE U+0100-02BA and both silently
+      drop Ş ş Ğ ğ İ to a serif fallback mid-word in Turkish. M PLUS 2 paints
+      all 20 test glyphs itself.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@400;700&display=swap"
       rel="stylesheet"
     />
 
@@ -129,6 +138,37 @@
     </script>
   </head>
   <body>
+    <!--
+      DIRECTION CONTRACT — seed b5968ece
+
+      THESIS: A résumé is judged in forty seconds by someone holding a dozen
+      others, so this page spends nothing on a borrowed world. It refuses the
+      modern CV page (sidebar photo, skill bars, dotted timeline, logo grid,
+      gradient name) and it refuses the design-object résumé — the bound
+      laboratory notebook it replaces, whose apparatus cost more attention than
+      it returned.
+
+      OWN-WORLD: White ground, one accent (deep teal #0D6E79), two text weights
+      (400/700), 1px hairlines, 6px radius. M PLUS 2 carries English, Japanese
+      and Turkish in one family — verified by what the browser paints, not by
+      declared unicode-range. Section names sit in an 8.5rem rail; content holds
+      one uninterrupted column at 34rem, ~68 characters.
+
+      STORY: The reader learns what Arda is, sees the span is checkable, takes
+      the file.
+
+      FIRST VIEWPORT: Controls top right. Name at 2.5rem, position of record
+      beneath it, four facts carrying the span, then the four artifacts as real
+      links with Download PDF primary.
+
+      FORM: The category standard — the standing exit, taken in the user's own
+      words ("something simpler, these are too complicated") after two re-rolled
+      hands. Craft bar: Linear/Vercel, Apple/MUJI, read.cv.
+
+      FINISH: unreviewed and undocumented is unfinished; this build ends with
+      the finish review, the verdict, DESIGN.md, and every shipping raster
+      carrying its provenance
+    -->
     <div id="root"></div>
     <script type="module" src="/src/Main.res.mjs"></script>
     <!-- Cloudflare Web Analytics (cookieless; the visible email stays out of the page) -->

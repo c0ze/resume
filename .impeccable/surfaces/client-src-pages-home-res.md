@@ -2,7 +2,7 @@
 version: 1
 slug: "client-src-pages-home-res"
 primary_target: "client/src/pages/Home.res"
-related_targets: ["client/src/index.css","scripts/generate-theme.mjs"]
+related_targets: ["client/src/index.css","scripts/generate-theme.mjs","client/index.html"]
 ---
 
 ## Scope & mode
@@ -19,54 +19,45 @@ Success: they believe the claim and keep the PDF.
 
 ## Direction contract
 
-**THESIS.** Twenty-five years set as a bound laboratory notebook — numbered,
-dated, and impossible to quietly revise, so that verifiability *is* the
-aesthetic rather than an assertion. Refuses the modern CV arrangement: sidebar
-photo, skill bars, dotted timeline, tech-logo grid, gradient name.
+**THESIS.** No borrowed world and no governing metaphor. A résumé judged in
+forty seconds cannot afford an apparatus between the reader and the facts, so
+this surface refuses both the modern CV page (sidebar photo, skill bars, dotted
+timeline, tech-logo grid, gradient name) and the design-object résumé — the
+bound laboratory notebook it replaced, whose spine, folios and entry numbering
+cost more attention than they returned.
 
-**OWN-WORLD.** Two inks on ruled stock: Writing Ink `#1B2432` and Correction
-Red `#A32B20`, the red reserved strictly for corrections, countersign and
-stamps. Cool pale green-grey stock `#EEF0EA` — never cream. A 5mm quad grid is
-the layout grid, minors drawn back toward the ground, majors at 20mm. A 28px
-spine carries stitch marks and the running folio, and the ruling continues
-through it. BIZ UDPGothic / BIZ UDPMincho — Morisawa universal-design business
-faces that cover CJK and Latin in one system. Radius 0, no shadow, no blur,
-nothing above 2.5rem.
+**OWN-WORLD.** White ground, one accent (deep teal `#0D6E79`), exactly two text
+weights (400/700), 1px hairlines, 6px radius. M PLUS 2 carries English,
+Japanese and Turkish in one family. Section names sit in an 8.5rem right-aligned
+rail; content holds one uninterrupted column at 34rem (~68 characters).
 
-**STORY.** A recruiter reads one screen, understands the span and the current
-role, sees the record is checkable, and takes the file.
+**STORY.** The reader learns what Arda is, sees the span is checkable, and takes
+the file.
 
-**FIRST VIEWPORT.** Page 01 of the book: `RECORD BOOK · 職務経歴書` header rule,
-the name at 2.5rem, the struck flavour correction where one is active, a ruled
-field table (Location / Resident / Languages / Record / Site), a dot-leader
-contents with entry numbers, date ranges and page refs, and the stamped
-**Issue & Artifacts** block listing PDF/DOCX/JSON/vCard against the script that
-generated each.
+**FIRST VIEWPORT.** Controls top right. Name at 2.5rem, position of record
+beneath it, four facts carrying the span (Tokyo + local time, residency, roles
+and degrees, spoken languages), then the four artifacts as real links with
+Download PDF primary.
 
-**FORM.** Bound laboratory notebook; grounded candidate 5 of 7, assigned by
-seed `d068b0f1` (mode persuade). Staged index-first (comp A), approved
-2026-07-25.
+**FORM.** The category standard, executed at full craft. This is Impeccable's
+standing exit, taken by the user in their own words after two re-rolled
+concept-led hands ("i want something simpler. these are too complicated").
+Seed key `b5968ece`. Craft bar, named by the user: **Linear/Vercel, Apple/MUJI,
+read.cv**.
 
 ## Memorable moment
 
-The struck correction. When `?flavor=` is active the base subtitle is struck in
-Correction Red with the flavour written beside it, carrying a provenance stamp
-naming the parameter that caused the amendment — the one correction in this
-document that is genuinely real.
+Deliberately none in the ornamental sense — the surface's job is to disappear.
+What carries is the finish a reader feels without naming: themed selection,
+caret, scrollbars and focus ring; tabular figures down every date column; the
+current engagement as the one place the accent marks a fact rather than an
+affordance; a real print sheet.
 
-## Confirmed at comp approval (2026-07-25)
+## Standing preference — do not re-litigate
 
-- Build comp A (index-first).
-- **The countersign is machine provenance**: commit SHA, build timestamp, and
-  each artifact attributed to its real generator script. No human witness is
-  invented.
-- Bilingual EN/JA statement rendered side by side carries forward.
-
-## Unresolved
-
-- Whether per-language prerendered pages are in scope (today there is one route,
-  `<html lang>` is hardcoded `en`, and JA/TR are invisible to crawlers).
-- The cross-repo theme contract, as with the blog.
+The user has now rejected concept-led direction twice for this surface. Do not
+propose a metaphor, artifact genre or governing conceit here again without
+being asked. Also recorded as a Brand Commitment in PRODUCT.md.
 
 ## Hard constraints — do not break
 
@@ -76,3 +67,19 @@ document that is genuinely real.
 - `abstract` is web-only and must stay out of every export.
 - Every content JSON field path read by the four generators must survive.
 - `client/src/theme.css` is generated by `scripts/generate-theme.mjs`.
+- The 11 employer/institution logos are a brand commitment and are rendered as
+  monochrome marks (`Mark.res`). Do not drop them for tidiness.
+- **Verify any body-face change by what the browser paints**
+  (`CSS.getPlatformFontsForNode`), never by declared `unicode-range`: Zen Kaku
+  Gothic New and Noto Sans JP both declare latin-ext and ship no `Ş ş Ğ ğ İ`,
+  silently falling back to a serif mid-word in Turkish.
+
+## Unresolved
+
+- Density is flat: a 2011 role carries the same vertical weight as the current
+  one, where read.cv and Standard Resume compress the tail. Raised at finish
+  review, not taken — it is a content-shape decision for the user.
+- The rail carries six words and no navigation on a page ten viewports tall;
+  the only way back is a footer link. Same reason.
+- Whether per-language prerendered pages are in scope (one route today,
+  `<html lang>` is `en` at build time, so JA/TR are invisible to crawlers).

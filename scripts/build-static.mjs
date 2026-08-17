@@ -206,7 +206,7 @@ async function build() {
         }
         // public/fonts/ holds the Noto TTFs that scripts/generate-resume.mjs
         // embeds into the PDFs. They are *build inputs*, not site assets — the
-        // page loads BIZ UDPGothic/UDPMincho from Google Fonts and has never
+        // page loads M PLUS 2 from Google Fonts and has never
         // referenced /fonts/. Copying them shipped 86 MB to GitHub Pages for
         // nothing.
         if (src === fontsPath || src.startsWith(fontsPath + path.sep)) {

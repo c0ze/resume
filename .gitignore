@@ -17,3 +17,9 @@ public/arda.vcf
 *.res.mjs
 .bsb.lock
 lib/
+
+# Impeccable process artifacts. The durable records — DESIGN.md, its
+# .impeccable/design.json sidecar and the surface briefs — ARE tracked; these
+# two are per-run scratch (13MB of review screenshots, decision-page payloads).
+.impeccable/review/
+.impeccable/questions/
