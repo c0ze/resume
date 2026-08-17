@@ -4,8 +4,15 @@ name: Refresh ai.arda.tr bot
 # re-fetches the latest résumé JSON at build time.
 #
 # Requires a fine-grained PAT secret BOT_DEPLOY_TOKEN scoped to
-# c0ze/ai.arda.tr with "Contents: Read and write" (authorizes the
+# c0ze/ai.arda.tr with "Contents: Read and write" (that is what authorizes the
 # repository dispatch API). Until that secret is set, the step no-ops.
+#
+# This job warns before the token expires rather than only failing after.
+# The first token was minted 2026-06-06 with a 30-day expiry, went dead around
+# 2026-07-06, and nothing said so until a content push happened to run this
+# workflow on 2026-07-27 — the bot answered visitors from a stale résumé for
+# six weeks. A fine-grained PAT's expiry is readable from a response header, so
+# there is no excuse for finding out that way twice.
 on:
   push:
     branches:
@@ -13,6 +20,10 @@ on:
     paths:
       - 'content/**'
   workflow_dispatch:
+  # A monthly no-op run is the point: it surfaces an expiring or dead token on
+  # a schedule instead of waiting for the next content edit.
+  schedule:
+    - cron: '0 6 1 * *'
 
 permissions:
   contents: read
@@ -25,10 +36,54 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOT_DEPLOY_TOKEN }}
         run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "BOT_DEPLOY_TOKEN not set; skipping bot refresh."
+          set -uo pipefail
+
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::warning::BOT_DEPLOY_TOKEN is not set — skipping bot refresh. The ai.arda.tr bot will answer from whatever résumé it last built."
             exit 0
           fi
-          gh api --method POST repos/c0ze/ai.arda.tr/dispatches \
-            -f event_type=resume-updated
-          echo "Dispatched resume-updated to c0ze/ai.arda.tr."
+
+          # Fine-grained PATs report their own expiry. Surface it every run, and
+          # raise an annotation while there is still time to rotate.
+          expiry=$(gh api -i user 2>/dev/null \
+            | tr -d '\r' \
+            | awk 'tolower($1) == "github-authentication-token-expiration:" { $1=""; sub(/^ /,""); print }')
+
+          if [ -n "${expiry}" ]; then
+            now=$(date -u +%s)
+            end=$(date -u -d "${expiry}" +%s 2>/dev/null || echo 0)
+            if [ "${end}" -gt 0 ]; then
+              days=$(( (end - now) / 86400 ))
+              echo "BOT_DEPLOY_TOKEN expires ${expiry} (${days} days)."
+              if [ "${days}" -lt 14 ]; then
+                echo "::warning::BOT_DEPLOY_TOKEN expires in ${days} days (${expiry}). Rotate it: gh secret set BOT_DEPLOY_TOKEN --repo c0ze/resume"
+              fi
+            fi
+          else
+            echo "Token reports no expiry (classic or non-expiring)."
+          fi
+
+          status=$(gh api --method POST repos/c0ze/ai.arda.tr/dispatches \
+            -f event_type=resume-updated \
+            --silent 2>/tmp/err; echo $?)
+
+          if [ "${status}" -eq 0 ]; then
+            echo "Dispatched resume-updated to c0ze/ai.arda.tr."
+            exit 0
+          fi
+
+          # A raw "Bad credentials (HTTP 401)" sent the last investigation
+          # looking at the workflow instead of at the secret. Say which one it is.
+          err=$(cat /tmp/err)
+          echo "${err}"
+          case "${err}" in
+            *401*|*"Bad credentials"*)
+              echo "::error::BOT_DEPLOY_TOKEN is expired or revoked (401). Mint a fine-grained PAT for c0ze/ai.arda.tr with Contents: Read and write, then: gh secret set BOT_DEPLOY_TOKEN --repo c0ze/resume" ;;
+            *403*)
+              echo "::error::BOT_DEPLOY_TOKEN lacks permission (403). It needs Contents: Read and write on c0ze/ai.arda.tr — that is what authorizes repository_dispatch." ;;
+            *404*)
+              echo "::error::c0ze/ai.arda.tr not found through this token (404). Either the repository moved or the PAT does not list it as an allowed resource." ;;
+            *)
+              echo "::error::Dispatch to c0ze/ai.arda.tr failed. See the API error above." ;;
+          esac
+          exit 1
