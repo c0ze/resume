@@ -3,50 +3,58 @@
    Run `node scripts/generate-theme.mjs` after changing either. */
 
 :root,
-.ruled {
-  --stock: #EEF0EA;
-  --stock-deep: #E2E5DC;
-  --grid: #C3C9BC;
-  --rule: #8E9686;
-  --ink: #1B2432;
-  --pencil: #5C6470;
-  --red: #A32B20;
+.light {
+  --bg: #FFFFFF;
+  --surface: #F7F8F9;
+  --border: #E3E5E8;
+  --text: #15171A;
+  --muted: #646A72;
+  --accent: #0D6E79;
+  --accent-contrast: #FFFFFF;
   color-scheme: light;
-  --radius: 0rem;
+  --radius: 0.375rem;
+  --radius-sm: 0.225rem;
+  --radius-xs: 0.1875rem;
 }
 
-.ruled-hc {
-  --stock: #F4F6F1;
-  --stock-deep: #E4E8DF;
-  --grid: #AEB6A6;
-  --rule: #3F4638;
-  --ink: #0D1219;
-  --pencil: #333A44;
-  --red: #7E1A12;
+.light-hc {
+  --bg: #FFFFFF;
+  --surface: #F1F3F4;
+  --border: #8A9098;
+  --text: #000000;
+  --muted: #3A4046;
+  --accent: #08505A;
+  --accent-contrast: #FFFFFF;
   color-scheme: light;
-  --radius: 0rem;
+  --radius: 0.375rem;
+  --radius-sm: 0.225rem;
+  --radius-xs: 0.1875rem;
 }
 
-.carbon-copy {
-  --stock: #14131A;
-  --stock-deep: #1E1C26;
-  --grid: #2E2B3A;
-  --rule: #4A4658;
-  --ink: #E8E4F0;
-  --pencil: #918CA3;
-  --red: #E2705F;
+.dark {
+  --bg: #0E1013;
+  --surface: #171A1E;
+  --border: #282C31;
+  --text: #EDEFF2;
+  --muted: #9BA3AC;
+  --accent: #4FC3D0;
+  --accent-contrast: #0E1013;
   color-scheme: dark;
-  --radius: 0rem;
+  --radius: 0.375rem;
+  --radius-sm: 0.225rem;
+  --radius-xs: 0.1875rem;
 }
 
-.carbon-copy-hc {
-  --stock: #0B0A10;
-  --stock-deep: #17151F;
-  --grid: #332F42;
-  --rule: #8C87A0;
-  --ink: #F6F4FB;
-  --pencil: #C4BFD6;
-  --red: #FF9B8A;
+.dark-hc {
+  --bg: #000000;
+  --surface: #121417;
+  --border: #5C646C;
+  --text: #FFFFFF;
+  --muted: #C9D0D7;
+  --accent: #7FE3EE;
+  --accent-contrast: #000000;
   color-scheme: dark;
-  --radius: 0rem;
+  --radius: 0.375rem;
+  --radius-sm: 0.225rem;
+  --radius-xs: 0.1875rem;
 }

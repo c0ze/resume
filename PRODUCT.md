@@ -76,25 +76,36 @@ current work on AI platform architecture.
 - **`header.contactViaEmail` must never appear in the rendered HTML** — it is
   both a repo rule and a test assertion. It does go into the downloads.
 - **`abstract` is web-only** and must stay out of every export.
-- Defects the 2026-07-27 redesign fixed: BIZ UDPGothic/UDPMincho now cover
-  Japanese, Latin and Turkish in one system; `<html lang>` tracks the selected
-  language; a blocking bootstrap in `client/index.html` applies the stored
-  rendition and language before first paint.
+- `<html lang>` tracks the selected language, and a blocking bootstrap in
+  `client/index.html` applies the stored rendition and language before first
+  paint. Both fix live defects and must not regress.
+- **The body face must be verified by what the browser paints, not by declared
+  `unicode-range`.** Several Japanese families (Zen Kaku Gothic New, Noto Sans
+  JP) declare the latin-ext range and ship no `Ş ş Ğ ğ İ`, so Turkish silently
+  falls back to a serif mid-word. **M PLUS 2** was chosen because
+  `CSS.getPlatformFontsForNode` reports it painting every glyph in all three
+  languages itself. Re-run that check before changing the face.
 - **Still open:** `createRoot` discards the SSR markup rather than hydrating, so
   the prerendered HTML is thrown away on first paint. It costs a re-render, not
   correctness, and it is why the SSR pass always renders the base English
   résumé without a flavour overlay.
-- The visual system is **"The Bound Notebook"** (`DESIGN.md`, binding). The four
-  renditions are Ruled, Ruled HC, Carbon Copy, Carbon Copy HC; the two HC
-  renditions target WCAG AAA. It replaced the four-theme professional subset on
-  2026-07-27.
+- The visual system is the **category standard at full craft** (`DESIGN.md`,
+  binding). The four renditions are Light, Light HC, Dark, Dark HC; the two HC
+  renditions target WCAG AAA. It replaced "The Bound Notebook" on 2026-08-18,
+  which had itself replaced the four-theme professional subset on 2026-07-27.
 - `docs/superpowers/specs/2026-07-03-resume-revamp-design.md` states "no visual
   redesign" and is **superseded** by that work; the file carries the notice.
 
 ## Brand Commitments
 
-- Name **Arda Karaduman**; the site is the formal register of the family —
-  restraint here is the point, not a limitation.
+- Name **Arda Karaduman**; the site is the formal register of the family.
+- **Standing preference: the category standard, executed at full craft.** Asked
+  to choose a visual world, the user twice re-rolled concept-led directions and
+  then asked for "something simpler." Treat that as durable: do not propose a
+  metaphor, an artifact genre or a governing conceit for this surface again
+  without being asked. The named craft bar is **Linear/Vercel, Apple/MUJI and
+  read.cv** — convention executed at their level of finish, without irony and
+  without a smuggled quirk.
 - Voice is factual and unembellished; no growth-copy, no superlatives.
 - Employer logos are real assets in `public/` and are used as marks.
 - Four downloadable formats are a promised capability, not a nice-to-have.
@@ -126,8 +137,12 @@ quantified business outcome. None of it exists in the content.
    paper or repository.
 2. **The file is the deliverable.** The PDF is what gets forwarded; it deserves
    at least as much design attention as the screen.
-3. **Restraint is the register.** This is the formal surface of the family.
-   Expression must never cost credibility or scanability.
+3. **Plain and professional is the register.** On 2026-08-18 the standing
+   "restraint is the register" doctrine was dropped and replaced by the user's
+   own brief: *plain, professional, simple, elegant*. This surface deliberately
+   carries no borrowed world and no governing metaphor — expression lives in
+   the precision of type, spacing and state, never in an apparatus laid over
+   the content, and never at the cost of credibility or scanability.
 4. **Three languages, equally.** Japanese and Turkish are not fallbacks.
 5. **Content schema is a contract.** Four generators and a chat bot read it;
    changing a field path is a breaking change.
@@ -136,10 +151,17 @@ quantified business outcome. None of it exists in the content.
 
 - WCAG-conscious contrast in every rendition, with one AAA-targeted
   high-contrast light rendition and one AAA-targeted high-contrast dark
-  rendition (Ruled HC and Carbon Copy HC).
+  rendition (Light HC and Dark HC).
 - `prefers-reduced-motion` fully respected; content readable without JS. Every
-  responsibility, competency and work is in the prerendered HTML — nothing is
-  behind an interaction.
+  responsibility, competency and work is in the prerendered HTML.
+- **Sections are collapsible, and on arrival only the statement is open**
+  (2026-08-18, at the user's request). This qualifies the older "nothing is
+  behind an interaction" rule rather than discarding it: the mechanism is a
+  native `<details>`, so the whole record stays in the prerendered HTML for an
+  ATS and a crawler, browser find-in-page opens a closed section to reveal a
+  match, it works with JavaScript off, and the print sheet forces every section
+  open. What genuinely changed is that a hurried reader now sees an index
+  first — which is the trade that was chosen deliberately.
 - The modal is genuinely accessible (focus trap, `inert`, Escape, focus
   restore) — that standard must be preserved, not regressed.
 - `<html lang>` tracks the selected language, set before first paint by the

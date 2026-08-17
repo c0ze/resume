@@ -31,5 +31,11 @@ let make = () => {
 
   React.useEffect0(() => Some(startClock(t => setTime(_ => t))))
 
-  <span className="pencil"> {React.string((time == "" ? "--:--" : time) ++ " JST")} </span>
+  // Nothing at all until there is a real reading. The separator lives here
+  // rather than in the caller so that a prerendered page — or one read with
+  // JavaScript off — shows "Chofu, Tokyo" and not "Chofu, Tokyo · --:-- JST",
+  // which reads as a broken page rather than as an absent clock.
+  time == ""
+    ? React.null
+    : <span className="tabular"> {React.string(`· ${time} JST`)} </span>
 }

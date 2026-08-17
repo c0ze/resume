@@ -142,63 +142,29 @@ type pdfMetaContent = {
   generatedOn: string,
 }
 
-// The record book's own vocabulary — field labels, column heads, the issue and
-// countersign copy. Kept out of the résumé sections proper because none of it
-// is a claim about Arda; it is the apparatus of the document. Translated in
-// full for all three languages: Japanese and Turkish are not fallbacks.
-type recordFields = {
-  location: string,
-  resident: string,
-  languages: string,
-  record: string,
-  site: string,
-  organisation: string,
-  period: string,
-  engagement: string,
-  abstract: string,
-  evidence: string,
-  institution: string,
-  stack: string,
-  source: string,
-}
-
-type recordColumns = {
-  no: string,
-  period: string,
-  organisation: string,
-  title: string,
-  page: string,
-  format: string,
-  file: string,
-  generatedBy: string,
-  issued: string,
-}
-
+// The document's own chrome vocabulary — control labels, the download block,
+// the build-provenance copy. Kept out of the résumé sections proper because
+// none of it is a claim about Arda; it is the furniture of the page. Translated
+// in full for all three languages: Japanese and Turkish are not fallbacks.
 type recordContent = {
-  book: string,
-  volume: string,
-  contents: string,
-  entriesLabel: string,
-  pagesLabel: string,
-  issue: string,
-  artifactsOfRecord: string,
-  issued: string,
-  closingEntry: string,
-  certificate: string,
-  authorOfRecord: string,
-  dateOfIssue: string,
-  commit: string,
-  issueNote: string,
-  amendmentNote: string,
-  register: string,
-  registerNote: string,
+  sections: string,
+  items: string,
+  language: string,
+  rendition: string,
+  download: string,
+  downloadNote: string,
   residentSince: string,
   recordSummary: string,
-  rendition: string,
-  language: string,
-  backToIndex: string,
-  fields: recordFields,
-  columns: recordColumns,
+  backToTop: string,
+  buildDetails: string,
+  commit: string,
+  built: string,
+  source: string,
+  amendedFrom: string,
+  amendmentNote: string,
+  stack: string,
+  close: string,
+  generatedBy: string,
 }
 
 type translations = {

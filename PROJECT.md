@@ -4,7 +4,7 @@ This file provides repository-specific guidance to Claude Code when working here
 
 ## Design System
 
-The visual system is **"The Bound Notebook"** — see `DESIGN.md`, which is
+The visual system is the **category standard executed at full craft** — see `DESIGN.md`, which is
 binding. Product truth is in `PRODUCT.md`; the direction contract for the single
 `/` route is in `.impeccable/surfaces/client-src-pages-home-res.md`. Read those
 before changing anything visual.
@@ -18,15 +18,18 @@ before changing anything visual.
 - Vite 8
 - React 18
 - ReScript 11
-- Tailwind CSS (reset, token-mapped colours and the 5mm quad spacing scale only)
-- BIZ UDPGothic + BIZ UDPMincho from Google Fonts
+- Tailwind CSS (reset, token-mapped colours and the spacing scale only)
+- M PLUS 2 from Google Fonts (weights 400 and 700 only). **Verify any face
+  change by what the browser actually paints** (`CSS.getPlatformFontsForNode`),
+  never by declared `unicode-range` — several JP families declare latin-ext and
+  ship no `Ş ş Ğ ğ İ`, so Turkish falls back to a serif mid-word.
 - PDFKit + docx (PDF/DOCX resumes)
 - GitHub Actions + GitHub Pages (CI runs Node 24)
 
 ## Source of Truth
 
 - Website content: `content/{en,ja,tr}/*.json` (12 files each, structurally
-  aligned; `record.json` holds the record book's own chrome vocabulary)
+  aligned; `record.json` holds the page's own chrome vocabulary)
 - Theme palette catalogue: `themePalettes` in `scripts/generate-theme.mjs` — generates `client/src/theme.css` (never edit the generated CSS directly)
 - Theme base settings: `config/theme.json` (appearance, radius — consumed by the generator)
 - Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
@@ -66,7 +69,7 @@ npm run res:clean     # Clean ReScript build artifacts
 ## Key Features
 
 - **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
-- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
+- **Web-only `abstract`** — each experience carries an `abstract`, rendered inline above its responsibilities (`.entry__abstract`). Nothing is behind an interaction: every responsibility, competency and work is in the prerendered HTML. `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
 - **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
 - **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
 
@@ -98,12 +101,12 @@ npm run test:static
 - ReScript compiles to `.res.mjs` files in-source (same directory as `.res`).
 - The `.res.mjs` files are gitignored — Vite picks them up during build.
 - JSON content is loaded via Vite's `import.meta.glob` through `%raw` interop.
-- There are no icon bindings and no icon dependency: the design system uses
-  typographic marks and hairline rules (see `DESIGN.md` → Components). If an
-  icon becomes necessary, prefer inline SVG over adding a package.
-- Shared UI parts live in `client/src/components/Entry.res` (`Entry`,
-  `Entry.Head`, `Entry.Fields`) — the entry, its header rule and the ruled field
-  table that every section is built from.
+- There is no icon set and no icon dependency. If an icon ever becomes
+  necessary, prefer inline SVG over adding a package.
+- Shared UI parts live in `client/src/components/Section.res` (the section name
+  in its rail plus the content column every section is built from),
+  `Controls.res` (language and rendition) and `Mark.res` (the monochrome
+  employer/institution logo).
 
 ## Content Rules
 
@@ -137,11 +140,11 @@ Be careful when editing:
 - `DESIGN.md` for the design system — it is binding, not advisory
 Do not add casual files to the repository root.
 Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
-- Each experience has a web-only `abstract` (card preview + modal) that the PDF/DOCX/JSON generators ignore — do not render it into the downloads.
+- Each experience has a web-only `abstract` that the PDF/DOCX/JSON generators ignore — do not render it into the downloads.
 Guidance for coding agents working in this repository.
 - If you add a new field in one language, update the others in the same pass unless there is a good reason not to.
 - JSON Resume and vCard generation lives in `scripts/generate-json-resume.mjs` and `scripts/generate-vcard.mjs`
-- Keep language files structurally aligned. `record.json` carries the record book's own vocabulary (field labels, column heads, issue and countersign copy) and is translated in full — a test asserts the three files match in shape and differ in content.
+- Keep language files structurally aligned. `record.json` carries the page's own chrome vocabulary (control labels, the download block, the build-provenance copy) and is translated in full — a test asserts the three files match in shape and differ in content.
 Keep the site accurate, static-build-safe, and easy to maintain.
 ## Mission
 `npm run build` does more than bundling. It also prerenders the homepage, regenerates the PDF/DOCX resumes, the JSON Resume exports, and the vCard, writes `artifact-status.json`, and emits `sitemap.xml`.
@@ -165,7 +168,7 @@ Run the smallest relevant set, but before finishing substantial work prefer:
 - The "Ask about Arda" chat widget (`client/src/components/ChatWidget.res`) calls the ai.arda.tr bot; chat Markdown is rendered by `Markdown.res` + `markdownParse.mjs`
 - The email (`header.contactViaEmail`) is intentionally kept out of the web page and only appears in the downloads (PDF/DOCX/JSON Resume/vCard) — do not surface it in the UI.
 - The rendition catalogue lives in `themePalettes` inside `scripts/generate-theme.mjs`, which generates `client/src/theme.css` (never edit the generated CSS directly); `config/theme.json` holds the base settings consumed by the generator. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`
-- The visual system is "The Bound Notebook" — `DESIGN.md` is binding, `PRODUCT.md` holds product truth
+- The visual system is the category standard at full craft — `DESIGN.md` is binding, `PRODUCT.md` holds product truth
 - Tooling config lives in `config/`
 Use:
 ## Validation Checklist

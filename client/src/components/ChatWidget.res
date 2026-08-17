@@ -303,22 +303,20 @@ let make = () => {
   <>
     {isOpen
       ? React.null
-      : <div className="chat-launcher no-print">
-          <button
-            ref={ReactDOM.Ref.domRef(launcherRef)}
-            type_="button"
-            onClick={_ => setIsOpen(_ => true)}
-            ariaHaspopup=#dialog
-            className="slip">
-            {React.string(c.launcher)}
-          </button>
-        </div>}
+      : <button
+          ref={ReactDOM.Ref.domRef(launcherRef)}
+          type_="button"
+          onClick={_ => setIsOpen(_ => true)}
+          ariaHaspopup=#dialog
+          className="chat-launcher no-print">
+          {React.string(c.launcher)}
+        </button>}
     {isOpen
       ? <div role="dialog" ariaLabel={c.title} className="chat-panel no-print">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-ink bg-stock-deep px-q py-2">
+          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-4 py-2.5">
             <div>
               <p className="t-label"> {React.string("AI · Gemini")} </p>
-              <p className="t-entry"> {React.string(c.title)} </p>
+              <p className="t-h3"> {React.string(c.title)} </p>
             </div>
             <button
               type_="button"
@@ -334,7 +332,7 @@ let make = () => {
             ref={ReactDOM.Ref.domRef(listRef)}
             role="log"
             ariaLive=#polite
-            className="flex-1 space-y-2 overflow-y-auto px-q py-q">
+            className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
             <div className="flex justify-start">
               <div className="chat-bubble"> {React.string(c.greeting)} </div>
             </div>
@@ -346,7 +344,7 @@ let make = () => {
                       key={Int.toString(i)}
                       type_="button"
                       onClick={_ => submit(s)}
-                      className="slip text-left">
+                      className="btn text-left">
                       {React.string(s)}
                     </button>
                   )
@@ -364,7 +362,7 @@ let make = () => {
               ReactEvent.Form.preventDefault(e)
               submit(input)
             }}
-            className="flex shrink-0 items-center gap-2 border-t border-ink p-2">
+            className="flex shrink-0 items-center gap-2 border-t border-border p-2">
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
               type_="text"
@@ -375,9 +373,9 @@ let make = () => {
               }}
               placeholder={c.placeholder}
               disabled={busy}
-              className="min-w-0 flex-1 border border-rule bg-stock px-2 py-1.5 font-gothic text-sm text-ink focus:border-ink focus:outline-none disabled:opacity-60"
+              className="chat-input"
             />
-            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="slip">
+            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="btn btn--primary">
               {React.string(c.send)}
             </button>
           </form>

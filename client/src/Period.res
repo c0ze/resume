@@ -11,6 +11,12 @@ let years: string => array<int> = %raw(`
 
 let currentYear: int = %raw(`new Date().getFullYear()`)
 
+// An engagement whose period carries a single year is the open one — the
+// current role. True of "2024 - Present", "2024年 - 現在" and "2024 - Halen"
+// alike, because the test is the count of four-digit years rather than any
+// one language's word for "present".
+let isOpen = (period: string) => Array.length(years(period)) < 2
+
 // The span covered by a list of periods. An engagement whose *first* period
 // carries a single year is the open one — the current role — so the record runs
 // to this year rather than to the last year printed on it.

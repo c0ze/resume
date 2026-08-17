@@ -17,17 +17,18 @@ const contractUrl = 'https://raw.githubusercontent.com/c0ze/arda.tr/main/config/
 
 // Local display names that deliberately differ from the canonical catalogue.
 //
-// The résumé's renditions are named for the artifact they imitate — a bound
-// laboratory notebook: Ruled stock and its carbon flimsy (see DESIGN.md). The
-// canonical catalogue names the same four *roles* — light, high-contrast light,
-// dark, high-contrast dark — after its own world. The mapping below is the
-// contract: the roles line up one-for-one, the words do not, and the words are
-// owned by each site's design system.
+// This site's renditions are named for what they are, because the design system
+// is the category standard executed at full craft (see DESIGN.md) and naming a
+// light mode anything other than "Light" would be exactly the invented
+// vocabulary it refuses. The canonical catalogue names the same four *roles* —
+// light, high-contrast light, dark, high-contrast dark — after its own world.
+// The mapping below is the contract: the roles line up one-for-one, the words
+// do not, and the words are owned by each site's design system.
 const localToCanonicalName = {
-  Ruled: 'Stock',
-  'Ruled HC': 'Stock HC',
-  'Carbon Copy': 'Microfiche',
-  'Carbon Copy HC': 'Microfiche HC',
+  Light: 'Stock',
+  'Light HC': 'Stock HC',
+  Dark: 'Microfiche',
+  'Dark HC': 'Microfiche HC',
 };
 
 async function loadContract() {

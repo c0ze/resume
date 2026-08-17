@@ -40,6 +40,15 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
   const commonConfig: Partial<UserConfig> = {
     base: "/",
     root: clientRoot,
+    /**
+     * The assets live in <projectRoot>/public, but Vite's root is client/, so
+     * its default publicDir would be client/public — which does not exist.
+     * Without this the dev server answers /images/logos/*.png with the SPA
+     * index.html at 200 text/html, and every employer mark silently fails to
+     * decode. The production build was unaffected (build-static.mjs copies
+     * public/ into dist/client itself), so dev and prod disagreed.
+     */
+    publicDir: path.resolve(projectRoot, "public"),
     define: {
       __BUILD_COMMIT__: JSON.stringify(buildCommit()),
       __BUILD_TIME__: JSON.stringify(

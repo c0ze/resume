@@ -144,28 +144,32 @@ test("static build emits a vCard with the contact details", () => {
   assert.ok(vcard.includes("\r\n"), "expected the vCard to use CRLF line endings per spec");
 });
 
-test("generated theme CSS contains all four renditions", () => {
+test("generated theme CSS contains all four renditions, each fully defined", () => {
   assert.ok(fs.existsSync(themeCssPath), `Expected generated theme CSS at ${themeCssPath}`);
 
   const themeCss = fs.readFileSync(themeCssPath, "utf8");
 
-  // The four renditions of the record book (see DESIGN.md).
-  for (const selector of [".ruled", ".ruled-hc", ".carbon-copy", ".carbon-copy-hc"]) {
+  // The four renditions (see DESIGN.md). A rendition offered by the toggle but
+  // missing from the CSS renders as the default one, and the reader never
+  // learns why their choice did nothing.
+  for (const selector of [".light", ".light-hc", ".dark", ".dark-hc"]) {
     assert.ok(
       themeCss.includes(`${selector} {`) || themeCss.includes(`${selector},`),
       `expected the generated theme CSS to include the ${selector} selector`
     );
   }
 
-  // Two inks on ruled stock: every rendition ships the same seven tokens.
+  // Every rendition ships the same seven tokens. One that omits a token
+  // inherits it from the light default — which is how a dark mode ends up with
+  // a single white hairline nobody can account for.
   for (const token of [
-    "--stock:",
-    "--stock-deep:",
-    "--grid:",
-    "--rule:",
-    "--ink:",
-    "--pencil:",
-    "--red:",
+    "--bg:",
+    "--surface:",
+    "--border:",
+    "--text:",
+    "--muted:",
+    "--accent:",
+    "--accent-contrast:",
   ]) {
     assert.equal(
       themeCss.split(token).length - 1,
@@ -174,10 +178,28 @@ test("generated theme CSS contains all four renditions", () => {
     );
   }
 
+  // One radius, one home: the value comes from config/theme.json through the
+  // generator, so every rendition must carry the same one.
+  const radii = new Set([...themeCss.matchAll(/--radius:\s*([^;]+);/g)].map((m) => m[1].trim()));
+  assert.equal(radii.size, 1, `expected one radius across renditions, found ${[...radii]}`);
   assert.equal(
-    themeCss.split("--radius: 0rem;").length - 1,
     themeCss.split("--radius:").length - 1,
-    "radius is 0 on every element — paper does not have rounded corners"
+    4,
+    "expected every rendition to define --radius"
+  );
+});
+
+test("the dark high-contrast rendition can override the plain dark one", () => {
+  // `dark` is both a rendition id and the class Tailwind's dark: variant keys
+  // off, so <html> carries both `dark-hc` and `dark` for the HC rendition. At
+  // equal specificity the later rule wins, so `.dark-hc` must be emitted after
+  // `.dark` — otherwise high contrast silently renders as ordinary dark and the
+  // AAA guarantee is quietly untrue.
+  const themeCss = fs.readFileSync(themeCssPath, "utf8");
+
+  assert.ok(
+    themeCss.indexOf(".dark-hc {") > themeCss.indexOf(".dark {"),
+    "expected .dark-hc to be emitted after .dark so it wins at equal specificity"
   );
 });
 

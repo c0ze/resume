@@ -14,7 +14,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
-- Four renditions of the record book — Ruled, Ruled HC, Carbon Copy, Carbon Copy HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA
+- Four renditions — Light, Light HC, Dark, Dark HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA
 - `<html lang>` tracks the selected language, and a blocking bootstrap applies the stored rendition before first paint
 
 ## Tech Stack
@@ -24,7 +24,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Vite 8 (client build + SSR prerender)
 - Tailwind CSS (with `@tailwindcss/typography`)
 - PDFKit (PDF resumes) and `docx` (DOCX resumes)
-- BIZ UDPGothic + BIZ UDPMincho (Google Fonts)
+- M PLUS 2 (Google Fonts, weights 400/700) — one family covering Japanese, Latin and the Turkish latin-ext glyphs
 - GitHub Actions + GitHub Pages for deployment
 
 ## Repository Layout
@@ -137,7 +137,7 @@ When you update content:
 
 The rendition catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base settings (appearance, radius) consumed by the generator, and rendition state lives in `client/src/contexts/ThemeContext.res`. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
 
-Each rendition is exactly seven tokens — `--stock`, `--stock-deep`, `--grid`, `--rule`, `--ink`, `--pencil`, `--red` — because the design system is two inks on ruled stock (see `DESIGN.md`). `scripts/check-theme-contract.mjs` maps the local rendition names onto the shared arda.tr catalogue by role (Ruled → Stock, Carbon Copy → Microfiche, and the two HC variants); `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
+Each rendition is exactly seven tokens — `--bg`, `--surface`, `--border`, `--text`, `--muted`, `--accent`, `--accent-contrast` — because the design system is a neutral surface carrying exactly one accent (see `DESIGN.md`). `scripts/check-theme-contract.mjs` maps the local rendition names onto the shared arda.tr catalogue by role (Light → Stock, Dark → Microfiche, and the two HC variants); `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
 
 ## Deployment
 
