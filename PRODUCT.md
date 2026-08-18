@@ -42,8 +42,10 @@ current work on AI platform architecture.
 - Single-route static site (`/`) prerendered by a ReScript SSR pass, deployed
   to GitHub Pages.
 - Sibling to `arda.tr` (index), `blog.arda.tr` (writing), `ai.arda.tr` (a chat
-  bot that answers questions about this résumé and is notified on content
-  changes via `notify-bot.yml`).
+  bot that answers questions about this résumé; it bakes the résumé in at build
+  time and **redeploys itself daily** to pick up changes, so this repo pushes
+  nothing to it and holds no credential for it). For an immediate refresh after
+  a content edit: `gh workflow run deploy-backend.yml --repo c0ze/ai.arda.tr`.
 - The site ships **four downloadable artifacts per language** — PDF, DOCX, JSON
   Resume and vCard — plus per-flavour variants.
 - Read on a laptop mid-screening call, on a phone, and as a printed or
