@@ -94,7 +94,7 @@ test("static build writes artifact status for PDF, DOCX, JSON, and vCard outputs
 test("static build emits JSON Resume exports with basics but without the web-only abstracts", () => {
   // A distinctive phrase that only appears in an `abstract` in content/en —
   // the JSON export must ignore abstracts just like the PDF/DOCX generators do.
-  const abstractOnlyPhrase = "Lead engineer on Veltra's AI platform";
+  const abstractOnlyPhrase = "Systems architect at Veltra working across";
   const enExperience = JSON.parse(
     fs.readFileSync(path.resolve(process.cwd(), "content/en/experience.json"), "utf8")
   );

@@ -1,6 +1,6 @@
 {
   "title": "自己紹介",
-  "paragraph1": "本番システム、クラウドインフラ、AIエージェントが交わる領域で、バックエンドとプラットフォームを構築しています。現在はVeltraのAIプラットフォームをリードし、標準準拠のOAuth 2.1認可サーバーと、旅行アクティビティのカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを開発しています。",
+  "paragraph1": "本番システム、クラウドインフラ、AIエージェントが交わる領域で、バックエンドとプラットフォームを構築しています。Veltraでは、AWS上のPython・Go・Nodeサービスを横断し、Model Context Protocol（MCP）連携や社内向けAIツールを含む設計・開発に携わっています。",
   "paragraph2": "それ以前は、物流・フィンテック・医療IT・ゲームの各分野でGo/Ruby/Pythonのシステムを開発・運用してきました（2004年より東京在住）。海外チームと日本チームの橋渡し役を、英語と日本語で担っています。",
   "languages": "言語",
   "languagesContent": "トルコ語 (ネイティブ), 英語 (TOEFL 263 - 2004), 日本語 (JLPT 2 - 2006)"
