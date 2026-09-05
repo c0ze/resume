@@ -65,7 +65,15 @@ module Provider = {
 // applied, so React's first render agrees with the already-painted page.
 let getStoredTheme = (): theme => {
   let stored: option<string> = %raw(`
-    typeof window !== "undefined" ? localStorage.getItem("resume-theme") : null
+    (function () {
+      try {
+        return typeof window !== "undefined"
+          ? localStorage.getItem("resume-theme") || undefined
+          : undefined;
+      } catch (e) {
+        return undefined;
+      }
+    })()
   `)
   switch stored {
   | Some(s) => themeFromString(s)

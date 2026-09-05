@@ -41,7 +41,7 @@ before changing anything visual.
 - Theme contract check (names vs the shared arda.tr catalogue): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
-- Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)
+- Tests (static output, Markdown, browser storage, and compiled chat transport): `tests/*.test.mjs` (run by `npm run test:static`)
 
 ## Important Directories
 
@@ -61,7 +61,7 @@ npm run dev           # ReScript watch + Vite dev server (requires concurrently)
 npm run build         # Full static build (ReScript → Vite → SSR → PDF/DOCX)
 npm run preview       # Preview built site
 npm run check         # ReScript type check (rescript build)
-npm run test:static   # Smoke tests: static output + Markdown renderer (tests/*.test.mjs)
+npm run test:static   # Static output and browser-boundary tests (tests/*.test.mjs)
 npm run res:build     # ReScript compile only
 npm run res:clean     # Clean ReScript build artifacts
 ```
@@ -69,6 +69,7 @@ npm run res:clean     # Clean ReScript build artifacts
 ## Key Features
 
 - **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
+- Streaming completion requires a complete `done` event. Interrupted replies retain received text and show an error; fallback is attempted only before text arrives. Transport tests use simulated responses without contacting the bot.
 - **Web-only `abstract`** — each experience carries an `abstract`, rendered inline above its responsibilities (`.entry__abstract`). Nothing is behind an interaction: every responsibility, competency and work is in the prerendered HTML. `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
 - **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
 - **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
