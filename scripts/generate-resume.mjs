@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
+import { fieldLabel } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -245,7 +246,7 @@ function generateResume(language, flavor = null) {
   // Languages
   doc.x = PAGE.margin.left;
   doc.font(fonts.bold).fontSize(SIZE.body).fillColor(COLOR.black);
-  doc.text(`${t.about.languages}: `, { continued: true, width: contentWidth });
+  doc.text(fieldLabel(t.about.languages), { continued: true, width: contentWidth });
   doc.font(fonts.regular).fillColor(COLOR.dark);
   doc.text(t.about.languagesContent, { width: contentWidth });
   doc.moveDown(0.5);
