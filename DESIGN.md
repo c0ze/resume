@@ -1,394 +1,272 @@
 ---
 name: resume.arda.tr
-description: A career history set as a bound laboratory notebook — numbered, dated, witnessed, and impossible to quietly revise.
+description: The résumé in One Bit Forest — paper, black toner, one moss signal, and a treeline. The most professional site in the arda.tr family.
 ---
 
 # Design System: resume.arda.tr
 
 ## Overview
 
-**Creative North Star: "The Bound Notebook"**
+**System: "One Bit Forest"** — the shared design system of arda.tr,
+blog.arda.tr, resume.arda.tr and ai.arda.tr (adopted 2026-09-23). The family
+contract is `../DESIGN-SYSTEM.md`; the approved reference for this site is
+section **03 · resume.arda.tr** of `../design-previews/sketch-1bit.html`. This
+file is binding for this repo and must not contradict either.
 
-A laboratory notebook is the instrument science uses to make claims about the
-past *checkable*. It is bound so pages cannot be inserted. Pages are
-sequentially numbered. Entries are dated and written in ink. An error is struck
-through with a single line and initialled — never erased, because the record of
-the correction is part of the record. A witness countersigns.
+The family meets at **1-bit dithering**: photocopied black-metal covers and
+early Macs drawing everything in one bit, with one neon phosphor per site. On
+the tone dial the résumé is **most professional**: calm, typographic, almost no
+ornament. It is the surface `arda.tr` routes recruiters to, and restraint is
+what it trades on.
 
-That is the exact problem a résumé has. A CV is a claim about twenty-five years
-that a stranger must decide whether to believe, in about forty seconds, while
-holding a dozen other candidates. This site's product principle is already
-"verifiable or absent"; the notebook is the genre where verifiability *is* the
-aesthetic rather than an assertion. It is also literally Arda's own document —
-Amano Laboratory, Keio, 2006–2011, four first-author papers.
+What that means here:
 
-The register is formal and unembellished, because this is the surface `arda.tr`
-routes recruiters to and restraint is what it trades on. Expression lives in
-the apparatus — the ruled grid, the entry numbering, the marginal annotations,
-the countersign block — never in ornament laid over the content.
+- **Xerox by default** — photocopy paper, black toner, moss ink.
+- **One moving thing**: a strip of pixel spruces under the status bar, drifting
+  slowly. Nothing else animates on the page.
+- **Two columns**: a mono-labelled meta rail and a main column that reads top
+  to bottom like a document.
+- **No other ornament.** No cards, no shadows, no gradients, no icons, no logos,
+  no skill bars, no hover lift.
 
-**Critically, this must be built as a system, not a texture.** Page numbers,
-dated entries, struck corrections, witness columns and a contents index are the
-world. A paper-grain background image is not, and would make the whole thing
-twee.
-
-**Confirmed anti-references:** the modern CV page (sidebar photo, skill bars,
-dotted timeline, tech-logo grid, gradient name) and its predictable opposite,
-the black-Times-on-white "I don't need design" CV; plus the incumbent look this
-replaces — gradient name fill, `.glass`, glow shadows, blur blobs, the dotted
-dossier grid, scroll-reveal, the 42-second tech marquee, hover lift.
-
-**Key Characteristics:**
-
-- Every section is a numbered, dated entry on a numbered page
-- A ruled quad grid underlies the whole layout and is faintly visible
-- Corrections are struck through and kept, never removed
-- Two inks: writing ink and correction red. Nothing else.
-- Print-native — the PDF is the object, not a downgrade
+The PDF, DOCX, JSON Resume and vCard exports are separate objects with their
+own fonts and layout; this system does not touch them.
 
 ## Colors
 
-Two inks on ruled stock. The palette is deliberately narrower than the previous
-system, because a notebook's is.
+One bit plus one signal. Values live in `themePalettes` in
+`scripts/generate-theme.mjs`, which writes `client/src/theme.css` (generated —
+never hand-edit). Neutrals are the family's; the signal is the résumé's own.
 
-### Primary
+| token | xerox (default) | xerox-hc | night | night-hc |
+| --- | --- | --- | --- | --- |
+| `--bg` ground | `#efede6` | `#ffffff` | `#060708` | `#000000` |
+| `--surface` panels | `#f7f6f1` | `#ffffff` | `#0d0f10` | `#000000` |
+| `--fg` ink | `#111210` | `#000000` | `#e4e0d4` | `#ffffff` |
+| `--fg-2` muted | `#5d5b55` | `#2e2e2e` | `#9d998e` | `#d0cdc4` |
+| `--rule` hairline | `#cfccc2` | `#1a1a1a` | `#22252a` | `#8a8a8a` |
+| `--signal` moss | `#2d5a39` | `#1d4028` | `#8fd19e` | `#a8e6b6` |
 
-- **Writing Ink** (`#1B2432`): a blue-black fountain/ballpoint ink. All body
-  text, all headings, all rules. Distinct from a neutral black — ink on paper
-  is never truly black.
+Canvas palette, read by `onebit.js` every frame: `--ob-ink` = `--fg`,
+`--ob-ground` = `--bg`, `--ob-signal` = `--signal`. Always hex. The chat panel
+sets `--ob-ground: var(--surface)` so its orb and cursor sit on the panel.
 
-### Secondary
+Contrast on `--bg`: xerox fg 16.0, fg-2 5.8, signal 6.8; xerox-hc fg 21,
+fg-2 13.6, signal 11.6; night fg 15.3, fg-2 7.1, signal 11.3; night-hc fg 21,
+fg-2 13.2, signal 14.7. The HC renditions target WCAG AAA.
 
-- **Correction Red** (`#A32B20`): the second pen. Used only for struck-through
-  corrections, the countersign, the page stamp, and required-field marks.
-  Nowhere else, ever.
+### Rules
 
-### Neutral
+- **Signal is for meaning, not decoration**: links, the current section in the
+  bar, the site mark, the focus ring, the `ai ▸` label, the one solid button.
+- **No tints.** The tokens are raw hex and deliberately not channel-split for
+  Tailwind's alpha slot. Muted means `--fg-2`, not `--fg` at 60%. The only
+  `color-mix` uses are a link's underline (signal at 45%) and the dialog scrim.
+- Solid signal buttons set their label in `--bg`.
 
-Every rendition is exactly seven tokens, emitted per class by
-`scripts/generate-theme.mjs`: `--stock`, `--stock-deep`, `--grid`, `--rule`,
-`--ink`, `--pencil`, `--red`. There is no eighth. Emphasis is a doubled rule or
-a tone step, never a tint — which is why the tokens are raw hex rather than
-channel-split for Tailwind's `<alpha-value>` slot. If you reach for
-`text-ink/60`, reach for `text-pencil` instead.
+## Renditions
 
-**Ruled** (`.ruled`, light, the native rendition — laboratory stock is pale cool
-green-grey, not cream and not white):
-
-| Token | Value | Role |
+| id | role | name |
 | --- | --- | --- |
-| `--stock` | `#EEF0EA` | the page |
-| `--stock-deep` | `#E2E5DC` | entry blocks, table bands, the bound spine strip |
-| `--grid` | `#C3C9BC` | the quad-ruled grid, at 5mm |
-| `--rule` | `#8E9686` | printed hairlines and column borders |
-| `--ink` | `#1B2432` | all primary text — 13.6:1 on stock |
-| `--pencil` | `#5C6470` | metadata, page numbers, marginal notes — 5.2:1 |
-| `--red` | `#A32B20` | Correction Red — 6.3:1 |
+| `xerox` | light | Xerox |
+| `xerox-hc` | hc-light | Xerox HC |
+| `night` | dark | Night |
+| `night-hc` | hc-dark | Night HC |
 
-**Ruled HC** (`.ruled-hc`, the same sheet printed hard — AAA):
-`--stock` `#F4F6F1` · `--stock-deep` `#E4E8DF` · `--grid` `#AEB6A6` ·
-`--rule` `#3F4638` · `--ink` `#0D1219` (17.3:1) · `--pencil` `#333A44` (10.6:1) ·
-`--red` `#7E1A12` (9.4:1).
-
-**Carbon Copy** (`.carbon-copy`, dark — a carbon flimsy, which is a real artifact
-of the same desk. Purple-black, slightly smeared, not an inversion):
-
-| Token | Value | Role |
-| --- | --- | --- |
-| `--stock` | `#14131A` | the page (Flimsy) |
-| `--stock-deep` | `#1E1C26` | entry blocks, table bands |
-| `--grid` | `#2E2B3A` | the quad grid |
-| `--rule` | `#4A4658` | printed hairlines |
-| `--ink` | `#E8E4F0` | Carbon Violet — carbon transfer reads violet-white, not neutral (14.8:1) |
-| `--pencil` | `#918CA3` | metadata, page numbers (5.7:1) |
-| `--red` | `#E2705F` | Correction Red, lifted (5.9:1) |
-
-**Carbon Copy HC** (`.carbon-copy-hc`, the flimsy under a lamp — AAA):
-`--stock` `#0B0A10` · `--stock-deep` `#17151F` · `--grid` `#332F42` ·
-`--rule` `#8C87A0` · `--ink` `#F6F4FB` (18.1:1) · `--pencil` `#C4BFD6` (11.1:1) ·
-`--red` `#FF9B8A` (9.7:1).
-
-**Correction Red is per-rendition, not one constant.** `#A32B20` on Flimsy is
-1.3:1 — it would make the one real correction on the document invisible. The
-dark renditions carry a lifted red instead. This is the single palette value
-that departs from the seed, and it departs because the seed's value fails the
-only job the colour has.
-
-### Named Rules
-
-**The Two Pen Rule.** There are exactly two inks: Writing Ink and Correction
-Red. Correction Red appears only where a real correction, countersign or stamp
-exists. A third colour is a system violation.
-
-**The Ruled Ground Rule.** The 5mm quad grid is the layout grid — components
-align to it rather than floating over it. Three clarifications, all learned by
-building it:
-
-- It is a **block** grid, not a baseline grid. Body at `0.9375rem / 1.75` is
-  26.25px of leading against an 18.9px quad; those do not divide. Structural
-  edges land on rules; prose rides freely between them. Do not promise
-  baselines the arithmetic cannot keep.
-- **Minor rules draw at roughly 62% toward Stock; full `#C3C9BC` is reserved
-  for a 20mm major.** At full strength every 5mm the grid fights 15px type and
-  makes printed hairlines look doubled.
-- The grid **continues through the spine.** The spine is a tone step, not an
-  opaque strip that interrupts the ruling it is supposed to sit on.
-- Browsers lay `5mm` out as 18.890625px, not the ideal 18.8976px. Pin the quad
-  to a px constant rather than doing mm arithmetic, or components drift several
-  pixels off the painted gradient over a long page.
-
-**The Cool Stock Rule.** The light ground is a pale cool green-grey
-(`#EEF0EA`). Cream, parchment, kraft and warm beige are forbidden; laboratory
-stock is cool, and warm paper is the default this design refuses.
+- The class goes on `<html>`, plus `.dark` for the two dark ids, and
+  `color-scheme` is set to match. The choice is stored in `localStorage`
+  under `resume-theme`.
+- A blocking bootstrap in `client/index.html` applies the stored rendition
+  before first paint. It migrates legacy ids by role and writes the new id
+  back:
+  - `ruled`, `alucard` → `xerox`
+  - `ruled-hc`, `paper` → `xerox-hc`
+  - `carbon-copy`, `van-helsing`, `dracula` → `night`
+  - `carbon-copy-hc`, `carbon` → `night-hc`
+- `ThemeContext.res` repeats that mapping.
+- The rendition switch in the bar is one button that cycles the four and shows
+  the current id.
+- `ThemeToggle.res` keeps its `{id: …, name: "…"}` list shape, because the
+  contract check parses it.
 
 ## Typography
 
-**Display Font:** BIZ UDPGothic (700) — section headers, field labels, the
-stamped blocks
-**Body Font:** BIZ UDPMincho (400/700) — entries, prose, responsibilities
-**Data Font:** BIZ UDPGothic (400, tracked) — page numbers, dates, periods
+From Google Fonts (`client/index.html`):
 
-**Character:** Morisawa's BIZ UD families are Japanese *universal-design*
-faces drawn specifically for business and instructional documents. They are the
-native register of a 職務経歴書, they cover CJK and Latin in one system, and
-they fixed a live defect: Japanese used to fall through to whatever the OS
-provided, at a mismatched optical weight, with negative heading tracking applied
-to it.
+- **Big Shoulders Display** 800/900, uppercase: the name, the chat title and the
+  dialog title. Nothing else.
+- **IBM Plex Sans** 400/500/600: body, the position, row titles.
+- **IBM Plex Mono** 400/500: the status bar, rail labels, section labels,
+  periods, indices, chips, downloads, chat labels, the colophon.
+- **IBM Plex Sans JP**: Japanese, both on `/` in Japanese and in the companion
+  statement. It is the fallback in the sans and mono stacks, so kana and kanji
+  never drop to a system face.
 
-Both families ship 400 and 700 from Google Fonts and both weights are verified
-loading (`document.fonts` reports four faces). Turkish coverage
-(`ı İ ğ ş ç ö ü`) is present in the `latin-ext` subset of both — no companion
-face is needed. (`document.fonts.check()` returns `false` for a weight/size
-combination until that subset is actually painted; that is lazy loading, not a
-coverage gap, and it is why the check is on `document.fonts` rather than on
-`check()`.)
-
-Note the *P* in UDP: these are the **proportional**-metric variants.
-`tabular-nums` still aligns the Latin figures, but if a column of dates ever
-fails to align, the tabular-metric siblings are `BIZ UDGothic` / `BIZ UDMincho`.
-
-### Hierarchy
-
-- **Display** (BIZ UDPGothic 700, `clamp(1.75rem, 3.5vw, 2.5rem)`, 1.15): the
-  name on the index page. This is a record, not a poster — it does not grow past
-  2.5rem at any viewport.
-- **Section** (BIZ UDPGothic 700, `1.125rem`, 1.2, with entry number): the six
-  section headers, each stamped with its entry number and date range.
-- **Entry Title** (BIZ UDPMincho 700, `1.0625rem`): a role title, a degree.
-- **Body** (BIZ UDPMincho 400, `0.9375rem`, 1.75, max `66ch`): abstracts,
-  responsibilities, descriptions.
-- **Label** (BIZ UDPGothic 400, `0.7rem`, `0.1em`, uppercase): field names in
-  the ruled table — Company, Period, Location.
-- **Data** (BIZ UDPGothic 400, `0.8125rem`, tabular figures): dates, periods,
-  page numbers, paper citations.
-
-### Named Rules
-
-**The Ledger Figures Rule.** Every date, period and page number uses
-`font-variant-numeric: tabular-nums`. A career is read by scanning dates down a
-column; they must align.
-
-**The No Poster Rule.** No type on this site exceeds `2.5rem`. The incumbent
-`md:text-7xl` hero is the specific thing being refused — a dossier that shouts
-its own name has already lost the reader it wanted.
+| role | spec |
+| --- | --- |
+| name | Big Shoulders 900, `clamp(56px, 6.2vw, 88px)`, line-height .84, one word per line |
+| position | Plex Sans 500 21px |
+| summary | Plex Sans 16.5px / 1.65, max 64ch |
+| section label | Plex Mono 500 11px, tracking .16em, uppercase, `--fg-2`, a 1px rule runs to the edge |
+| row title | Plex Sans 600 17px; the employer after it at 400 in `--fg-2` |
+| row body | 15.5px lead, 14.5px list, max 66ch |
+| gutter / meta | Plex Mono 12.5px, tabular figures, `--fg-2` |
+| rail label | Plex Mono 500 10.5px, tracking .14em, uppercase |
 
 ## Layout
 
-The page is a **bound document**. A `28px` spine strip (`.spine`) runs down the
-left edge in Stock Deep, carrying stitch marks, the running folio and the
-running head — the binding, visible, holding the record together. It is
-`aria-hidden`: every number and name it shows is already in the document as real
-text.
+```
+┌ status bar (34px, sticky) ───────────────────────────────────────────────┐
+│ ▮ resume.arda.tr  about experience …      EN · JA · TR  JST 18:19  xerox │
+├ treeline (52px, drifting) ───────────────────────────────────────────────┤
+│  rail (260px)        │  main                                             │
+│  LOCATION            │  ARDA                                             │
+│  LANGUAGES           │  KARADUMAN                                        │
+│  LINKS               │  position · summary                               │
+│  DOWNLOAD  [PDF][DOCX]  ABOUT ME ──────────────────────────────────────  │
+│            [JSON][vCard] English   │ paragraph                           │
+│  ASK                 │  日本語     │ companion statement                  │
+│                      │  WORK EXPERIENCE ─────────────────────────────── │
+│                      │  2024 – Present │ Role · Company · Place          │
+└──────────────────────┴───────────────────────────────────────────────────┘
+```
 
-Every section is an **entry** (`.entry`): a marginal column carrying the entry
-number, its page ref and — for engagements and degrees — the employer or
-institution mark; then a numbered header rule (`.entry__head`), then a ruled
-field table (`.fields`, label column `7rem`, value column fluid), then prose at
-66ch. Sub-entries are numbered `02.1 … 02.9`, `05.1 … 05.2`.
+- **Grid**: `260px | 1fr`, gap 64px, max 1180px, padding 54px 40px 80px.
+- **Rail**: sticks under the bar when the viewport is at least 700px tall.
+  - Groups: location (plus years in Tokyo), spoken languages (one per line),
+    links, and the four downloads as a 2×2 grid of plain `<a download>` links
+    that honour the `?flavor=` prefix.
+  - Then the issue date and the certificate of issue, and Ask, which opens the
+    chat.
+- **Main**: name, position, summary (About paragraph 1), then about,
+  experience, skills, projects, education, contact and the colophon.
+  - **Rows**: every entry is a `120px | 1fr` row closed by a hairline. The mono
+    gutter carries the period (experience, education), the language (about) or
+    a two-digit index (skills, projects).
+  - Nothing is hidden behind a click: every abstract, responsibility, skill and
+    paper is in the prerendered HTML.
+- **About** carries paragraph 2, then the whole statement in the companion
+  language (Japanese for an English reader, English otherwise), muted.
+- **Status bar**: marks the section being read with `aria-current="location"`,
+  taking over the old spine folio's running head.
+  - Below 1080px the nav folds into a `§ section ▾` button that opens the list.
+  - Below 600px the host name and the clock drop out, so the bar never scrolls
+    sideways.
+- **Breakpoints**:
+  - ≤900px: the rail stacks above main as a 3-column block.
+  - ≤600px: single column; rows stack with the gutter as a line above the
+    entry.
+  - Tested at 390px with no horizontal overflow.
 
-**The entry list is fixed at 00–06.** `00` Contents · `00.1` Issue & Artifacts ·
-`01` Statement · `02` Record of Service · `03` Competencies · `04` Works ·
-`05` Education · `06` Countersign & Issue. The anchors are the pre-existing
-`#about`, `#experience`, `#skills`, `#projects`, `#education`, `#contact`.
+## Motion
 
-**Page numbers are derived, never decorative.** `Folio.res` computes them from
-the shape of the content — how many engagements, how many degrees — so the index
-cites real pages and all three languages agree.
+All motion comes from `client/src/lib/onebit.js`:
 
-**The index page** opens the document: the `RECORD BOOK` rule, the name, the
-struck correction where one is active, the ruled field table (Location /
-Resident / Languages / Record / Site), the dot-leader contents, and the stamped
-Issue & Artifacts block. A recruiter who reads only this screen knows what Arda
-is and already has the file.
+- The engine pauses every animation off-screen and in hidden tabs.
+- Under `prefers-reduced-motion` it draws one still frame.
+- `OneBit.useRepaintOnTheme` redraws still canvases when the rendition changes.
 
-**The Record of Service opens with the register** — every engagement on one
-ruled table (No. / Period / Employer / Title / p.), each row linking to the page
-its full entry is written on — and then writes every engagement out **in full,
-inline**. A bound record shows everything; nothing is hidden behind a click.
+What moves:
 
-**The countersign block** closes it. There is no second party in this content
-and inventing a witness is forbidden, so **the witness is the build**: commit
-SHA, build timestamp, and each of the four artifacts attributed to the script
-that actually generated it (`generate-resume.mjs`, `generate-docx.mjs`,
-`generate-json-resume.mjs`, `generate-vcard.mjs`). The provenance is injected by
-Vite `define` (`__BUILD_COMMIT__` / `__BUILD_TIME__`) and read through
-`Build.res`; `scripts/build-static.mjs` pins `RESUME_BUILD_TIME` once so the
-client bundle and the SSR bundle, built seconds apart, agree on when the record
-was issued. The commit is a link to the commit.
+- **Treeline**: `treeline(canvas, {seed: 3, px: 2, speed: 4})`, the only motion
+  on the page itself.
+- **Chat orb**: `orb(canvas, {size: 40})` revolves while the panel is open and
+  `sizzle()`s on each streamed chunk.
+- **Chat cursor**: a `crackle()` block cursor trails the reply while it streams.
+- **Hover**: colour transitions of 150ms; nothing lifts, scales or slides.
 
-**The Certificate of Issue** is the countersign made examinable: the one modal
-in the document, opened from the issue stamp on page 01 and from the closing
-entry. It exists so the modal's accessibility work — focus trap, `inert`,
-Escape, focus restore — stays in a real, always-available flow rather than
-being kept alive as a component nobody reaches.
-
-**Navigation is the contents index.** There is no pill bar. The only fixed
-chrome is the **reader's tag** (`.tag`, bottom right): the language of this copy
-and the rendition it is printed on — the two things a bound record can honestly
-let you change.
-
-**Field labels are one word, at most 11 characters.** The label column is
-`7rem`; "POSITION OF RECORD" wraps to three lines at `0.7rem / 0.1em`. This is
-why the employer field is labelled `Employer`, not `Organisation`.
-
-**Entries are closed by their own rule, not opened by the next one.** Implemented
-as `border-top` on `.entry` with no bottom rule, so a rule is drawn once. The
-masthead is the exception — it closes page 01 with an ink rule — so
-`.masthead + .entry` explicitly suppresses its `border-top`.
-
-Responsive: the field table restacks to `label: value` pairs below `768px`; the
-spine narrows to `16px` and keeps the page number; the marginal column collapses
-into a single line. The grid stays 5mm. **The register scrolls sideways; the
-artifacts table reflows.** A ledger may scroll — a reader who has to scroll
-sideways to find the issue checkmark has not been shown the artifacts, so on
-narrow sheets the generator attribution moves under the filename instead.
-
-## Elevation & Depth
-
-**This system has no shadows.** Depth is the page itself: the ruled grid, the
-spine strip, the tone step of an entry block against stock, and the faint
-offset of the carbon copy. Nothing floats above the page, because nothing on a
-bound page can.
-
-### Named Rules
-
-**The Bound Page Rule.** `box-shadow`, `backdrop-filter` and blur are not used
-anywhere. `.glass`, `.glass-strong`, `--shadow-glow` and the two `blur-3xl`
-blobs were deleted, not restyled. The modal scrim is a flat
-`color-mix(in srgb, var(--ink) 74%, transparent)` — an overlay, not a shadow.
-A DOM audit of the built page reports zero elements with a non-zero radius, a
-box-shadow, or a backdrop-filter.
-
-## Shapes
-
-**Radius is `0`** on every element — entries, tables, buttons, the modal, the
-chat panel. Paper does not have rounded corners. Enforced twice: `--radius: 0rem`
-comes from `config/theme.json` through the generator, and `@layer base * {
-border-radius: 0 }` catches anything that reaches for a literal.
-
-Borders are `1px` Rule hairlines. Emphasis is a doubled rule (`3px double`) or a
-tone step, never a heavier stroke and never a colour change.
+`onebit.js` is a verbatim copy of `../design-previews/onebit/onebit.js`. Do not
+fork it: change the shared file first, then copy it to every site.
 
 ## Components
 
-The world is made of CSS classes with the document's own names, not Tailwind
-soup. `client/src/index.css` is the stylesheet; Tailwind supplies the reset,
-the token-mapped colour utilities and the quad spacing scale (`p-q`, `mt-q2`,
-`w-spine`) only.
+- **Status bar** (`StatusBar.res`, `TokyoClock.res`, `ThemeToggle.res`): the
+  family's 34px mono strip.
+  - The site mark is an 8×14 signal block plus the host name.
+  - The language switch is `EN · JA · TR`; the active language is `--fg` with a
+    signal underline.
+  - The rendition button has a 1px border.
+- **Treeline** (`Treeline.res`): decorative, `aria-hidden`.
+- **Rail** (`Rail.res`): a `<dl>` of labelled groups.
+  - Downloads are 1px `--fg` boxes that invert on hover.
+- **Rows** (`Section.res`): `Section` (label + rule) and `Section.Row` (gutter +
+  body).
+  - Project stacks are the page's only chips: 1px `--rule` border, mono
+    11.5px, `--fg-2`.
+- **Contact** (`ContactSection.res`): "Get In Touch", one solid signal button
+  that opens the chat, the public profiles.
+  - No email anywhere in the HTML; a test asserts this.
+- **Colophon** (`Footer.res`): copyright, how the page is built, source, commit,
+  issue time, certificate.
+- **Certificate of issue** (`Certificate.res`, `Artifacts.res`, `Modal.res`):
+  the commit, the build time, the source, the `?flavor=` in effect, and each
+  artifact against the script that generates it.
+  - Behaviour: an accessible dialog with the root made `inert`, a focus trap,
+    Escape and focus restore.
+- **Chat** (`ChatWidget.res`, `Markdown.res`): styled like ai.arda.tr.
+  - Layout: orb and "Ask about Arda" in the header, `ai ▸` / `you ▸` label
+    columns, numbered mono quick prompts, and a terminal-line input with a `▸`
+    prompt.
+  - Behaviour is unchanged: SSE with the non-streaming fallback and timeouts,
+    Escape, focus into the input on open, focus back to whatever opened it,
+    safe element-only Markdown, and the `arda:open-chat` event.
 
-| Class | What it is |
-| --- | --- |
-| `.sheet` / `.page` | the ruled ground and the text block |
-| `.spine` / `.spine__folio` / `.spine__head` / `.spine__cap` | the binding, running folio, running head, volume |
-| `.masthead` / `.masthead__strip` / `.masthead__sub` | page 01's header |
-| `.struck` / `.amend` / `.amend__prov` | the correction, the amendment, its provenance stamp |
-| `.entry` / `.entry--major` / `.entry__marg` / `.entry__mark` / `.entry__head` | a numbered entry and its margin |
-| `.fields` (`dl` grid) | the ruled field table |
-| `.record` | numbered sub-records (responsibilities, competencies, works) |
-| `.contents` / `.toc-row` / `.toc-lead` | the dot-leader index |
-| `.schedule` / `.schedule-wrap` | the register of service |
-| `.stamp` / `.stamp--double` | Correction Red stamps |
-| `.issue` / `.artifacts` / `.countersign` / `.sigline` | the issue block and countersign |
-| `.papers` | ruled citation list |
-| `.bilingual` | the EN/JA statement, side by side |
-| `.slip` / `.tag` | a control drawn as a hairlined slip of stock; the reader's tag |
-| `.modal-scrim` / `.modal-panel` / `.chat-panel` / `.chat-bubble` | dialog and enquiry surfaces |
+## Geometry
 
-**There are no icons.** A record book has stamps, rules and marginal marks, not
-a pictogram language. Affordances are typographic — `×`, `↗`, `↳`, `✓` — and
-`lucide-react` was removed from the dependency tree entirely. If an icon ever
-becomes genuinely necessary, prefer inline SVG drawn in this grammar (hairline
-strokes, no fills, square caps) over reintroducing the package.
+- Radius 0 everywhere (`--radius: 0rem`, asserted by the static test).
+- No drop shadows. No gradients, except the dialog scrim.
+- 1px rules.
+- Focus ring: 2px solid `--signal`, offset 2px. The chat input draws it on the
+  whole terminal line.
 
-**Alignment is a runtime pass.** `Quad.res` measures the browser's real 5mm,
-pins `--q` to it, and nudges every `.js-snap` block's bottom padding down to the
-next rule — padding-bottom only, so React never has to fight it. It re-runs on
-resize, on `document.fonts.ready`, and when the language changes.
+## Print
+
+- Black on white whatever the rendition: the print block overrides the tokens.
+- The bar, treeline, chat, launcher, switches, downloads and dialogs are hidden.
+- The rail prints as a compact header row.
+- Rows do not break across pages.
+- External links print their URL.
 
 ## Do's and Don'ts
 
-### Do:
+**Do:**
 
-- **Do** number and date every section as an entry, and number every page in
-  the spine.
-- **Do** render corrections as struck-through-and-kept. The **flavour system is
-  the honest use of this device**: when `?flavor=` is active, the base subtitle
-  is struck in Correction Red and the flavour subtitle written beside it.
-- **Do** align every component to the 5mm quad grid.
-- **Do** keep four renditions — Ruled, Ruled HC, Carbon Copy, Carbon Copy HC —
-  with the two HC modes targeting WCAG AAA.
-- **Do** set `<html lang>` from the selected language and keep the blocking
-  bootstrap in `client/index.html` — it applies the stored rendition and language
-  before first paint, which is what stops the dark-rendition flash and the
-  screen-reader mismatch.
-- **Do** preserve every content JSON field path the four generators read. The
-  schema is a contract with `generate-resume.mjs`, `generate-docx.mjs`,
-  `generate-json-resume.mjs` and `ai.arda.tr`.
-- **Do** preserve the modal's existing accessibility behaviour — focus trap,
-  `inert`, Escape, focus restore.
-- **Do** translate the apparatus. `content/{en,ja,tr}/record.json` holds the
-  record book's own vocabulary — field labels, column heads, the issue and
-  countersign copy — in all three languages, because "Japanese and Turkish are
-  not fallbacks" applies to the chrome as much as to the claims. A test asserts
-  the three files are structurally aligned and actually differ.
+- Keep copy in `content/{en,ja,tr}` and keep the three languages aligned.
+- Use `--fg-2` for anything secondary and `--signal` only for meaning.
+- Keep downloads as plain `<a download>` links. They must work without
+  JavaScript, paste into an ATS and be crawlable.
+- Add tokens in two places: `generate-theme.mjs` and
+  `config/tailwind.config.cjs`.
 
-### Don't:
+**Don't:**
 
-- **Don't** invent a correction, an amendment or a witness that did not happen.
-  Struck-through text must correspond to something real, and the only real one
-  today is the flavour override.
-- **Don't** use paper-grain images, coffee rings, tape, torn edges, handwriting
-  faces, or any other skeuomorphic prop. The apparatus is the world; texture is
-  not.
-- **Don't** exceed `2.5rem` type anywhere.
-- **Don't** use cream, parchment or kraft as the light ground.
-- **Don't** let Correction Red carry anything other than a correction,
-  countersign, stamp or required mark.
-- **Don't** surface `header.contactViaEmail` in the rendered HTML — repo rule
-  and test assertion.
-- **Don't** hand-edit `client/src/theme.css`; it is generated by
-  `scripts/generate-theme.mjs`. A new token is a two-file change: the generator
-  plus `config/tailwind.config.cjs`.
-- **Don't** use a token's opacity modifier (`bg-ink/10`). The tokens are raw hex
-  and deliberately not channel-split, because a tint is a third ink.
-- **Don't** hide part of the record behind an interaction. Every
-  responsibility, competency and work is rendered inline, visible, and in the
-  prerendered HTML — that is what "impossible to quietly revise" costs.
+- Add a second moving thing, a pre-dithered image, an icon set or employer
+  logos to the page.
+- Hand-edit `client/src/theme.css`.
+- Use opacity modifiers on tokens (`text-fg/60`).
+- Fork `onebit.js`.
+- Reintroduce the OAuth line (removed 2026-09-23) anywhere.
+- Claim anything that isn't real. No invented taglines, metrics or blurbs.
 
 ## Cross-repo theme contract
 
-The renditions are named for the artifact they imitate. The canonical arda.tr
-catalogue (v2) names the same four *roles* — light, high-contrast light, dark,
-high-contrast dark — after its own world: Stock, Stock HC, Microfiche,
-Microfiche HC. `scripts/check-theme-contract.mjs` holds the mapping:
+arda.tr publishes `config/themes.json` **v3**: the four ids, their roles and
+names, the required tokens and its own values.
 
-| This repo | Canonical |
-| --- | --- |
-| Ruled | Stock |
-| Ruled HC | Stock HC |
-| Carbon Copy | Microfiche |
-| Carbon Copy HC | Microfiche HC |
+`scripts/check-theme-contract.mjs` (run by
+`.github/workflows/theme-contract.yml`, non-blocking) checks:
 
-The roles line up one-for-one; the words are owned by each site's design system.
-The check was failing before this redesign (the local names were still Ivory /
-Paper / Steel / Carbon against a catalogue that had moved on) and passes now.
+- the **id set**
+- each id's **role**
+- that every local rendition defines every **required token**
+
+Values are never compared. A name mismatch only warns.
+
+It soft-passes when:
+
+- the contract cannot be fetched;
+- the contract is older than v3, as it is while arda.tr main still publishes
+  v2.
+
+`THEMES_CONTRACT_PATH=../arda.tr/config/themes.json` checks against a local
+checkout.

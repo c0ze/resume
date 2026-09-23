@@ -12,8 +12,6 @@ Read these files first when relevant:
 
 - `DESIGN.md` for the design system — it is binding, not advisory
 - `PRODUCT.md` for product truth, including what must never be fabricated
-- `DESIGN.md` for the design system — it is binding, not advisory
-- `PRODUCT.md` for product truth, including what must never be fabricated
 - `README.md` for project overview and layout
 - `CLAUDE.md` for repo-specific implementation notes
 - `package.json` for the supported commands
@@ -22,12 +20,12 @@ Read these files first when relevant:
 ## Source of Truth
 
 - Resume content lives in `content/en`, `content/ja`, and `content/tr`
-- The visual system is "The Bound Notebook" — `DESIGN.md` is binding, `PRODUCT.md` holds product truth
+- The visual system is "One Bit Forest" (the arda.tr family system, `../DESIGN-SYSTEM.md`) — `DESIGN.md` is binding, `PRODUCT.md` holds product truth
 - The rendition catalogue lives in `themePalettes` inside `scripts/generate-theme.mjs`, which generates `client/src/theme.css` (never edit the generated CSS directly); `config/theme.json` holds the base settings consumed by the generator. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`
 - Tooling config lives in `config/`
 - PDF/DOCX generation lives in `scripts/generate-resume.mjs` and `scripts/generate-docx.mjs`
 - JSON Resume and vCard generation lives in `scripts/generate-json-resume.mjs` and `scripts/generate-vcard.mjs`
-- `scripts/check-theme-contract.mjs` verifies the theme names against the shared arda.tr catalogue (separate, non-blocking `.github/workflows/theme-contract.yml`)
+- `scripts/check-theme-contract.mjs` verifies the rendition ids, roles and required tokens against the shared arda.tr catalogue, contract v3 (separate, non-blocking `.github/workflows/theme-contract.yml`)
 - The "Ask about Arda" chat widget (`client/src/components/ChatWidget.res`) calls the ai.arda.tr bot; chat Markdown is rendered by `Markdown.res` + `markdownParse.mjs`
 - Static + unit validation lives in `tests/*.test.mjs` (run via `npm run test:static`)
 
@@ -56,7 +54,7 @@ Do not commit exported resume artifacts such as loose `.txt` or `.docx` files.
 
 ## Content Editing Rules
 
-- Keep language files structurally aligned. `record.json` carries the record book's own vocabulary (field labels, column heads, issue and countersign copy) and is translated in full — a test asserts the three files match in shape and differ in content.
+- Keep language files structurally aligned. `record.json` carries the page's own vocabulary (rail labels, certificate and column heads, chat labels) and is translated in full — a test asserts the three files match in shape and differ in content.
 - If you add a new field in one language, update the others in the same pass unless there is a good reason not to.
 - Each experience has a web-only `abstract` (card preview + modal) that the PDF/DOCX/JSON generators ignore — do not render it into the downloads.
 - The email (`header.contactViaEmail`) is intentionally kept out of the web page and only appears in the downloads (PDF/DOCX/JSON Resume/vCard) — do not surface it in the UI.

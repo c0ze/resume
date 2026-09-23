@@ -1,72 +1,74 @@
 ---
-version: 1
+version: 2
 slug: "client-src-pages-home-res"
 primary_target: "client/src/pages/Home.res"
-related_targets: ["client/src/index.css","scripts/generate-theme.mjs"]
+related_targets: ["client/src/index.css","scripts/generate-theme.mjs","client/src/lib/onebit.js"]
 ---
 
 ## Scope & mode
 
-`resume.arda.tr` — the single `/` route and its four generated artifacts.
-Visitor mode: **Persuade** — the reader must decide and act, in about forty
+`resume.arda.tr`: the single `/` route and its four generated artifacts.
+Visitor mode: **Persuade**. The reader must decide and act in about forty
 seconds, while holding a dozen other candidates.
 
 ## Audience, job, action
 
-Hiring managers, recruiters and technical interviewers, routed here explicitly
-from `arda.tr`. Many Japanese-speaking, some Turkish, often on a phone.
-Success: they believe the claim and keep the PDF.
+- **Who:** hiring managers, recruiters and technical interviewers, routed here
+  explicitly from `arda.tr`. Many are Japanese-speaking, some Turkish, often on
+  a phone.
+- **Success:** they believe the claim and keep the PDF.
 
 ## Direction contract
 
-**THESIS.** Twenty-five years set as a bound laboratory notebook — numbered,
-dated, and impossible to quietly revise, so that verifiability *is* the
-aesthetic rather than an assertion. Refuses the modern CV arrangement: sidebar
-photo, skill bars, dotted timeline, tech-logo grid, gradient name.
+**SYSTEM.** One Bit Forest, the arda.tr family system (`../DESIGN-SYSTEM.md`),
+at the **most professional** end of its tone dial. The reference is section
+03 of `../design-previews/sketch-1bit.html`, approved 2026-09-23. It replaces
+"The Bound Notebook" (2026-07-27).
 
-**OWN-WORLD.** Two inks on ruled stock: Writing Ink `#1B2432` and Correction
-Red `#A32B20`, the red reserved strictly for corrections, countersign and
-stamps. Cool pale green-grey stock `#EEF0EA` — never cream. A 5mm quad grid is
-the layout grid, minors drawn back toward the ground, majors at 20mm. A 28px
-spine carries stitch marks and the running folio, and the ruling continues
-through it. BIZ UDPGothic / BIZ UDPMincho — Morisawa universal-design business
-faces that cover CJK and Latin in one system. Radius 0, no shadow, no blur,
-nothing above 2.5rem.
+**THESIS.** A calm, typographic document on photocopy paper. The family's
+signature is present but quiet: a 1-bit treeline drifting under the status
+bar, and one moss signal. Everything else is type, hairlines and white space.
+It refuses the modern CV arrangement: sidebar photo, skill bars, dotted
+timeline, tech-logo grid, gradient name.
 
-**STORY.** A recruiter reads one screen, understands the span and the current
-role, sees the record is checkable, and takes the file.
+**OWN-WORLD.**
+- **Colour:** Xerox paper `#efede6`, toner `#111210`, moss `#2d5a39`; Night,
+  Xerox HC and Night HC as the other renditions.
+- **Type:** Big Shoulders Display 900 for the name; IBM Plex Sans for body,
+  Plex Mono for every label, date and control, Plex Sans JP for Japanese.
+- **Geometry:** radius 0, no shadow, no gradient, 1px rules.
 
-**FIRST VIEWPORT.** Page 01 of the book: `RECORD BOOK · 職務経歴書` header rule,
-the name at 2.5rem, the struck flavour correction where one is active, a ruled
-field table (Location / Resident / Languages / Record / Site), a dot-leader
-contents with entry numbers, date ranges and page refs, and the stamped
-**Issue & Artifacts** block listing PDF/DOCX/JSON/vCard against the script that
-generated each.
+**STORY.** A recruiter reads one screen. They see the name, the position and
+the summary, and the files are already in the rail beside it. They scroll a
+plain, complete record, and take the file.
 
-**FORM.** Bound laboratory notebook; grounded candidate 5 of 7, assigned by
-seed `d068b0f1` (mode persuade). Staged index-first (comp A), approved
-2026-07-25.
+**FIRST VIEWPORT.**
+- **Status bar:** site mark, section nav, EN · JA · TR, JST clock, rendition.
+- **Treeline** under it.
+- **Rail:** location, languages, links, the four downloads, the certificate of
+  issue, Ask.
+- **Main:** the name in two lines, the position, the summary, then the opening
+  of About.
+
+**FORM.** Two columns (`260px | 1fr`).
+- Every section is a mono label with a hairline.
+- Every entry is a `120px | 1fr` row: mono gutter on the left, entry on the
+  right.
+- On a phone the rail stacks above main and the bar folds its nav into a
+  `§ section ▾` menu.
 
 ## Memorable moment
 
-The struck correction. When `?flavor=` is active the base subtitle is struck in
-Correction Red with the flavour written beside it, carrying a provenance stamp
-naming the parameter that caused the amendment — the one correction in this
-document that is genuinely real.
+The treeline. It is the only thing that moves, it pauses when unseen, and it
+stands still for readers who prefer reduced motion.
 
-## Confirmed at comp approval (2026-07-25)
+## Kept from the previous direction
 
-- Build comp A (index-first).
-- **The countersign is machine provenance**: commit SHA, build timestamp, and
-  each artifact attributed to its real generator script. No human witness is
-  invented.
-- Bilingual EN/JA statement rendered side by side carries forward.
-
-## Unresolved
-
-- Whether per-language prerendered pages are in scope (today there is one route,
-  `<html lang>` is hardcoded `en`, and JA/TR are invisible to crawlers).
-- The cross-repo theme contract, as with the blog.
+- The certificate of issue as machine provenance: the commit SHA, the build
+  timestamp, and each artifact attributed to its real generator script. No
+  human witness is invented.
+- The bilingual statement: About repeats the whole statement in the companion
+  language.
 
 ## Hard constraints — do not break
 
@@ -76,3 +78,5 @@ document that is genuinely real.
 - `abstract` is web-only and must stay out of every export.
 - Every content JSON field path read by the four generators must survive.
 - `client/src/theme.css` is generated by `scripts/generate-theme.mjs`.
+- `client/src/lib/onebit.js` is a verbatim copy of the shared engine.
+- The OAuth line is gone from the résumé (2026-09-23). Do not reintroduce it.

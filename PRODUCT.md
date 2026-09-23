@@ -51,8 +51,9 @@ current work on AI platform architecture.
 
 ## Capabilities and Constraints
 
-- **Stack:** ReScript 12 → React 18, Vite, Tailwind 3. ~2,515 LOC across 29
-  `.res` files. `npm run check` is `rescript build`; there is **no lint and no
+- **Stack:** ReScript 11 → React 18, Vite 8, Tailwind 3. ~2,200 LOC across 30
+  `.res` files, plus the shared 1-bit canvas engine `client/src/lib/onebit.js`
+  (a verbatim copy of `design-previews/onebit/onebit.js`). `npm run check` is `rescript build`; there is **no lint and no
   `verify` script**. `npm run test:static` runs `node --test tests/*.test.mjs`
   and requires a prior build.
 - **The exports are independent of the web layout.** `generate-resume.mjs`
@@ -62,8 +63,9 @@ current work on AI platform architecture.
 - **Content is `content/{en,ja,tr}/*.json`**, 12 files each, structurally
   aligned, fully duplicated per language. `Translations.res` loads them through
   `Obj.magic` with **no runtime validation** — a renamed field is an
-  `undefined` at runtime, not a compile error. `record.json` is the record
-  book's own chrome vocabulary and is read by the web layer only.
+  `undefined` at runtime, not a compile error. `record.json` is the page's own
+  chrome vocabulary (rail labels, certificate, chat labels) and is read by the
+  web layer only.
 - **Flavours** (`content/flavors/*.json`) override only `header.subtitle` and
   the two About paragraphs, selected by `?flavor=` in the browser. SSR always
   renders the base résumé.
@@ -76,20 +78,24 @@ current work on AI platform architecture.
 - **`header.contactViaEmail` must never appear in the rendered HTML** — it is
   both a repo rule and a test assertion. It does go into the downloads.
 - **`abstract` is web-only** and must stay out of every export.
-- Defects the 2026-07-27 redesign fixed: BIZ UDPGothic/UDPMincho now cover
-  Japanese, Latin and Turkish in one system; `<html lang>` tracks the selected
-  language; a blocking bootstrap in `client/index.html` applies the stored
-  rendition and language before first paint.
+- Type: Big Shoulders Display for the name, IBM Plex Sans / Plex Mono for
+  body and labels, IBM Plex Sans JP for Japanese (also the fallback in the sans
+  and mono stacks, so kana and kanji never drop to a system face). `<html lang>`
+  tracks the selected language; a blocking bootstrap in `client/index.html`
+  applies the stored rendition (migrating legacy ids by role) and language
+  before first paint.
 - **Still open:** `createRoot` discards the SSR markup rather than hydrating, so
   the prerendered HTML is thrown away on first paint. It costs a re-render, not
   correctness, and it is why the SSR pass always renders the base English
   résumé without a flavour overlay.
-- The visual system is **"The Bound Notebook"** (`DESIGN.md`, binding). The four
-  renditions are Ruled, Ruled HC, Carbon Copy, Carbon Copy HC; the two HC
-  renditions target WCAG AAA. It replaced the four-theme professional subset on
-  2026-07-27.
-- `docs/superpowers/specs/2026-07-03-resume-revamp-design.md` states "no visual
-  redesign" and is **superseded** by that work; the file carries the notice.
+- The visual system is **"One Bit Forest"**, the arda.tr family system
+  (`../DESIGN-SYSTEM.md`; `DESIGN.md` is this repo's binding spec), adopted
+  2026-09-23. It replaced "The Bound Notebook" (2026-07-27). The four
+  renditions are Xerox (default), Xerox HC, Night, Night HC; the two HC
+  renditions target WCAG AAA.
+- `docs/superpowers/specs/*` are historical; the 2026-07-03 revamp spec states
+  "no visual redesign" and is superseded (the file carries the notice).
+- The OAuth line was removed from the résumé on 2026-09-23 and must not return.
 
 ## Brand Commitments
 
@@ -136,8 +142,9 @@ quantified business outcome. None of it exists in the content.
 
 - WCAG-conscious contrast in every rendition, with one AAA-targeted
   high-contrast light rendition and one AAA-targeted high-contrast dark
-  rendition (Ruled HC and Carbon Copy HC).
-- `prefers-reduced-motion` fully respected; content readable without JS. Every
+  rendition (Xerox HC and Night HC).
+- `prefers-reduced-motion` fully respected (the treeline, the chat orb and
+  cursor draw one still frame); content readable without JS. Every
   responsibility, competency and work is in the prerendered HTML — nothing is
   behind an interaction.
 - The modal is genuinely accessible (focus trap, `inert`, Escape, focus

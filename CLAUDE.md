@@ -4,8 +4,10 @@ This file provides repository-specific guidance to Claude Code when working here
 
 ## Design System
 
-The visual system is **"The Bound Notebook"** — see `DESIGN.md`, which is
-binding. Product truth is in `PRODUCT.md`; the direction contract for the single
+The visual system is **"One Bit Forest"**, shared by the arda.tr family (the
+family contract is `../DESIGN-SYSTEM.md`, the approved reference is section 03
+of `../design-previews/sketch-1bit.html`). `DESIGN.md` is this repo's binding
+spec. Product truth is in `PRODUCT.md`; the direction contract for the single
 `/` route is in `.impeccable/surfaces/client-src-pages-home-res.md`. Read those
 before changing anything visual.
 
@@ -18,16 +20,18 @@ before changing anything visual.
 - Vite 8
 - React 18
 - ReScript 11
-- Tailwind CSS (reset, token-mapped colours and the 5mm quad spacing scale only)
-- BIZ UDPGothic + BIZ UDPMincho from Google Fonts
+- Tailwind CSS (reset and token-mapped colours; the visual system is plain CSS in `client/src/index.css`)
+- Big Shoulders Display (name) + IBM Plex Sans / Plex Mono / Plex Sans JP from Google Fonts (the PDF/DOCX embed their own fonts)
+- `client/src/lib/onebit.js` — the family's 1-bit canvas engine (treeline, chat orb, crackle cursor), a verbatim copy of `../design-previews/onebit/onebit.js`, bound in `client/src/OneBit.res`
 - PDFKit + docx (PDF/DOCX resumes)
 - GitHub Actions + GitHub Pages (CI runs Node 24)
 
 ## Source of Truth
 
 - Website content: `content/{en,ja,tr}/*.json` (12 files each, structurally
-  aligned; `record.json` holds the record book's own chrome vocabulary)
-- Theme palette catalogue: `themePalettes` in `scripts/generate-theme.mjs` — generates `client/src/theme.css` (never edit the generated CSS directly)
+  aligned; `record.json` holds the page's own chrome vocabulary — rail labels,
+  certificate, chat labels)
+- Rendition catalogue: `themePalettes` in `scripts/generate-theme.mjs` — the four One Bit ids `xerox` (default), `xerox-hc`, `night`, `night-hc`, each with a role; generates `client/src/theme.css` (never edit the generated CSS directly)
 - Theme base settings: `config/theme.json` (appearance, radius — consumed by the generator)
 - Tooling config: `config/{vite.config.ts,tailwind.config.cjs,postcss.config.cjs}`
 - ReScript config: `rescript.json`
@@ -35,7 +39,7 @@ before changing anything visual.
 - DOCX generator: `scripts/generate-docx.mjs`
 - JSON Resume generator: `scripts/generate-json-resume.mjs`
 - vCard generator: `scripts/generate-vcard.mjs`
-- Theme contract check (names vs the shared arda.tr catalogue): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
+- Theme contract check (v3: id set, roles and required tokens vs arda.tr's `config/themes.json`; soft-passes on older contracts): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
 - Smoke tests (static output + Markdown): `tests/*.test.mjs` (run by `npm run test:static`)
@@ -65,8 +69,8 @@ npm run res:clean     # Clean ReScript build artifacts
 
 ## Key Features
 
-- **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda") POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
-- **Web-only `abstract`** — each experience carries an `abstract` (card preview + modal). `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
+- **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda", styled like ai.arda.tr: a 1-bit orb that sizzles per streamed chunk and a crackle cursor) POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
+- **Web-only `abstract`** — each experience carries an `abstract`, rendered as the lead line of its row in the Experience section, above the responsibilities. `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
 - **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
 - **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
 
@@ -101,9 +105,13 @@ npm run test:static
 - There are no icon bindings and no icon dependency: the design system uses
   typographic marks and hairline rules (see `DESIGN.md` → Components). If an
   icon becomes necessary, prefer inline SVG over adding a package.
-- Shared UI parts live in `client/src/components/Entry.res` (`Entry`,
-  `Entry.Head`, `Entry.Fields`) — the entry, its header rule and the ruled field
-  table that every section is built from.
+- Page structure: `pages/Home.res` = `StatusBar` + `Treeline` + (`Rail` | main
+  column: `Intro`, the six sections, `Footer`) + `ChatWidget`. Sections are
+  built from `components/Section.res` (`Section` = mono label + rule,
+  `Section.Row` = mono gutter + body; `Section.ids` is the nav order).
+- Canvas work goes through `OneBit.res` (`useCanvas`, `useRepaintOnTheme`);
+  never fork `lib/onebit.js` — change the shared copy in `design-previews/`
+  first, then copy it to every site.
 
 ## Content Rules
 

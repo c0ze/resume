@@ -10,11 +10,11 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Multi-language content (English, Japanese, Turkish) sourced from JSON in `content/{en,ja,tr}`
 - Generated PDF/DOCX resumes in `public/resume-{en,ja,tr}.{pdf,docx}`
 - Generated [JSON Resume](https://jsonresume.org/schema) exports in `public/resume-{en,ja,tr}.json` and a vCard in `public/arda.vcf`
-- A web-only `abstract` per experience (card preview + detail modal) that the PDF/DOCX/JSON exports deliberately ignore
-- "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown
+- A web-only `abstract` per experience (the lead line of each Experience row) that the PDF/DOCX/JSON exports deliberately ignore
+- "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown, with the family's 1-bit orb and crackle cursor
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
-- Four renditions of the record book — Ruled, Ruled HC, Carbon Copy, Carbon Copy HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA
+- The "One Bit Forest" design system shared with arda.tr, blog.arda.tr and ai.arda.tr (see `DESIGN.md`): four renditions — Xerox (default), Xerox HC, Night, Night HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA, and a 1-bit treeline drawn live by `client/src/lib/onebit.js`
 - `<html lang>` tracks the selected language, and a blocking bootstrap applies the stored rendition before first paint
 
 ## Tech Stack
@@ -22,9 +22,9 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - ReScript 11 (compiled to JS, rendered by React 18)
 - React 18
 - Vite 8 (client build + SSR prerender)
-- Tailwind CSS (with `@tailwindcss/typography`)
+- Tailwind CSS (reset + token colours; the rest is plain CSS in `client/src/index.css`)
 - PDFKit (PDF resumes) and `docx` (DOCX resumes)
-- BIZ UDPGothic + BIZ UDPMincho (Google Fonts)
+- Big Shoulders Display + IBM Plex Sans / Mono / Sans JP (Google Fonts)
 - GitHub Actions + GitHub Pages for deployment
 
 ## Repository Layout
@@ -137,7 +137,7 @@ When you update content:
 
 The rendition catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base settings (appearance, radius) consumed by the generator, and rendition state lives in `client/src/contexts/ThemeContext.res`. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
 
-Each rendition is exactly seven tokens — `--stock`, `--stock-deep`, `--grid`, `--rule`, `--ink`, `--pencil`, `--red` — because the design system is two inks on ruled stock (see `DESIGN.md`). `scripts/check-theme-contract.mjs` maps the local rendition names onto the shared arda.tr catalogue by role (Ruled → Stock, Carbon Copy → Microfiche, and the two HC variants); `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
+Each rendition defines the same tokens — `--bg`, `--surface`, `--fg`, `--fg-2`, `--rule`, `--signal` and the canvas palette `--ob-ink`, `--ob-ground`, `--ob-signal` — plus `--radius: 0` (see `DESIGN.md`). The ids (`xerox`, `xerox-hc`, `night`, `night-hc`) are shared by the whole arda.tr family; `scripts/check-theme-contract.mjs` compares the id set, roles and required tokens (never values) with arda.tr's `config/themes.json` v3 and soft-passes while an older contract is published. `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
 
 ## Deployment
 
