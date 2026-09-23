@@ -1,8 +1,12 @@
-// "Ask about Arda" — a floating enquiry slip that POSTs to the ai.arda.tr bot's
+// "Ask about Arda" — a floating chat panel that POSTs to the ai.arda.tr bot's
 // SSE /api/chat/stream (falling back to the non-streaming /api/chat) and renders
-// Markdown via Markdown.res. The bot holds the API key, so this static site
-// ships no secrets. Other parts of the page open it via the `arda:open-chat`
-// window event.
+// Markdown via Markdown.res (React elements only — never raw HTML). The bot
+// holds the API key, so this static site ships no secrets. Other parts of the
+// page open it via the `arda:open-chat` window event.
+//
+// Styled like ai.arda.tr: the construct orb revolves in the header and
+// sizzles on every streamed chunk, and a crackling 1-bit block cursor trails
+// the reply while it streams (OneBit.res / lib/onebit.js).
 type chatMsg = {
   id: int,
   role: string, // "user" | "model"
@@ -157,20 +161,47 @@ let listenForOpen: (unit => unit) => (unit => unit) = %raw(`
   }
 `)
 
-let bubble = (msg: chatMsg) => {
+
+let activeElement: unit => Nullable.t<Dom.element> = %raw(`
+  function () {
+    var el = typeof document !== "undefined" ? document.activeElement : null;
+    return el && el !== document.body ? el : null;
+  }
+`)
+
+// The construct: a small revolving 1-bit planet. Its handle is handed back
+// through `into` so the widget can sizzle it per chunk.
+module Orb = {
+  @react.component
+  let make = (~into: React.ref<option<OneBit.handle>>) => {
+    let canvasRef = React.useRef(Nullable.null)
+    OneBit.useCanvas(canvasRef, c => OneBit.orb(c, {size: 40, speed: 0.55, seed: 7}), into)
+    OneBit.useRepaintOnTheme(into)
+    <canvas className="px chat__orb" ariaHidden=true ref={ReactDOM.Ref.domRef(canvasRef)} />
+  }
+}
+
+// The crackling block cursor at the end of a streaming reply.
+module Cursor = {
+  @react.component
+  let make = () => {
+    let canvasRef = React.useRef(Nullable.null)
+    let handle = React.useRef(None)
+    OneBit.useCanvas(canvasRef, c => OneBit.crackle(c, {w: 5, h: 9}), handle)
+    <canvas className="px chat__cursor" ariaHidden=true ref={ReactDOM.Ref.domRef(canvasRef)} />
+  }
+}
+
+let message = (~who, ~msg: chatMsg, ~live) => {
   let isModel = msg.role != "user" && !msg.isError
-  <div
-    key={Int.toString(msg.id)}
-    className={"flex " ++ (msg.role == "user" ? "justify-end" : "justify-start")}>
-    <div
-      className={"chat-bubble " ++ (
-        msg.role == "user"
-          ? "chat-bubble--user whitespace-pre-wrap"
-          : msg.isError
-          ? "chat-bubble--err whitespace-pre-wrap"
-          : ""
-      )}>
-      {isModel ? <Markdown text={msg.content} /> : React.string(msg.content)}
+  let cls =
+    "msg" ++ (msg.role == "user" ? " msg--you" : msg.isError ? " msg--err" : " msg--ai")
+  <div key={Int.toString(msg.id)} className=cls>
+    <p className="msg__who"> {React.string(who ++ ` ▸`)} </p>
+    <div className="msg__txt">
+      {isModel
+        ? <Markdown text={msg.content} after=?{live ? Some(<Cursor />) : None} />
+        : <p className="whitespace-pre-wrap"> {React.string(msg.content)} </p>}
     </div>
   </div>
 }
@@ -179,6 +210,7 @@ let bubble = (msg: chatMsg) => {
 let make = () => {
   let {translations: t} = LanguageContext.useLanguage()
   let c = t.chat
+  let r = t.record
   let (isOpen, setIsOpen) = React.useState(() => false)
   let (input, setInput) = React.useState(() => "")
   let (messages, setMessages) = React.useState(() => [])
@@ -188,12 +220,20 @@ let make = () => {
   let listRef = React.useRef(Nullable.null)
   let inputRef = React.useRef(Nullable.null)
   let launcherRef = React.useRef(Nullable.null)
+  let returnRef = React.useRef(Nullable.null)
+  let orbRef = React.useRef(None)
 
   let nextId = () => {
     let id = idRef.current
     idRef.current = id + 1
     id
   }
+
+  let sizzle = amount =>
+    switch orbRef.current {
+    | Some(h) => OneBit.sizzle(h, amount)
+    | None => ()
+    }
 
   // Keep the transcript pinned to the latest message / thinking indicator.
   let lastLen = switch messages->Array.get(Array.length(messages) - 1) {
@@ -208,12 +248,14 @@ let make = () => {
     None
   }, [Int.toString(Array.length(messages)) ++ ":" ++ Int.toString(lastLen) ++ ":" ++ (busy ? "1" : "0")])
 
-  // On open: focus the input and wire Escape-to-close. On close, the cleanup
-  // returns focus to the launcher so keyboard users aren't stranded (the dialog
-  // is non-modal — a floating enquiry slip — so we restore focus rather than
-  // trap it).
+  // On open: remember what had focus, focus the input and wire
+  // Escape-to-close. On close, the cleanup returns focus to where the reader
+  // was (the rail's "Ask", the contact button) or to the launcher, so keyboard
+  // users aren't stranded. The panel is non-modal — the page stays usable
+  // behind it — so focus is restored rather than trapped.
   React.useEffect1(() => {
     if isOpen {
+      returnRef.current = activeElement()
       switch inputRef.current->Nullable.toOption {
       | Some(el) => focusEl(el)
       | None => ()
@@ -222,7 +264,11 @@ let make = () => {
       Some(
         () => {
           removeEscape()
-          switch launcherRef.current->Nullable.toOption {
+          let back = switch returnRef.current->Nullable.toOption {
+          | Some(el) => Some(el)
+          | None => launcherRef.current->Nullable.toOption
+          }
+          switch back {
           | Some(el) => focusEl(el)
           | None => ()
           }
@@ -257,6 +303,7 @@ let make = () => {
       setInput(_ => "")
       setBusy(_ => true)
       setStreaming(_ => false)
+      sizzle(0.4)
       postChatStream(
         trimmed,
         history,
@@ -265,6 +312,7 @@ let make = () => {
             setStreaming(_ => true)
           }
           addOrUpdate(full)
+          sizzle(0.5 +. Math.random() *. 0.5)
         },
         full => {
           addOrUpdate(full)
@@ -283,6 +331,7 @@ let make = () => {
                 setMessages(prev =>
                   Array.concat(prev, [{id: modelId, role: "model", content: reply, isError: false}])
                 )
+                sizzle(1.0)
                 setBusy(_ => false)
               },
               () => {
@@ -299,72 +348,83 @@ let make = () => {
   }
 
   let canSend = String.trim(input) !== "" && !busy
+  let lastId = switch messages->Array.get(Array.length(messages) - 1) {
+  | Some(m) => m.id
+  | None => -1
+  }
 
   <>
     {isOpen
       ? React.null
-      : <div className="chat-launcher no-print">
-          <button
-            ref={ReactDOM.Ref.domRef(launcherRef)}
-            type_="button"
-            onClick={_ => setIsOpen(_ => true)}
-            ariaHaspopup=#dialog
-            className="slip">
-            {React.string(c.launcher)}
-          </button>
-        </div>}
+      : <button
+          ref={ReactDOM.Ref.domRef(launcherRef)}
+          type_="button"
+          onClick={_ => setIsOpen(_ => true)}
+          ariaHaspopup=#dialog
+          className="chat-launcher no-print">
+          {React.string(c.launcher)}
+          <span ariaHidden=true> {React.string(` ▸`)} </span>
+        </button>}
     {isOpen
-      ? <div role="dialog" ariaLabel={c.title} className="chat-panel no-print">
-          <div className="flex shrink-0 items-center justify-between gap-2 border-b border-ink bg-stock-deep px-q py-2">
-            <div>
-              <p className="t-label"> {React.string("AI · Gemini")} </p>
-              <p className="t-entry"> {React.string(c.title)} </p>
+      ? <div role="dialog" ariaLabelledby="chat-title" className="chat no-print">
+          <div className="chat__head">
+            <Orb into=orbRef />
+            <div className="chat__id">
+              <h2 id="chat-title" className="chat__title"> {React.string(c.title)} </h2>
+              <p className="chat__sub"> {React.string("ai.arda.tr")} </p>
             </div>
             <button
               type_="button"
               onClick={_ => setIsOpen(_ => false)}
               ariaLabel={c.close}
               title={c.close}
-              className="modal-close modal-close--static">
+              className="x">
               {React.string(`×`)}
             </button>
           </div>
 
-          <div
-            ref={ReactDOM.Ref.domRef(listRef)}
-            role="log"
-            ariaLive=#polite
-            className="flex-1 space-y-2 overflow-y-auto px-q py-q">
-            <div className="flex justify-start">
-              <div className="chat-bubble"> {React.string(c.greeting)} </div>
+          <div ref={ReactDOM.Ref.domRef(listRef)} role="log" ariaLive=#polite className="chat__log">
+            <div className="msg msg--ai">
+              <p className="msg__who"> {React.string(r.assistant ++ ` ▸`)} </p>
+              <div className="msg__txt"> <p> {React.string(c.greeting)} </p> </div>
             </div>
-            {Array.length(messages) == 0
-              ? <div className="flex flex-col items-start gap-1.5 pt-1">
-                  {c.suggestions
-                  ->Array.mapWithIndex((s, i) =>
-                    <button
-                      key={Int.toString(i)}
-                      type_="button"
-                      onClick={_ => submit(s)}
-                      className="slip text-left">
-                      {React.string(s)}
-                    </button>
-                  )
-                  ->React.array}
+            {messages
+            ->Array.map(m =>
+              message(
+                ~who=m.role == "user" ? r.you : r.assistant,
+                ~msg=m,
+                ~live=streaming && m.id == lastId,
+              )
+            )
+            ->React.array}
+            {busy && !streaming
+              ? <div className="msg msg--ai msg--wait">
+                  <p className="msg__who"> {React.string(r.assistant ++ ` ▸`)} </p>
+                  <p className="msg__txt"> {React.string(c.thinking)} <Cursor /> </p>
                 </div>
               : React.null}
-            {messages->Array.map(bubble)->React.array}
-            {busy && !streaming
-              ? <p className="t-label" ariaLabel={c.thinking}> {React.string(c.thinking)} </p>
-              : React.null}
           </div>
+
+          {Array.length(messages) == 0
+            ? <div className="chat__prompts">
+                {c.suggestions
+                ->Array.mapWithIndex((s, i) =>
+                  <button key={Int.toString(i)} type_="button" onClick={_ => submit(s)}>
+                    <em ariaHidden=true> {React.string(Int.toString(i + 1))} </em>
+                    {React.string(s)}
+                  </button>
+                )
+                ->React.array}
+              </div>
+            : React.null}
 
           <form
             onSubmit={e => {
               ReactEvent.Form.preventDefault(e)
               submit(input)
             }}
-            className="flex shrink-0 items-center gap-2 border-t border-ink p-2">
+            className="chat__form">
+            <span className="chat__prompt" ariaHidden=true> {React.string(`▸`)} </span>
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
               type_="text"
@@ -374,11 +434,12 @@ let make = () => {
                 setInput(_ => value)
               }}
               placeholder={c.placeholder}
+              ariaLabel={c.placeholder}
               disabled={busy}
-              className="min-w-0 flex-1 border border-rule bg-stock px-2 py-1.5 font-gothic text-sm text-ink focus:border-ink focus:outline-none disabled:opacity-60"
             />
-            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="slip">
+            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="chat__send">
               {React.string(c.send)}
+              <span ariaHidden=true> {React.string(` ↵`)} </span>
             </button>
           </form>
         </div>

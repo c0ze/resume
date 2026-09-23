@@ -337,6 +337,146 @@
     font: 400 11.5px/1.75 var(--mono);
   }
 
+  /* ---- 8. Chat ---------------------------------------------------------- */
+
+  .chat-launcher {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 40;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    font: 400 12.5px/1 var(--mono);
+    transition: background-color .15s, color .15s;
+  }
+  .chat-launcher:hover { background: var(--fg); color: var(--bg); }
+
+  .chat {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    width: min(420px, calc(100vw - 24px));
+    height: min(620px, calc(100vh - var(--bar-h) - 40px));
+    background: var(--surface);
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    /* The orb and cursor sit on the panel, not on the page ground. */
+    --ob-ground: var(--surface);
+  }
+
+  .chat__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 12px 12px 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .chat__orb { width: 44px; height: 44px; flex: none; }
+  .chat__id { min-width: 0; }
+  .chat__title { font: 800 24px/.9 var(--display); text-transform: uppercase; }
+  .chat__sub { margin-top: 5px; color: var(--fg-2); font: 400 11px/1 var(--mono); }
+
+  .x {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: auto;
+    border: 1px solid var(--rule);
+    color: var(--fg-2);
+    font: 400 16px/1 var(--mono);
+  }
+  .x:hover { border-color: var(--fg); color: var(--fg); }
+
+  .chat__log {
+    display: grid;
+    flex: 1;
+    align-content: start;
+    gap: 16px;
+    padding: 16px 14px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .msg {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 10px;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+  .msg__who { color: var(--fg-2); font: 400 11.5px/1.95 var(--mono); }
+  .msg--ai .msg__who { color: var(--signal); }
+  .msg--err .msg__txt { padding-left: 8px; border-left: 2px solid var(--fg); }
+  .msg--wait .msg__txt { color: var(--fg-2); font: 400 12px/1.95 var(--mono); }
+
+  canvas.chat__cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    margin-left: 3px;
+    vertical-align: -3px;
+  }
+
+  .md > * + * { margin-top: 8px; }
+  .md strong { font-weight: 600; }
+  .md-list { padding-left: 18px; list-style: disc; }
+  .md-list--ol { list-style: decimal; }
+  .md-list li + li { margin-top: 3px; }
+  .md-code { padding: 1px 5px; background: var(--bg); color: var(--signal); font: 400 .9em var(--mono); }
+  .md-pre {
+    overflow-x: auto;
+    padding: 8px 10px;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    font: 400 12px/1.6 var(--mono);
+  }
+
+  .chat__prompts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px; }
+  .chat__prompts button {
+    padding: 7px 9px;
+    border: 1px solid var(--rule);
+    color: var(--fg-2);
+    font: 400 12px/1.35 var(--mono);
+    text-align: left;
+    transition: border-color .15s, color .15s;
+  }
+  .chat__prompts button:hover { border-color: var(--signal); color: var(--signal); }
+  .chat__prompts em { margin-right: 7px; font-style: normal; color: var(--fg-2); }
+
+  .chat__form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--rule);
+    font: 400 14px/1 var(--mono);
+  }
+  .chat__form:focus-within { outline: 2px solid var(--signal); outline-offset: -2px; }
+  .chat__prompt { color: var(--signal); }
+  .chat__form input {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 0;
+    background: transparent;
+    border: 0;
+    color: var(--fg);
+    font: inherit;
+  }
+  .chat__form input:focus-visible { outline: none; }
+  .chat__form input::placeholder { color: var(--fg-2); }
+  .chat__form input:disabled { opacity: .6; }
+  .chat__send { color: var(--fg-2); font-size: 12px; transition: color .15s; }
+  .chat__send:not(:disabled):hover { color: var(--signal); }
+  .chat__send:disabled { opacity: .45; cursor: default; }
+
   /* ---- 9. Dialog (certificate of issue) --------------------------------- */
 
   .modal-scrim {
@@ -455,6 +595,8 @@
   .skills .row { grid-template-columns: 2.25rem minmax(0, 1fr); gap: 8px; }
   .contact { padding-left: 0; }
 
+  .chat-launcher { right: 12px; bottom: 12px; }
+  .chat { right: 8px; left: 8px; bottom: 8px; width: auto; height: min(78vh, calc(100vh - var(--bar-h) - 24px)); }
   .artifacts__src { display: none; }
   .cert__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
