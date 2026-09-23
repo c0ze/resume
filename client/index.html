@@ -7,22 +7,36 @@
     <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
     <link rel="canonical" href="https://resume.arda.tr/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#EEF0EA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#14131A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#efede6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#060708" media="(prefers-color-scheme: dark)" />
 
     <!--
       Rendition + language bootstrap. Blocking on purpose: without it a reader
-      who chose a dark rendition gets a full flash of light stock before React
+      who chose a dark rendition gets a full flash of paper before React
       mounts, and screen readers announce Japanese and Turkish content as
-      English until the first render. Both were live defects.
+      English until the first render.
+
+      Stored ids from earlier designs migrate by role (light → xerox,
+      HC light → xerox-hc, dark → night, HC dark → night-hc) and the migrated
+      id is written back. Keep in sync with ThemeContext.res.
     -->
     <script>
       (function () {
         var root = document.documentElement;
-        var RENDITIONS = { ruled: 0, "ruled-hc": 0, "carbon-copy": 1, "carbon-copy-hc": 1 };
+        var RENDITIONS = { xerox: 0, "xerox-hc": 0, night: 1, "night-hc": 1 };
+        var LEGACY = {
+          ruled: "xerox", alucard: "xerox", light: "xerox",
+          "ruled-hc": "xerox-hc", paper: "xerox-hc",
+          "carbon-copy": "night", "van-helsing": "night", dracula: "night", dark: "night",
+          "carbon-copy-hc": "night-hc", carbon: "night-hc"
+        };
         try {
           var t = localStorage.getItem("resume-theme");
-          if (!(t in RENDITIONS)) t = "ruled";
+          if (t && LEGACY[t]) {
+            t = LEGACY[t];
+            localStorage.setItem("resume-theme", t);
+          }
+          if (!(t in RENDITIONS)) t = "xerox";
           root.classList.add(t);
           if (RENDITIONS[t]) {
             root.classList.add("dark");
@@ -33,7 +47,7 @@
           var l = localStorage.getItem("resume-lang");
           if (l === "en" || l === "ja" || l === "tr") root.lang = l;
         } catch (e) {
-          root.classList.add("ruled");
+          root.classList.add("xerox");
         }
       })();
     </script>
@@ -41,13 +55,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
-      Morisawa BIZ UD — Japanese universal-design business-document faces.
-      One system covers CJK, Latin and latin-ext (Turkish ı İ ğ ş ç ö ü), which
-      fixes the live defect where /ja had no web font at all and fell through
-      to the OS at a mismatched optical weight.
+      One Bit Forest type: Big Shoulders Display for the name, IBM Plex Sans for
+      body, IBM Plex Mono for labels, dates and chrome, IBM Plex Sans JP for
+      Japanese (Google serves it in unicode-range slices, so Latin readers do
+      not download it). The PDF/DOCX exports embed their own fonts.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
 

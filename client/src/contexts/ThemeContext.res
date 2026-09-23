@@ -1,43 +1,48 @@
-// The four renditions of the record book (see DESIGN.md):
+// The four renditions of the résumé — the shared One Bit Forest ids (see
+// DESIGN.md and ../DESIGN-SYSTEM.md):
 //
-//   Ruled           — the native sheet: laboratory stock, pale cool green-grey
-//   Ruled HC        — the same sheet printed hard, targeting WCAG AAA
-//   Carbon Copy     — a carbon flimsy off the same desk, not an inversion
-//   Carbon Copy HC  — the flimsy read under a lamp, targeting WCAG AAA
+//   Xerox      — light, the default: paper, black toner, moss signal
+//   Xerox HC   — high-contrast light, targeting WCAG AAA
+//   Night      — dark
+//   Night HC   — high-contrast dark, targeting WCAG AAA
 //
 // Palette values live in scripts/generate-theme.mjs; the ids here must match
-// its `themePalettes` keys, which are also the CSS class names.
-type theme = Ruled | RuledHc | CarbonCopy | CarbonCopyHc
+// its `themePalettes` keys, which are also the CSS class names. The blocking
+// bootstrap in client/index.html migrates legacy stored ids by role before
+// first paint; `themeFromString` repeats that mapping so React agrees with it.
+type theme = Xerox | XeroxHc | Night | NightHc
 
 let themeToString = theme =>
   switch theme {
-  | Ruled => "ruled"
-  | RuledHc => "ruled-hc"
-  | CarbonCopy => "carbon-copy"
-  | CarbonCopyHc => "carbon-copy-hc"
+  | Xerox => "xerox"
+  | XeroxHc => "xerox-hc"
+  | Night => "night"
+  | NightHc => "night-hc"
   }
 
+// Legacy ids migrate by role: light → xerox, HC light → xerox-hc,
+// dark → night, HC dark → night-hc. Unknown values fall back to the default.
 let themeFromString = str =>
   switch str {
-  | "ruled-hc" => RuledHc
-  | "carbon-copy" => CarbonCopy
-  | "carbon-copy-hc" => CarbonCopyHc
-  | _ => Ruled
+  | "xerox-hc" | "ruled-hc" | "paper" => XeroxHc
+  | "night" | "carbon-copy" | "van-helsing" | "dracula" | "dark" => Night
+  | "night-hc" | "carbon-copy-hc" | "carbon" => NightHc
+  | _ => Xerox
   }
 
-let themes = [Ruled, RuledHc, CarbonCopy, CarbonCopyHc]
+let themes = [Xerox, XeroxHc, Night, NightHc]
 
 let isDark = theme =>
   switch theme {
-  | CarbonCopy | CarbonCopyHc => true
-  | Ruled | RuledHc => false
+  | Night | NightHc => true
+  | Xerox | XeroxHc => false
   }
 
 // `next` advances from the *current* state rather than from a captured value,
 // so two clicks in one tick advance two renditions instead of one.
 let next = theme => {
   let index = themes->Array.indexOf(theme)
-  themes->Array.get(mod(index + 1, Array.length(themes)))->Option.getOr(Ruled)
+  themes->Array.get(mod(index + 1, Array.length(themes)))->Option.getOr(Xerox)
 }
 
 type contextValue = {
@@ -46,7 +51,7 @@ type contextValue = {
 }
 
 let context = React.createContext({
-  theme: Ruled,
+  theme: Xerox,
   cycleTheme: () => (),
 })
 
@@ -58,18 +63,24 @@ module Provider = {
 // applied, so React's first render agrees with the already-painted page.
 let getStoredTheme = (): theme => {
   let stored: option<string> = %raw(`
-    typeof window !== "undefined" ? localStorage.getItem("resume-theme") : null
+    (function () {
+      try {
+        return typeof window !== "undefined" ? localStorage.getItem("resume-theme") || undefined : undefined;
+      } catch (e) {
+        return undefined;
+      }
+    })()
   `)
   switch stored {
   | Some(s) => themeFromString(s)
-  | None => Ruled
+  | None => Xerox
   }
 }
 
 let applyThemeToDOM: (string, bool) => unit = %raw(`
   function (themeStr, dark) {
     var root = document.documentElement;
-    root.classList.remove("ruled", "ruled-hc", "carbon-copy", "carbon-copy-hc", "dark");
+    root.classList.remove("xerox", "xerox-hc", "night", "night-hc", "dark");
     root.classList.add(themeStr);
     if (dark) {
       root.classList.add("dark");

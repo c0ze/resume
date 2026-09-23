@@ -1,8 +1,10 @@
 name: Theme contract check
 
-# Verifies that this site's theme names still map into the canonical 9-theme
-# catalogue published by the arda.tr portfolio repo (config/themes.json).
-# Runs as a separate workflow so it never blocks deploys.
+# Verifies this site's renditions against the One Bit Forest catalogue that the
+# arda.tr repo publishes as config/themes.json (contract v3): the id set, the
+# roles and the required tokens — never the values. Soft-passes while arda.tr
+# main still publishes an older contract. Runs as a separate workflow so it
+# never blocks deploys.
 
 on:
   push:
@@ -27,5 +29,5 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '24'
-      - name: Check theme names against the shared catalogue
+      - name: Check renditions against the shared catalogue
         run: node scripts/check-theme-contract.mjs

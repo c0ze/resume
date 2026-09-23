@@ -3,50 +3,58 @@
    Run `node scripts/generate-theme.mjs` after changing either. */
 
 :root,
-.ruled {
-  --stock: #EEF0EA;
-  --stock-deep: #E2E5DC;
-  --grid: #C3C9BC;
-  --rule: #8E9686;
-  --ink: #1B2432;
-  --pencil: #5C6470;
-  --red: #A32B20;
+.xerox {
+  --bg: #efede6;
+  --surface: #f7f6f1;
+  --fg: #111210;
+  --fg-2: #5d5b55;
+  --rule: #cfccc2;
+  --signal: #2d5a39;
+  --ob-ink: #111210;
+  --ob-ground: #efede6;
+  --ob-signal: #2d5a39;
   color-scheme: light;
   --radius: 0rem;
 }
 
-.ruled-hc {
-  --stock: #F4F6F1;
-  --stock-deep: #E4E8DF;
-  --grid: #AEB6A6;
-  --rule: #3F4638;
-  --ink: #0D1219;
-  --pencil: #333A44;
-  --red: #7E1A12;
+.xerox-hc {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --fg: #000000;
+  --fg-2: #2e2e2e;
+  --rule: #1a1a1a;
+  --signal: #1d4028;
+  --ob-ink: #000000;
+  --ob-ground: #ffffff;
+  --ob-signal: #1d4028;
   color-scheme: light;
   --radius: 0rem;
 }
 
-.carbon-copy {
-  --stock: #14131A;
-  --stock-deep: #1E1C26;
-  --grid: #2E2B3A;
-  --rule: #4A4658;
-  --ink: #E8E4F0;
-  --pencil: #918CA3;
-  --red: #E2705F;
+.night {
+  --bg: #060708;
+  --surface: #0d0f10;
+  --fg: #e4e0d4;
+  --fg-2: #9d998e;
+  --rule: #22252a;
+  --signal: #8fd19e;
+  --ob-ink: #e4e0d4;
+  --ob-ground: #060708;
+  --ob-signal: #8fd19e;
   color-scheme: dark;
   --radius: 0rem;
 }
 
-.carbon-copy-hc {
-  --stock: #0B0A10;
-  --stock-deep: #17151F;
-  --grid: #332F42;
-  --rule: #8C87A0;
-  --ink: #F6F4FB;
-  --pencil: #C4BFD6;
-  --red: #FF9B8A;
+.night-hc {
+  --bg: #000000;
+  --surface: #000000;
+  --fg: #ffffff;
+  --fg-2: #d0cdc4;
+  --rule: #8a8a8a;
+  --signal: #a8e6b6;
+  --ob-ink: #ffffff;
+  --ob-ground: #000000;
+  --ob-signal: #a8e6b6;
   color-scheme: dark;
   --radius: 0rem;
 }

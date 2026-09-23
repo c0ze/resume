@@ -149,23 +149,26 @@ test("generated theme CSS contains all four renditions", () => {
 
   const themeCss = fs.readFileSync(themeCssPath, "utf8");
 
-  // The four renditions of the record book (see DESIGN.md).
-  for (const selector of [".ruled", ".ruled-hc", ".carbon-copy", ".carbon-copy-hc"]) {
+  // The four One Bit Forest renditions shared by the arda.tr family (see DESIGN.md).
+  for (const selector of [".xerox", ".xerox-hc", ".night", ".night-hc"]) {
     assert.ok(
       themeCss.includes(`${selector} {`) || themeCss.includes(`${selector},`),
       `expected the generated theme CSS to include the ${selector} selector`
     );
   }
 
-  // Two inks on ruled stock: every rendition ships the same seven tokens.
+  // One bit plus one signal: every rendition ships the same tokens, including
+  // the three the 1-bit canvases read.
   for (const token of [
-    "--stock:",
-    "--stock-deep:",
-    "--grid:",
+    "--bg:",
+    "--surface:",
+    "--fg:",
+    "--fg-2:",
     "--rule:",
-    "--ink:",
-    "--pencil:",
-    "--red:",
+    "--signal:",
+    "--ob-ink:",
+    "--ob-ground:",
+    "--ob-signal:",
   ]) {
     assert.equal(
       themeCss.split(token).length - 1,
@@ -177,11 +180,12 @@ test("generated theme CSS contains all four renditions", () => {
   assert.equal(
     themeCss.split("--radius: 0rem;").length - 1,
     themeCss.split("--radius:").length - 1,
-    "radius is 0 on every element — paper does not have rounded corners"
+    "radius is 0 everywhere"
   );
+  assert.equal(themeCss.split("--radius:").length - 1, 4, "expected every rendition to define --radius");
 });
 
-test("the record book's chrome is translated for every language", () => {
+test("the page chrome (record.json) is translated for every language", () => {
   const languages = ["en", "ja", "tr"];
   const shape = (value) =>
     typeof value === "object" && value !== null

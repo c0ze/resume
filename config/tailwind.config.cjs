@@ -3,13 +3,15 @@ const path = require("node:path");
 const projectRoot = path.resolve(__dirname, "..");
 
 /**
- * "The Bound Notebook" (see DESIGN.md).
+ * "One Bit Forest" (see DESIGN.md).
+ *
+ * Tailwind supplies the reset and a handful of layout utilities; almost all of
+ * the visual system lives in client/src/index.css as plain CSS over the tokens.
  *
  * Colour tokens are raw hex emitted per rendition by scripts/generate-theme.mjs.
  * They are deliberately *not* channel-split for Tailwind's `<alpha-value>`
- * slot: the system has exactly two inks and emphasis is a doubled rule or a
- * tone step, never a tint. If you reach for `text-ink/60`, reach for
- * `text-pencil` instead.
+ * slot: the system is one bit plus one signal, and emphasis is weight, size or
+ * a 1px rule, never a tint. If you reach for `text-fg/60`, use `text-fg-2`.
  *
  * A new token is a two-file change: the generator plus this file.
  */
@@ -22,33 +24,21 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // Morisawa BIZ UD — Japanese universal-design *business document*
-        // faces. One system covers CJK, Latin and latin-ext (Turkish).
-        gothic: ['"BIZ UDPGothic"', '"Hiragino Kaku Gothic ProN"', "Meiryo", "sans-serif"],
-        mincho: ['"BIZ UDPMincho"', '"Hiragino Mincho ProN"', '"Yu Mincho"', "serif"],
+        display: ['"Big Shoulders Display"', '"Arial Narrow"', "sans-serif"],
+        sans: ['"IBM Plex Sans"', '"IBM Plex Sans JP"', "system-ui", "sans-serif"],
+        mono: ['"IBM Plex Mono"', '"IBM Plex Sans JP"', "ui-monospace", "monospace"],
+        jp: ['"IBM Plex Sans JP"', '"IBM Plex Sans"', "sans-serif"],
       },
       colors: {
-        stock: "var(--stock)",
-        "stock-deep": "var(--stock-deep)",
-        grid: "var(--grid)",
+        bg: "var(--bg)",
+        surface: "var(--surface)",
+        fg: "var(--fg)",
+        "fg-2": "var(--fg-2)",
         rule: "var(--rule)",
-        ink: "var(--ink)",
-        pencil: "var(--pencil)",
-        red: "var(--red)",
+        signal: "var(--signal)",
       },
       borderColor: {
         DEFAULT: "var(--rule)",
-      },
-      spacing: {
-        // The 5mm quad is the layout grid. --q is pinned to the browser's real
-        // 5mm at runtime so laid-out blocks and the painted ruling share one
-        // number (see index.css / Quad.res).
-        q: "var(--q)",
-        q2: "calc(var(--q) * 2)",
-        q3: "calc(var(--q) * 3)",
-        q4: "calc(var(--q) * 4)",
-        q6: "calc(var(--q) * 6)",
-        spine: "var(--spine)",
       },
       borderRadius: {
         lg: "var(--radius)",

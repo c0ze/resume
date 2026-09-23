@@ -1,10 +1,23 @@
-// Generates client/src/theme.css — the four renditions of the record book.
+// Generates client/src/theme.css — the four renditions of the résumé.
 // NEVER hand-edit the generated CSS; edit `themePalettes` below and re-run.
 //
-// The design system is "The Bound Notebook" (see DESIGN.md). Two inks on ruled
-// stock, so a rendition is only seven values: the page, the tone step used for
-// entry blocks and bands, the quad ruling, the printed hairline, the writing
-// ink, the pencil used for metadata, and the correction red.
+// The design system is "One Bit Forest", shared by the arda.tr family (see
+// DESIGN.md here and DESIGN-SYSTEM.md one level up). Every site ships the same
+// four rendition ids — xerox, xerox-hc, night, night-hc — in the same roles;
+// the values are this site's. The résumé uses the family neutrals and its own
+// signal: moss.
+//
+// A rendition is six colours plus the three the 1-bit canvases read:
+//   bg        the ground
+//   surface   raised panels (chat, dialog)
+//   fg        ink
+//   fg-2      muted ink: labels, dates, meta
+//   rule      1px hairlines
+//   signal    the phosphor — links, focus, the site mark. Never decoration.
+//   ob-ink / ob-ground / ob-signal   read by client/src/lib/onebit.js (hex only)
+//
+// `role` is not emitted as a variable; scripts/check-theme-contract.mjs reads it
+// and compares it with the arda.tr catalogue.
 //
 // Adding a token here is half a change: the other half is
 // config/tailwind.config.cjs, which maps the token onto a utility.
@@ -13,73 +26,77 @@ import path from 'path';
 
 const themePath = path.resolve(process.cwd(), 'config/theme.json');
 const theme = JSON.parse(fs.readFileSync(themePath, 'utf-8'));
-const defaultTheme = theme.appearance === 'dark' ? 'carbon-copy' : 'ruled';
+const defaultTheme = theme.appearance === 'dark' ? 'night' : 'xerox';
 
 const themePalettes = {
-  // ── Ruled — the native rendition. Laboratory stock is a pale cool green-grey;
-  //    cream, parchment and kraft are forbidden grounds (The Cool Stock Rule).
-  ruled: {
+  // ── Xerox — the default. Photocopy paper, black toner, moss ink for links.
+  //    fg 16.0:1, fg-2 5.8:1, signal 6.8:1 on bg.
+  xerox: {
+    role: 'light',
     colorScheme: 'light',
-    stock: '#EEF0EA',
-    'stock-deep': '#E2E5DC',
-    grid: '#C3C9BC',
-    rule: '#8E9686',
-    ink: '#1B2432',
-    pencil: '#5C6470',
-    red: '#A32B20',
+    bg: '#efede6',
+    surface: '#f7f6f1',
+    fg: '#111210',
+    'fg-2': '#5d5b55',
+    rule: '#cfccc2',
+    signal: '#2d5a39',
   },
 
-  // ── Ruled HC — the same sheet printed hard. Targets WCAG AAA: ink 17.3:1,
-  //    pencil 10.6:1, correction red 9.4:1, printed hairline 9.0:1 on stock.
-  'ruled-hc': {
+  // ── Xerox HC — the same sheet, hard. Targets WCAG AAA throughout:
+  //    fg 21:1, fg-2 13.6:1, signal 11.6:1, rule 17.4:1 on white.
+  'xerox-hc': {
+    role: 'hc-light',
     colorScheme: 'light',
-    stock: '#F4F6F1',
-    'stock-deep': '#E4E8DF',
-    grid: '#AEB6A6',
-    rule: '#3F4638',
-    ink: '#0D1219',
-    pencil: '#333A44',
-    red: '#7E1A12',
+    bg: '#ffffff',
+    surface: '#ffffff',
+    fg: '#000000',
+    'fg-2': '#2e2e2e',
+    rule: '#1a1a1a',
+    signal: '#1d4028',
   },
 
-  // ── Carbon Copy — a carbon flimsy off the same desk, not an inversion of the
-  //    page. Purple-black stock; carbon transfer reads violet-white, never
-  //    neutral. The correction red is lifted so it survives on a dark ground —
-  //    #A32B20 is 1.3:1 there, which would make the one real correction on the
-  //    document invisible.
-  'carbon-copy': {
+  // ── Night — the family's dark ground, moss phosphor.
+  //    fg 15.3:1, fg-2 7.1:1, signal 11.3:1 on bg.
+  night: {
+    role: 'dark',
     colorScheme: 'dark',
-    stock: '#14131A',
-    'stock-deep': '#1E1C26',
-    grid: '#2E2B3A',
-    rule: '#4A4658',
-    ink: '#E8E4F0',
-    pencil: '#918CA3',
-    red: '#E2705F',
+    bg: '#060708',
+    surface: '#0d0f10',
+    fg: '#e4e0d4',
+    'fg-2': '#9d998e',
+    rule: '#22252a',
+    signal: '#8fd19e',
   },
 
-  // ── Carbon Copy HC — the flimsy read under a lamp. Targets WCAG AAA:
-  //    ink 18.1:1, pencil 11.1:1, correction red 9.7:1, hairline 5.7:1.
-  'carbon-copy-hc': {
+  // ── Night HC — targets WCAG AAA: fg 21:1, fg-2 13.2:1, signal 14.7:1,
+  //    rule 6.1:1 on black.
+  'night-hc': {
+    role: 'hc-dark',
     colorScheme: 'dark',
-    stock: '#0B0A10',
-    'stock-deep': '#17151F',
-    grid: '#332F42',
-    rule: '#8C87A0',
-    ink: '#F6F4FB',
-    pencil: '#C4BFD6',
-    red: '#FF9B8A',
+    bg: '#000000',
+    surface: '#000000',
+    fg: '#ffffff',
+    'fg-2': '#d0cdc4',
+    rule: '#8a8a8a',
+    signal: '#a8e6b6',
   },
 };
 
-function buildThemeBlock(selector, variables) {
-  const lines = Object.entries(variables)
-    .filter(([name]) => name !== 'colorScheme')
-    .map(([name, value]) => `  --${name}: ${value};`);
+// The canvas palette for the résumé: pixels on = ink, off = ground, accent = signal.
+const canvasPalette = (p) => ({
+  'ob-ink': p.fg,
+  'ob-ground': p.bg,
+  'ob-signal': p.signal,
+});
 
-  lines.push(`  color-scheme: ${variables.colorScheme};`);
-  // Paper does not have rounded corners. The token stays so the value has one
-  // home, but every rendition ships radius 0.
+function buildThemeBlock(selector, palette) {
+  const { role: _role, colorScheme, ...colours } = palette;
+  const lines = Object.entries({ ...colours, ...canvasPalette(palette) }).map(
+    ([name, value]) => `  --${name}: ${value};`
+  );
+
+  lines.push(`  color-scheme: ${colorScheme};`);
+  // Radius 0 everywhere. The token stays so the value has one home.
   lines.push(`  --radius: ${theme.radius}rem;`);
 
   return `${selector} {\n${lines.join('\n')}\n}`;
