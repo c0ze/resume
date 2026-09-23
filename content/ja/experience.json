@@ -6,11 +6,10 @@
     {
       "title": "システムアーキテクト",
       "logo": "veltra.png",
-      "abstract": "VeltraのAIプラットフォームのリードエンジニア。旅行アクティビティカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを構築。アクティビティ検索コネクタはAnthropicの審査を通過し、Claudeの公開コネクタディレクトリに掲載中。",
+      "abstract": "Python・Go・Nodeの各サービスとAWS基盤を横断的に担当するシステムアーキテクト。旅行アクティビティカタログをAIアシスタントに公開するMCPサービスや、社内向け分析ツールを構築。",
       "company": "Veltra（東京・リモート）",
       "period": "2024 - 現在",
       "responsibilities": [
-        "VeltraのMCPプラットフォームの主要開発者として、旅行アクティビティカタログをAIアシスタント（Claude MCP Apps／ChatGPT Apps）へ公開し、社員向けのAIツールも提供。",
         "ClaudeとOpenAIの両アプリホストに対応したステートレスな「アクティビティ検索」MCPサーバーを構築（Anthropicの審査を通過し、Claudeコネクタディレクトリで一般公開中）。あわせて社内向けにGoogle AnalyticsとAWSの読み取り専用MCPツールを開発。",
         "画像配信を有料CDNから、AWS CloudFront上の自社開発の仕組みへ移行。",
         "Python・Go・Nodeの各サービスについて、アプリケーションとインフラ全般のアーキテクチャ設計・計画を担当。TerraformとGitHub Actions（CI/CD）でAWS ECSへデプロイ。",

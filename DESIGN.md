@@ -79,10 +79,10 @@ fg-2 13.2, signal 14.7. The HC renditions target WCAG AAA.
 - A blocking bootstrap in `client/index.html` applies the stored rendition
   before first paint. It migrates legacy ids by role and writes the new id
   back:
-  - `ruled`, `alucard` → `xerox`
-  - `ruled-hc`, `paper` → `xerox-hc`
-  - `carbon-copy`, `van-helsing`, `dracula` → `night`
-  - `carbon-copy-hc`, `carbon` → `night-hc`
+  - `ruled`, `alucard`, `light` → `xerox`
+  - `ruled-hc`, `paper`, `light-hc` → `xerox-hc`
+  - `carbon-copy`, `van-helsing`, `dracula`, `dark` → `night`
+  - `carbon-copy-hc`, `carbon`, `dark-hc` → `night-hc`
 - `ThemeContext.res` repeats that mapping.
 - The rendition switch in the bar is one button that cycles the four and shows
   the current id.

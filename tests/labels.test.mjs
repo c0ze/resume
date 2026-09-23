@@ -16,7 +16,17 @@ test('fieldLabel appends exactly one separator, whatever the label ends with', (
   assert.equal(fieldLabel('言語：'), '言語: ');
   assert.equal(fieldLabel('Spoken languages'), 'Spoken languages: ');
   assert.equal(fieldLabel('Spoken languages :'), 'Spoken languages: ');
+  assert.equal(fieldLabel('Spoken languages \t: \n'), 'Spoken languages: ');
+  assert.equal(fieldLabel('言語　：　'), '言語: ');
   assert.equal(fieldLabel('Spoken languages::'), 'Spoken languages: ');
+});
+
+test('missing or blank labels keep the separator without printing undefined', () => {
+  // Content loading can yield a missing field; composition must remain safe
+  // and preserve the separator contract for the following value.
+  for (const label of ['', undefined, ' \t\n']) {
+    assert.equal(fieldLabel(label) + 'Turkish (Native)', ': Turkish (Native)');
+  }
 });
 
 test('fieldLabel is idempotent and honours a custom separator', () => {

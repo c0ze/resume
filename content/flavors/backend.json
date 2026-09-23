@@ -8,7 +8,7 @@
       "subtitle": "Senior Backend Engineer — Go · Ruby · Python, Cloud & Distributed Systems",
       "about": {
         "paragraph1": "I build and operate backend systems: Go, Ruby, and Python services with the APIs, auth, data models, and cloud infrastructure behind them. 15+ years shipping and running production software across logistics, fintech, medical IT, and games — in Tokyo since 2004.",
-        "paragraph2": "Recently I led Veltra's platform work — MCP services on AWS ECS with Terraform, with the activity-search connector now live in Anthropic's public Claude connector directory — and before that owned core domain verticals and the shared integration-test harness on a Go logistics SaaS. I care about correctness under concurrency, idempotency, and tests that let a team move fast without breaking production."
+        "paragraph2": "Recently I have worked across Veltra's Python, Go, and Node services on AWS ECS with Terraform, including an activity-search MCP connector now live in Anthropic's public Claude connector directory — and before that owned core domain verticals and the shared integration-test harness on a Go logistics SaaS. I care about correctness under concurrency, idempotency, and tests that let a team move fast without breaking production."
       }
     }
   }

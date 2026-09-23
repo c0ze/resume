@@ -3,9 +3,9 @@
   "viewSource": "GitHubでソースを見る",
   "entries": [
     {
-      "title": "MCP AIプラットフォーム",
-      "technologies": "Python, FastAPI, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "Veltraにて、旅行アクティビティカタログをAIアシスタントに公開するプラットフォームを主要開発者として構築。ClaudeとChatGPTの両アプリに対応するMCPサーバーと、社員向けのAIツールを提供。アクティビティ検索コネクタは、Anthropicが公開するClaudeコネクタディレクトリに掲載中。",
+      "title": "旅行アクティビティ向けMCPサービス",
+      "technologies": "Python, FastAPI, Model Context Protocol, Terraform, AWS ECS",
+      "description": "Veltraにて、旅行アクティビティカタログをClaudeとChatGPTのアプリから利用できるMCPサービスと、社内向け分析ツールを構築。アクティビティ検索コネクタは、Anthropicが公開するClaudeコネクタディレクトリに掲載中。",
       "repo": null
     },
     {

@@ -39,6 +39,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Test static output and browser boundaries
+        run: npm run test:static
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact

@@ -36,7 +36,10 @@ let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %
       body: JSON.stringify({ message: message, history: hist }),
       signal: controller.signal,
     })
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error("Chat request failed");
+        return r.json();
+      })
       .then(function (j) {
         if (j && typeof j.reply === "string" && j.reply.length > 0) {
           finish(onReply, j.reply);
@@ -50,7 +53,7 @@ let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %
 
 // Streaming variant: POSTs to the SSE /api/chat/stream endpoint and calls
 // onChunk(fullTextSoFar) as tokens arrive, onDone(fullText) at the end, or
-// onError() if the stream fails before any token (caller falls back to postChat).
+// onError() if the stream fails (caller falls back only before any token).
 // Aborts after 45s. SSE shape: `data: {"type":"thinking"|"chunk"|"done","text"?}`.
 let postChatStream: (
   string,
@@ -64,18 +67,26 @@ let postChatStream: (
       return { role: m.role, content: m.content };
     });
     var controller = new AbortController();
-    var timer = setTimeout(function () { controller.abort(); }, 45000);
+    var timer = setTimeout(function () { controller.abort(); fail(); }, 45000);
     var settled = false;
+    var reader;
+    function closeReader() {
+      if (reader) {
+        try { Promise.resolve(reader.cancel()).catch(function () {}); } catch (e) {}
+      }
+    }
     function fail() {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      closeReader();
       onError();
     }
     function finish(full) {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      closeReader();
       onDone(full);
     }
     fetch("https://ai-arda-tr-api-599610058688.asia-northeast1.run.app/api/chat/stream", {
@@ -86,12 +97,14 @@ let postChatStream: (
     })
       .then(function (res) {
         if (!res.ok || !res.body) { fail(); return; }
-        var reader = res.body.getReader();
+        reader = res.body.getReader();
+        if (settled) { closeReader(); return; }
         var decoder = new TextDecoder();
         var buffer = "";
         var full = "";
         function pump() {
           return reader.read().then(function (r) {
+            if (settled) return;
             if (r.done) {
               buffer += decoder.decode(); // flush any trailing multi-byte char
             } else {
@@ -99,7 +112,7 @@ let postChatStream: (
             }
             // SSE events are blank-line separated; tolerate LF or CRLF framing.
             var events = buffer.split(/\r?\n\r?\n/);
-            buffer = r.done ? "" : (events.pop() || ""); // keep the trailing partial event
+            buffer = events.pop() || ""; // incomplete events are never dispatched
             for (var k = 0; k < events.length; k++) {
               var dataLines = events[k].split(/\r?\n/).filter(function (l) {
                 return l.indexOf("data:") === 0;
@@ -110,11 +123,12 @@ let postChatStream: (
                 .join("\n");
               var obj;
               try { obj = JSON.parse(payload); } catch (e) { continue; }
-              if (obj.type === "chunk" && typeof obj.text === "string") {
+              if (!obj || typeof obj !== "object") continue;
+              if (obj.type === "chunk" && typeof obj.text === "string" && obj.text.length > 0) {
                 full += obj.text;
                 onChunk(full);
-              } else if (obj.type === "done") {
-                if (typeof obj.text === "string" && obj.text.length > 0) full = obj.text;
+              } else if (obj.type === "done" && typeof obj.text === "string" && obj.text.length > 0) {
+                full = obj.text;
                 finish(full);
                 return;
               } else if (obj.type === "error") {
@@ -122,8 +136,8 @@ let postChatStream: (
                 return;
               }
             }
-            // Stream ended without an explicit done event — settle with what we have.
-            if (r.done) { finish(full); return; }
+            // EOF without completion is a failed request, even after partial text.
+            if (r.done) { fail(); return; }
             return pump();
           });
         }
@@ -288,17 +302,19 @@ let make = () => {
       let history = messages->Array.filter(m => !m.isError)
       let modelId = nextId()
       let started = ref(false)
-      let addOrUpdate = full =>
+      let addOrUpdate = full => {
+        started := true
         setMessages(prev =>
-          if started.contents {
+          if prev->Array.some(m => m.id == modelId) {
             prev->Array.map(m => m.id == modelId ? {...m, content: full} : m)
           } else {
-            started := true
             Array.concat(prev, [{id: modelId, role: "model", content: full, isError: false}])
           }
         )
+      }
+      let userId = nextId()
       setMessages(prev =>
-        Array.concat(prev, [{id: nextId(), role: "user", content: trimmed, isError: false}])
+        Array.concat(prev, [{id: userId, role: "user", content: trimmed, isError: false}])
       )
       setInput(_ => "")
       setBusy(_ => true)
@@ -321,6 +337,10 @@ let make = () => {
         },
         () => {
           if started.contents {
+            let errorId = nextId()
+            setMessages(prev =>
+              Array.concat(prev, [{id: errorId, role: "model", content: c.error, isError: true}])
+            )
             setStreaming(_ => false)
             setBusy(_ => false)
           } else {

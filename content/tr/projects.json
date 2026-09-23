@@ -3,9 +3,9 @@
   "viewSource": "Kaynak kodu GitHub'da görüntüle",
   "entries": [
     {
-      "title": "MCP Yapay Zekâ Platformu",
-      "technologies": "Python, FastAPI, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "Veltra'da seyahat aktiviteleri kataloğunu yapay zekâ asistanlarına açan platformun ana geliştiricisi: Claude ve ChatGPT uygulamalarıyla uyumlu MCP sunucuları ve çalışanlar için şirket içi yapay zekâ araçları. Aktivite arama konektörü, Anthropic'in herkese açık Claude konektör dizininde yayında.",
+      "title": "Seyahat Aktiviteleri için MCP Servisleri",
+      "technologies": "Python, FastAPI, Model Context Protocol, Terraform, AWS ECS",
+      "description": "Veltra'da seyahat aktiviteleri kataloğunu Claude ve ChatGPT uygulamalarına açan MCP servislerini ve şirket içi analiz araçlarını geliştirdim. Aktivite arama konektörü, Anthropic'in herkese açık Claude konektör dizininde yayında.",
       "repo": null
     },
     {

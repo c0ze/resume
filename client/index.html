@@ -26,29 +26,32 @@
         var RENDITIONS = { xerox: 0, "xerox-hc": 0, night: 1, "night-hc": 1 };
         var LEGACY = {
           ruled: "xerox", alucard: "xerox", light: "xerox",
-          "ruled-hc": "xerox-hc", paper: "xerox-hc",
+          "ruled-hc": "xerox-hc", paper: "xerox-hc", "light-hc": "xerox-hc",
           "carbon-copy": "night", "van-helsing": "night", dracula: "night", dark: "night",
-          "carbon-copy-hc": "night-hc", carbon: "night-hc"
+          "carbon-copy-hc": "night-hc", carbon: "night-hc", "dark-hc": "night-hc"
         };
+        // Storage can throw (blocked site data, some private modes). Theme and
+        // language are read separately so one failure cannot cost the other,
+        // and a failed read still paints the default rendition.
+        var own = function (o, k) { return !!k && Object.prototype.hasOwnProperty.call(o, k); };
+        var t = null;
         try {
-          var t = localStorage.getItem("resume-theme");
-          if (t && LEGACY[t]) {
+          t = localStorage.getItem("resume-theme");
+          if (own(LEGACY, t)) {
             t = LEGACY[t];
-            localStorage.setItem("resume-theme", t);
+            try { localStorage.setItem("resume-theme", t); } catch (e) {}
           }
-          if (!(t in RENDITIONS)) t = "xerox";
-          root.classList.add(t);
-          if (RENDITIONS[t]) {
-            root.classList.add("dark");
-            root.style.colorScheme = "dark";
-          } else {
-            root.style.colorScheme = "light";
-          }
+        } catch (e) {
+          t = null;
+        }
+        if (!own(RENDITIONS, t)) t = "xerox";
+        root.classList.add(t);
+        if (RENDITIONS[t]) root.classList.add("dark");
+        root.style.colorScheme = RENDITIONS[t] ? "dark" : "light";
+        try {
           var l = localStorage.getItem("resume-lang");
           if (l === "en" || l === "ja" || l === "tr") root.lang = l;
-        } catch (e) {
-          root.classList.add("xerox");
-        }
+        } catch (e) {}
       })();
     </script>
 

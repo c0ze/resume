@@ -6,11 +6,10 @@
     {
       "title": "Sistem Mimarı",
       "logo": "veltra.png",
-      "abstract": "Veltra'nın yapay zekâ platformunun lider mühendisi; seyahat aktiviteleri kataloğunu Claude ve ChatGPT gibi yapay zekâ asistanlarına açan Model Context Protocol (MCP) servislerinin geliştiricisi. Aktivite arama konektörü Anthropic tarafından onaylandı ve herkese açık Claude konektör dizininde yayında.",
+      "abstract": "Veltra'da Python, Go ve Node servisleri ile AWS altyapısı genelinde çalışan sistem mimarı. Seyahat aktiviteleri kataloğunu yapay zekâ asistanlarına açan MCP servislerini ve şirket içi analiz araçlarını geliştirdim.",
       "company": "Veltra (Tokyo, Uzaktan)",
       "period": "2024 - Günümüz",
       "responsibilities": [
-        "Veltra'nın MCP platformunun ana geliştiricisi olarak seyahat aktiviteleri kataloğunu yapay zekâ asistanlarına (Claude MCP Apps ve ChatGPT Apps) açtım ve çalışanlara şirket içi yapay zekâ araçları sağladım.",
         "Claude ve OpenAI uygulama ortamlarının ikisiyle de uyumlu, durumsuz (stateless) bir aktivite arama MCP sunucusu geliştirdim; sunucu Anthropic tarafından onaylandı ve Claude konektör dizininde herkese açık olarak listeleniyor. Ayrıca şirket içi kullanım için Google Analytics ve salt okunur AWS MCP araçları geliştirdim.",
         "Görsel dağıtımını ücretli bir CDN'den AWS CloudFront üzerinde kendi geliştirdiğim bir çözüme taşıdım.",
         "Python, Go ve Node servislerinin genel uygulama ve altyapı mimarisini ve planlamasını üstlendim; servisleri Terraform ve GitHub Actions CI/CD ile AWS ECS'ye dağıttım.",

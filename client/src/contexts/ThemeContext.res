@@ -24,9 +24,9 @@ let themeToString = theme =>
 // dark → night, HC dark → night-hc. Unknown values fall back to the default.
 let themeFromString = str =>
   switch str {
-  | "xerox-hc" | "ruled-hc" | "paper" => XeroxHc
+  | "xerox-hc" | "ruled-hc" | "paper" | "light-hc" => XeroxHc
   | "night" | "carbon-copy" | "van-helsing" | "dracula" | "dark" => Night
-  | "night-hc" | "carbon-copy-hc" | "carbon" => NightHc
+  | "night-hc" | "carbon-copy-hc" | "carbon" | "dark-hc" => NightHc
   | _ => Xerox
   }
 

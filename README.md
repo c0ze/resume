@@ -44,8 +44,9 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 ├── tests/                # Lightweight smoke tests for static output
 ├── DESIGN.md             # The design system — binding, not advisory
 ├── PRODUCT.md            # Product truth, audience, and what must never be fabricated
-├── CLAUDE.md             # Repo-specific instructions for Claude Code
-├── AGENTS.md             # Repo-specific instructions for coding agents
+├── CLAUDE.md             # Generic agent rules (identical across repos)
+├── AGENTS.md             # Symlink to CLAUDE.md
+├── PROJECT.md            # Project handoff: architecture, key files, validation
 └── README.md             # Human-facing project documentation
 ```
 
@@ -54,7 +55,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 The root is intentionally kept for:
 
 - tool conventions that truly require the root, such as `package.json`, `package-lock.json`, `.gitignore`, and `.gitattributes`
-- repo-wide docs such as `README.md`, `DESIGN.md`, `PRODUCT.md`, `CLAUDE.md`, and `AGENTS.md`
+- repo-wide docs such as `README.md`, `DESIGN.md`, `PRODUCT.md`, `PROJECT.md`, `CLAUDE.md`, and `AGENTS.md`
 - top-level source directories such as `client/`, `content/`, `public/`, `scripts/`, and `tests/`
 
 Do not add new loose assets or ad-hoc notes to the root. Put them in one of these places instead:

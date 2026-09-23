@@ -8,7 +8,7 @@ const clientDistDir = path.resolve(projectRoot, "dist/client");
 const flavorsDir = path.resolve(projectRoot, "content/flavors");
 
 // A distinctive phrase that only appears in a web-only `abstract` in content/en.
-const abstractOnlyPhrase = "Lead engineer on Veltra's AI platform";
+const abstractOnlyPhrase = "Systems architect at Veltra working across";
 
 function loadFlavors() {
   if (!fs.existsSync(flavorsDir)) return [];

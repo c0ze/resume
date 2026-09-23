@@ -33,6 +33,16 @@ test("static output contains real resume content instead of loading placeholders
   );
 });
 
+test("the PDF build fonts are not shipped with the site", () => {
+  // public/fonts/ holds the TTFs the PDF generator embeds. The page never loads
+  // them, and shipping them adds ~83 MB to every Pages deploy. Two copy paths
+  // can leak them: build-static's own copy and Vite's publicDir copy.
+  assert.ok(
+    !fs.existsSync(path.join(clientDistDir, "fonts")),
+    "expected dist/client/fonts to be absent"
+  );
+});
+
 test("static build emits a sitemap with the homepage and generated resume artifacts", () => {
   assert.ok(fs.existsSync(sitemapPath), `Expected sitemap at ${sitemapPath}`);
 
@@ -94,7 +104,7 @@ test("static build writes artifact status for PDF, DOCX, JSON, and vCard outputs
 test("static build emits JSON Resume exports with basics but without the web-only abstracts", () => {
   // A distinctive phrase that only appears in an `abstract` in content/en —
   // the JSON export must ignore abstracts just like the PDF/DOCX generators do.
-  const abstractOnlyPhrase = "Lead engineer on Veltra's AI platform";
+  const abstractOnlyPhrase = "Systems architect at Veltra working across";
   const enExperience = JSON.parse(
     fs.readFileSync(path.resolve(process.cwd(), "content/en/experience.json"), "utf8")
   );
