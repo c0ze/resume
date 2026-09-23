@@ -1,15 +1,15 @@
 {
   "launcher": "Arda hakkında sor",
   "title": "Arda hakkında sor",
-  "greeting": "Merhaba! Ben Arda'nın yapay zeka asistanıyım — deneyimi, yetenekleri veya projeleri hakkında her şeyi sorabilirsiniz.",
-  "placeholder": "Bir soru sorun…",
+  "greeting": "Merhaba! Ben Arda'nın yapay zekâ asistanıyım. Deneyimi, yetkinlikleri ya da projeleri hakkında dilediğinizi sorabilirsiniz.",
+  "placeholder": "Bir soru yazın…",
   "send": "Gönder",
   "close": "Sohbeti kapat",
   "thinking": "Düşünüyor…",
-  "error": "Üzgünüm, asistana şu anda ulaşılamadı. Lütfen birazdan tekrar deneyin.",
+  "error": "Üzgünüm, şu anda asistana ulaşılamıyor. Lütfen birazdan tekrar deneyin.",
   "suggestions": [
     "Arda'nın Go deneyimi var mı?",
-    "Python'u ne kadar süredir kullanıyor?",
-    "Veltra'da ne geliştirdi?"
+    "Kaç yıldır Python kullanıyor?",
+    "Veltra'da neler geliştirdi?"
   ]
 }

@@ -171,10 +171,11 @@ function generateResume(language, flavor = null) {
   const bulletGap = language === 'ja' ? 5 : 1;
 
   // ── Helpers ─────────────────────────────────────────────────────
+  // Centre across the content width: a box sized to widthOfString() is too
+  // tight for CJK, where PDFKit's line breaker can wrap the last character.
   function textCenter(text, options = {}) {
-    const w = doc.widthOfString(text);
-    doc.x = (doc.page.width - w) / 2;
-    doc.text(text, { width: w + 1, ...options });
+    doc.x = PAGE.margin.left;
+    doc.text(text, { width: contentWidth, align: 'center', ...options });
   }
 
   function drawRule() {

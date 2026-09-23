@@ -2,16 +2,19 @@
   "title": "学歴",
   "entries": [
     {
-      "degree": "情報学部修士",
+      "degree": "修士（理学）",
       "institution": "慶應義塾大学",
       "period": "2006 - 2011",
       "logo": "keio.png",
-      "description": "天野研究室での大学院研究（コンピュータアーキテクチャ／組込みシステム／VLSI）。2008年に修士課程を修了し、2011年まで博士課程の研究を継続（博士は未取得）。組込みプロセッサ向けのコード圧縮技術「Echoインストラクション」に関する筆頭著者の査読付き論文を4本発表。Verilogで32ビットMIPS R3000コアに実装し、90nmプロセスで合成した後、業界へ移行。",
+      "description": "天野研究室にて大学院研究に従事（コンピュータアーキテクチャ／組込みシステム／VLSI）。2008年に修士課程を修了し、2011年まで博士課程レベルの研究を継続（博士号は未取得）。ハードウェアによるコード圧縮手法「Echo命令」をテーマに、筆頭著者として査読付き論文4本を発表。VerilogでMIPS R3000コアに実装し、90nmプロセスで論理合成まで実施。その後、産業界へ転身。",
       "links": [
-        { "label": "修士論文", "url": "https://github.com/c0ze/masters-thesis" }
+        {
+          "label": "修士論文",
+          "url": "https://github.com/c0ze/masters-thesis"
+        }
       ],
       "additionalInfo": {
-        "title": "論文:",
+        "title": "主な論文：",
         "items": [
           "2011: Cache Implementation for Echo Instructions on an Embedded Processor (IPSJ Transactions on System LSI Design Methodology, T-SLDM)",
           "2009: Code Compression with Split Echo Instructions (IEICE Transactions on Information and Systems)",
@@ -20,13 +23,16 @@
       }
     },
     {
-      "degree": "情報学部",
-      "institution": "Istanbul Bilgi 大学",
+      "degree": "学士（理学）",
+      "institution": "Istanbul Bilgi University",
       "period": "2000 - 2004",
       "logo": "bilgi.png",
-      "description": "卒業論文：Linuxクラスタ（MPI）上での量子回路の並列シミュレーション。分散状態ベクトルシミュレータでQFT、Grover、Shorの各アルゴリズムを実装。",
+      "description": "卒業研究：Linuxクラスタ（MPI）上での量子回路の並列シミュレーション。分散型の状態ベクトルシミュレータを用いて、QFT・Grover・Shorの各アルゴリズムを実装。",
       "links": [
-        { "label": "卒業論文", "url": "https://github.com/c0ze/dissertation-thesis" }
+        {
+          "label": "卒業論文",
+          "url": "https://github.com/c0ze/dissertation-thesis"
+        }
       ],
       "additionalInfo": null
     }

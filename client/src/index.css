@@ -230,6 +230,10 @@
 
   .intro__title { margin-top: 16px; font: 500 21px/1.3 var(--sans); }
   html:lang(ja) .intro__title { font-family: var(--jp); }
+  /* Break Japanese headings between phrases, not inside a word (Chromium;
+     elsewhere it falls back to normal breaking). */
+  html:lang(ja) .intro__title,
+  html:lang(ja) .row__title { word-break: auto-phrase; }
 
   .intro__summary { max-width: 64ch; margin-top: 22px; font-size: 16.5px; line-height: 1.65; }
 

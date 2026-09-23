@@ -6,126 +6,126 @@
     {
       "title": "Sistem Mimarı",
       "logo": "veltra.png",
-      "abstract": "Veltra'nın yapay zeka platformunda baş mühendis — seyahat-aktivite kataloğunu Claude ve ChatGPT gibi yapay zeka asistanlarına sunan Model Context Protocol (MCP) servisleri geliştirdim. Aktivite arama konektörü, Anthropic tarafından onaylanıp Claude'un herkese açık konektör dizininde yayında.",
+      "abstract": "Veltra'nın yapay zekâ platformunun lider mühendisi; seyahat aktiviteleri kataloğunu Claude ve ChatGPT gibi yapay zekâ asistanlarına açan Model Context Protocol (MCP) servislerinin geliştiricisi. Aktivite arama konektörü Anthropic tarafından onaylandı ve herkese açık Claude konektör dizininde yayında.",
       "company": "Veltra (Tokyo, Uzaktan)",
-      "period": "2024 - Halen",
+      "period": "2024 - Günümüz",
       "responsibilities": [
-        "Veltra'nın MCP platformunun baş yazarı olarak seyahat-aktivite kataloğunu yapay zeka asistanlarına (Claude MCP Apps ve ChatGPT Apps) sundum ve ekip için dahili yapay zeka araçları sağladım.",
-        "Claude ve OpenAI uygulama ana bilgisayarlarıyla uyumlu, durumsuz bir 'aktivite arama' MCP sunucusu (Anthropic tarafından onaylanıp Claude konektör dizininde yayında) ve dahili Google Analytics ile AWS salt-okunur MCP araçları geliştirdim.",
+        "Veltra'nın MCP platformunun ana geliştiricisi olarak seyahat aktiviteleri kataloğunu yapay zekâ asistanlarına (Claude MCP Apps ve ChatGPT Apps) açtım ve çalışanlara şirket içi yapay zekâ araçları sağladım.",
+        "Claude ve OpenAI uygulama ortamlarının ikisiyle de uyumlu, durumsuz (stateless) bir aktivite arama MCP sunucusu geliştirdim; sunucu Anthropic tarafından onaylandı ve Claude konektör dizininde herkese açık olarak listeleniyor. Ayrıca şirket içi kullanım için Google Analytics ve salt okunur AWS MCP araçları geliştirdim.",
         "Görsel dağıtımını ücretli bir CDN'den AWS CloudFront üzerinde kendi geliştirdiğim bir çözüme taşıdım.",
-        "Python, Go ve Node servisleri genelinde genel uygulama ve altyapı mimarisi ve planlaması; AWS ECS'ye Terraform ve GitHub Actions CI/CD ile dağıtım.",
-        "Denizaşırı ve Japonya ekipleri arasında köprü mühendisi olarak görev yaptım ve eski sistemlerin MCP entegrasyonunu yönettim."
+        "Python, Go ve Node servislerinin genel uygulama ve altyapı mimarisini ve planlamasını üstlendim; servisleri Terraform ve GitHub Actions CI/CD ile AWS ECS'ye dağıttım.",
+        "Yurt dışı ve Japonya ekipleri arasında köprü mühendisi olarak çalıştım ve eski (legacy) sistemlerin MCP entegrasyonunu yönettim."
       ]
     },
     {
-      "title": "Kıdemli Geliştirici",
+      "title": "Kıdemli Yazılım Geliştirici",
       "logo": "gaussy.png",
-      "abstract": "Üretimdeki bir lojistik 'depo borsası' SaaS'ı olan WareX'in arkasındaki Go (Echo/GORM) API'sinde kıdemli arka uç mühendisi ve ilk 3 yazardan biri — temel alan dikeylerini ve ekibin entegrasyon test altyapısını sahiplendim.",
+      "abstract": "Canlıdaki lojistik “depo borsası” SaaS ürünü WareX'in Go (Echo/GORM) API'sinde kıdemli backend mühendisi ve en çok katkı veren üç geliştiriciden biri; temel domain modüllerinin ve ekibin entegrasyon test altyapısının sorumlusu.",
       "company": "Gaussy (Tokyo, Uzaktan)",
       "period": "2020 - 2023",
       "responsibilities": [
-        "Üretimdeki bir lojistik 'depo borsası' SaaS'ı olan WareX'in Go (Echo / GORM) API'sinde kıdemli arka uç mühendisi ve ilk 3 yazardan biri (şirket 2022'de Gaussy olarak tüzel kişilik kazandı).",
-        "Depo (coğrafi + lisansla filtrelenmiş arama), sözleşme, çalışma alanı, belge ve fiyat-spesifikasyonu kaynak dikeylerini veri modellerinden REST kaynaklarına ve göçlere kadar uçtan uca sahiplendim.",
-        "Rol tabanlı erişim denetimi (RBAC) ara katmanı ve sunucu tarafı toplu atama (mass-assignment) korumaları geliştirdim; sistematik istek doğrulama ve parametreli sorgular uyguladım.",
-        "Entegrasyon test paketinin büyük bir kısmını, ekibin geri kalanının API testlerinin üzerinde çalıştığı paylaşılan test altyapısı dahil, sahiplendim.",
-        "Veritabanı göçü ve tohumlama (goose) ve Bugsnag ile hata raporlama; Hubspot ve Mailgun dahil üçüncü parti entegrasyonlar.",
-        "CircleCI ile Google Kubernetes Engine'e dağıtım, sırlar SOPS ile yönetildi; Vue/Nuxt yönetici ve müşteri portallarında bazı ön uç çalışmaları."
+        "Canlıdaki lojistik “depo borsası” SaaS ürünü WareX'in Go (Echo / GORM) API'sinde kıdemli backend mühendisi ve en çok katkı veren üç geliştiriciden biri olarak çalıştım (şirket 2022'de Gaussy adıyla şirketleşti).",
+        "Depo (konum ve lisansa göre filtrelenen arama), sözleşme, çalışma alanı, belge ve fiyat tanımı kaynaklarını veri modellerinden REST kaynaklarına ve migration'lara kadar uçtan uca üstlendim.",
+        "Rol tabanlı erişim kontrolü (RBAC) middleware'i ve sunucu tarafında mass-assignment korumaları geliştirdim; istek doğrulamayı ve parametreli sorguları sistematik biçimde uyguladım.",
+        "Ekibin diğer API testlerinin üzerinde çalıştığı ortak test altyapısı dahil, entegrasyon test paketinin büyük bölümünü üstlendim.",
+        "Veritabanı migration ve seed süreçlerini (goose) ve Bugsnag ile hata raporlamayı kurdum; HubSpot ve Mailgun gibi üçüncü taraf entegrasyonlarını geliştirdim.",
+        "CircleCI ile Google Kubernetes Engine'e dağıtım yaptım ve secret'ları SOPS ile yönettim; Vue/Nuxt tabanlı yönetim ve müşteri portallarında da kısmen frontend geliştirdim."
       ]
     },
     {
-      "title": "Kıdemli Geliştirici",
+      "title": "Kıdemli Yazılım Geliştirici",
       "logo": "robotfund.png",
-      "abstract": "Tokyo merkezli bir robo-danışman girişiminde, bir LINE-bot fintech platformunun (Rails 5 + React) ve yarış koşulsuz (race-free) bir Go medya/TTS önbellekleme servisinin baş geliştiricisi.",
+      "abstract": "Tokyo merkezli bir robo-danışmanlık girişiminde LINE bot tabanlı bir fintek platformunun (Rails 5 + React) ve race condition barındırmayan bir Go medya/TTS önbellek servisinin lider geliştiricisi.",
       "company": "Robotfund (Tokyo, Hibrit)",
       "period": "2018 - 2020",
       "responsibilities": [
-        "Çok kiracılı bir Rails 5 JSON:API + React platformunun baş yazarı olarak fon ve tahvil analizlerini (net varlık değeri grafikleri, faktör analizi) kullanıcılara LINE Flex Mesajları ve üretilen grafikler olarak sundum.",
-        "LINE webhook HMAC imza doğrulaması, tüm denetleyicilerde güçlü parametre (strong-parameter) yetkilendirmesi ve bcrypt ile güvenli kimlik doğrulama uyguladım.",
-        "Bir metin-konuşma (TTS) sunucu havuzunun önünde duran bir Go servisini tek başıma geliştirdim — tasarımı gereği yarış koşulsuz (kanal-sahipli durum), PCM'den MP3'e dönüştürme, içerik-özeti önbellekleme ve sunucu başına yük dağıtımı ile, CI'da `go test -race` ile doğrulandı.",
-        "Günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine alan bir Go AWS Lambda geliştirdim ve MIT lisanslı bir Reuters DSS Go istemci kütüphanesi çıkardım.",
-        "Olgun CI/CD: CircleCI ile derleme ve dağıtım, AWS ECR'ye gönderilen Docker imajları ve etikete bağlı sürümler."
+        "Fon ve tahvil analizlerini (net aktif değer grafikleri, faktör analizi) kullanıcılara LINE Flex Message'lar ve otomatik üretilen grafiklerle sunan, çok kiracılı (multi-tenant) bir Rails 5 JSON:API + React platformunu ana geliştirici olarak hayata geçirdim.",
+        "LINE webhook'ları için HMAC imza doğrulaması, tüm controller'larda strong parameters ile yetkilendirme ve bcrypt ile güvenli kimlik doğrulama uyguladım.",
+        "Bir TTS (metinden sese) sunucu havuzunun önünde çalışan Go servisini tek başıma geliştirdim. Durumun kanallara ait olduğu tasarımı sayesinde servis race condition'a yapısal olarak kapalı; PCM'den MP3'e dönüştürme, içerik özeti (digest) tabanlı önbellekleme ve sunucu başına yük dağıtımı sunuyor. Servisi CI'da `go test -race` ile doğruladım.",
+        "Günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine aktaran bir Go AWS Lambda fonksiyonu geliştirdim; MIT lisanslı bir Reuters DSS Go istemci kütüphanesini ayrı bir proje olarak çıkardım.",
+        "Olgun bir CI/CD süreci işlettim: CircleCI ile derleme ve dağıtım, AWS ECR'ye gönderilen Docker imajları ve etiket (tag) tabanlı sürümler."
       ]
     },
     {
       "title": "Kıdemli Geliştirme Mühendisi",
       "logo": "allm.png",
-      "abstract": "Bir medikal-BT ve perakende-analitik şirketinde iki ürün hattında tek başına/lider geliştirici — uçtan uca bir IoT/uç (edge) insan-analitiği ürünü ve sürümlenmiş bir klinik inme/kalp triyaj API'si.",
-      "company": "Allm Inc (Tokyo, Yerinde)",
+      "abstract": "Sağlık bilişimi ve perakende analitiği alanlarında çalışan bir şirkette iki ürün hattının tek ya da lider geliştiricisi: uçtan uca bir IoT/edge mağaza içi kişi analitiği ürünü ve sürümlendirilmiş bir klinik inme/kalp triyaj API'si.",
+      "company": "Allm Inc (Tokyo, Ofisten)",
       "period": "2014 - 2018",
       "responsibilities": [
-        "Mağaza içi uç (edge) cihazlar (amd64 ve ARM) için uçtan uca bir Go arka plan servisini (daemon) tek başıma geliştirdim — BLE işaretçileriyle personel sayımı, WiFi dinlemesiyle tekrar eden müşteri sayımı ve yüz tanıma — bir web yapılandırma arayüzü ile birlikte.",
-        "Tam OTA (kablosuz) güncelleme hattını kurdum: amd64/armhf çapraz derlemesi, imzalı Debian paketleri oluşturma, HashiCorp Vault'tan derleme sırlarını çekme, GPG ile imzalı sürümler ve test/sürüm kanallarına sahip bir S3 apt deposuna yayınlama.",
-        "Hastaneler için bir FAST-ED inme/kalp triyaj API'sinin (Ruby/Grape + GraphQL + Pundit) baş yazarıyım; API sürümleme, HMAC istek imzalama ve giriş kilitleme ile dönen anahtarlara sahip bcrypt kimlik doğrulaması uyguladım.",
-        "Triyaj yönetici SPA'sını (Vue 2 + Apollo) birlikte geliştirip AWS S3/CloudFront'a dağıttım ve çok kiracılı bir Go veri alım servisine sensör-üretici sürücüleri ekledim.",
-        "Yeniden kullanılabilir Go kütüphanelerini kendi ad alanıma çıkardım; GitLab CI ve Docker ile CI/CD."
+        "Mağaza içi edge cihazlar (amd64 ve ARM) için uçtan uca bir Go arka plan servisini (daemon) tek başıma geliştirdim: BLE beacon'larla personel sayımı, Wi-Fi sniffing ile tekrar gelen müşteri sayımı ve yüz tanıma; web tabanlı bir yapılandırma arayüzüyle birlikte.",
+        "OTA (kablosuz) güncelleme pipeline'ının tamamını kurdum: amd64/armhf için çapraz derleme, imzalı Debian paketleri, HashiCorp Vault'tan çekilen derleme secret'ları, GPG ile imzalanan sürümler ve testing/release kanallarına sahip bir S3 apt deposunda yayın.",
+        "Hastaneler için FAST-ED inme/kalp triyaj API'sini (Ruby/Grape + GraphQL + Pundit) ana geliştirici olarak hayata geçirdim; API sürümleme, HMAC ile istek imzalama ve giriş kilitleme ile anahtar rotasyonu içeren bcrypt kimlik doğrulaması uyguladım.",
+        "Triyaj yönetim SPA'sını (Vue 2 + Apollo) ekiple birlikte geliştirip AWS S3/CloudFront'a dağıttım; çok kiracılı bir Go veri toplama servisine sensör üreticileri için sürücüler ekledim.",
+        "Yeniden kullanılabilir Go kütüphanelerini kendi ad alanıma (namespace) ayırdım; GitLab CI ve Docker ile CI/CD kurdum."
       ]
     },
     {
-      "title": "Geliştirici",
+      "title": "Yazılım Geliştirici",
       "logo": "aiming.png",
-      "abstract": "Yayınlanmış bir mobil MMORPG'nin (Japonya + Kore) canlı Ruby/Padrino arka ucunda arka uç mühendisi olarak birçok oynanış özelliği dikeyini bağımsız olarak sahiplendim.",
-      "company": "Aiming Inc (Tokyo, Yerinde, Sözleşmeli)",
+      "abstract": "Yayındaki bir mobil MMORPG'nin (Japonya + Kore) canlı Ruby/Padrino backend'inde backend mühendisi; birden çok oynanış özelliğinin bağımsız sorumlusu.",
+      "company": "Aiming Inc (Tokyo, Ofisten, Sözleşmeli)",
       "period": "2014",
       "responsibilities": [
-        "Yaklaşık 60 mühendisli bir kod tabanında, yayınlanmış bir mobil MMORPG olan 'Griffon'un (Japonya + Kore/Naver) canlı Ruby/Padrino arka ucunda arka uç mühendisi.",
-        "Başarımlar, arkadaşlık, ödül dağıtımı ve lonca-savaşı eşleştirme sistemlerini veri modelinden tipli-RPC servisine, ana-veri içe aktarıcısına, göçlere ve testlere kadar uçtan uca bağımsız olarak sahiplendim.",
-        "Benzersiz dizinler (unique index) aracılığıyla veritabanı düzeyinde idempotentlik tasarladım ve çok adımlı oyun içi ekonomi işlemlerini işlemlerle (transaction) korudum.",
-        "Yapısal olarak toplu atamaya (mass-assignment) kapalı, sunucu tarafı yetkilendirmeli tipli bir RPC API'si geliştirdim ve dalları eksiksiz kapsayan RSpec paketleriyle doğruladım.",
-        "Günlük binlerce aktif kullanıcısı olan bir oyunda, sıkı teslim tarihleriyle çevik bir ortamda çalıştım."
+        "Yaklaşık 60 mühendisin çalıştığı bir kod tabanında, yayındaki mobil MMORPG Griffon'un (Japonya + Kore/Naver) canlı Ruby/Padrino backend'inde backend mühendisi olarak çalıştım.",
+        "Başarım, arkadaşlık, ödül dağıtımı ve lonca savaşı eşleştirme sistemlerini veri modeli, tipli RPC servisi, ana veri (master data) içe aktarıcısı, migration'lar ve testlerle birlikte uçtan uca, bağımsız olarak üstlendim.",
+        "Benzersiz indekslerle (unique index) veritabanı düzeyinde idempotentlik tasarladım; çok adımlı oyun içi ekonomi değişikliklerini transaction'larla korudum.",
+        "Yapısı gereği mass-assignment açığı barındırmayan, sunucu tarafında yetkilendirme yapan tipli bir RPC API'si geliştirdim ve tüm dalları kapsayan RSpec test paketleriyle doğruladım.",
+        "Günlük binlerce aktif kullanıcısı olan bir oyunda, sıkı teslim tarihleriyle çevik (Agile) bir ortamda çalıştım."
       ]
     },
     {
-      "title": "Dev Ops",
+      "title": "DevOps Mühendisi",
       "logo": "kii.png",
-      "abstract": "Bir mobil Backend-as-a-Service platformunun kullanım ölçümü ve faturalandırma hattını, çevresindeki API ağ geçidini ve Puppet tabanlı dağıtımı sahiplendim — ve ekibin ilk Go kodunu yazdım.",
-      "company": "Kii Inc (Tokyo, Yerinde)",
+      "abstract": "Bir mobil Backend-as-a-Service (BaaS) platformunun kullanım ölçümü ve faturalandırma pipeline'ının, çevresindeki API ağ geçidinin ve Puppet tabanlı dağıtımın sorumlusu; ekibin ilk Go kodunun yazarı.",
+      "company": "Kii Inc (Tokyo, Ofisten)",
       "period": "2012 - 2014",
       "responsibilities": [
-        "Bir mobil Backend-as-a-Service platformu için Ruby kullanım-ölçümü ve faturalandırma toplu işini (batch) baş yazar olarak ortak yönettim — bir 3scale API ağ geçidinden uygulama başına API/depolama/analitik kullanımını topladım, plan aşımlarını hesapladım ve faturalandırılabilir kullanımı idempotent oluştur-veya-güncelle mutabakatıyla Zuora'ya raporladım.",
-        "RSpec, Minitest ve serverspec ile test edildi; Omnibus/RPM cron işi olarak paketlendi.",
-        "Varnish + 3scale API ağ geçidi ölçüm katmanını ve faturalandırma ile ağ geçidi yığınını dağıtan Puppet modüllerini (VCL/Puppet) geliştirdim ve işlettim.",
-        "Zuora ve PayPal aracılığıyla ödeme entegrasyonu; 3scale, Varnish ve fluentd ile kullanım takibi ve günlük kaydı.",
-        "Geliştirici portalı geliştirme (Ruby on Rails, Backbone.js) ve Cloud Code bakımı (Node.js); ekibin ilk Go kodunu (erken bir Kii Go SDK'sı) yazdım.",
-        "Çeşitli otomasyonlar: Ruby/Bash ve Puppet ile raporlar ve AWS kaynak ayarlaması."
+        "Mobil bir BaaS platformu için Ruby ile yazılan kullanım ölçümü ve faturalandırma batch işini ana geliştirici olarak ortaklaşa yönettim: 3scale API ağ geçidinden uygulama bazında API, depolama ve analitik kullanımını topladım, plan aşımlarını hesapladım ve faturalanabilir kullanımı idempotent oluştur-ya-da-güncelle mutabakatıyla Zuora'ya raporladım.",
+        "RSpec, Minitest ve serverspec ile test ettim; Omnibus/RPM ile cron işi olarak paketledim.",
+        "Varnish + 3scale API ağ geçidi ölçüm katmanını ve faturalandırma ile ağ geçidi altyapısını dağıtan Puppet modüllerini (VCL/Puppet) geliştirip işlettim.",
+        "Zuora ve PayPal ödeme entegrasyonlarını; 3scale, Varnish ve fluentd ile kullanım takibini ve loglamayı gerçekleştirdim.",
+        "Geliştirici portalını geliştirdim (Ruby on Rails, Backbone.js) ve Cloud Code bakımını üstlendim (Node.js); ekibin ilk Go kodunu (erken dönem bir Kii Go SDK'sı) yazdım.",
+        "Ruby/Bash ve Puppet ile raporlama ve AWS kaynak ayarları gibi çeşitli otomasyonlar geliştirdim."
       ]
     },
     {
-      "title": "Dev Ops",
+      "title": "DevOps Mühendisi",
       "logo": "mobilous.png",
-      "abstract": "Beyaz etiketli, kodsuz (no-code) bir mobil uygulama platformu için tek başına derleme/sürüm ve bulut altyapı mühendisi — yerel derleme hattı, S3 ile sürüm dağıtımı ve Puppet/Vagrant ile sağlama (provisioning).",
-      "company": "Mobilous Inc (Tokyo, Yerinde)",
+      "abstract": "White-label, no-code bir mobil uygulama platformunun tek derleme/sürüm ve bulut altyapı mühendisi: native derleme pipeline'ı, S3 üzerinden sürüm dağıtımı ve Puppet/Vagrant ile provisioning.",
+      "company": "Mobilous Inc (Tokyo, Ofisten)",
       "period": "2011 - 2012",
       "responsibilities": [
-        "Yerel iOS/Android uygulamaları üreten, beyaz etiketli kodsuz bir uygulama oluşturucu olan AppExe için tek başına derleme/sürüm ve bulut altyapı mühendisi.",
-        "Kodsuz uygulama tanımlarını imzalı yerel APK'lara dönüştüren talep üzerine yerel derleme servisini geliştirdim (Ruby/Sinatra, öncesinde Python).",
-        "Puppet + Vagrant (VirtualBox/AWS ikili desteği) ile sunucu yığınının tüm sağlamasını yazdım: GlassFish, PostgreSQL, MongoDB, günlük aktarımı ve güvenlik duvarı, ayrıca Android/iOS derleme, sürüm ve yedekleme betikleri.",
-        "Müşteri başına AWS hesabı/örnek etkinleştirme kontrol düzlemi ve sürümlenmiş bir S3 sürüm-dağıtım aracı geliştirdim.",
-        "Selenium tabanlı bir hatla AWS hesabı kaydını uçtan uca otomatikleştirdim ve ekibin git sunucusunu işlettim.",
-        "İzleme ve otomatik ölçeklendirme ile ölçeklenebilir EC2 altyapısı tasarladım."
+        "Native iOS/Android uygulamaları üreten white-label no-code uygulama oluşturucu AppExe'nin tek derleme/sürüm ve bulut altyapı mühendisi olarak çalıştım.",
+        "No-code uygulama tanımlarını imzalı native APK'lara dönüştüren, talep üzerine çalışan native derleme servisini geliştirdim (Ruby/Sinatra; öncülü Python ile yazılmıştı).",
+        "Puppet + Vagrant (VirtualBox ve AWS desteğiyle) ile tüm sunucu yığınının provisioning'ini yazdım: GlassFish, PostgreSQL, MongoDB, log aktarımı ve güvenlik duvarı; ayrıca Android/iOS derleme, sürüm ve yedekleme script'lerini hazırladım.",
+        "Müşteri başına AWS hesabı/instance etkinleştirmesini yöneten bir kontrol düzlemi (control plane) ve S3 tabanlı, sürümlendirilmiş bir release dağıtım aracı geliştirdim.",
+        "AWS hesap açılışını Selenium tabanlı bir pipeline ile uçtan uca otomatikleştirdim ve ekibin git sunucusunu işlettim.",
+        "İzleme ve otomatik ölçeklendirme içeren, ölçeklenebilir bir EC2 altyapısı tasarladım."
       ]
     },
     {
-      "title": "Sözleşmeli Geliştirici",
+      "title": "Sözleşmeli Yazılım Geliştirici",
       "logo": "ryde.png",
-      "abstract": "Ryde'ın mobil ve web servisleri için Ruby on Rails ve GraphQL kullanarak yarı zamanlı arka uç (ve bazı ön uç) geliştirme.",
+      "abstract": "Ryde'ın mobil ve web servisleri için Ruby on Rails ve GraphQL ile yarı zamanlı backend (ve kısmen frontend) geliştirme.",
       "company": "Ryde Inc (Tokyo, Uzaktan - Yarı Zamanlı)",
       "period": "Temmuz 2021 - Temmuz 2022",
       "responsibilities": [
-        "Ruby on Rails ve GraphQL kullanarak Ryde servisleri (Mobil ve Web) için arka uç geliştirme.",
-        "Bazı ön uç geliştirmeleri (Yönetici sitesi, Ruby on Rails, React)."
+        "Ryde servisleri (mobil ve web) için Ruby on Rails ve GraphQL ile backend geliştirdim.",
+        "Kısmen frontend geliştirdim (yönetim paneli; Ruby on Rails, React)."
       ]
     },
     {
-      "title": "Sözleşmeli Geliştirici",
+      "title": "Sözleşmeli Yazılım Geliştirici",
       "logo": "iron.svg",
-      "abstract": "İlk Docker tabanlı sunucusuz (FaaS) platformlarından biri olan IronFunctions'a yarı zamanlı açık kaynak katkıda bulunan — web arayüzü ve motoru.",
+      "abstract": "İlk Docker tabanlı serverless (FaaS) platformlarından IronFunctions'ın web arayüzüne ve motoruna yarı zamanlı açık kaynak katkı.",
       "company": "Iron.io (ABD, Uzaktan - Yarı Zamanlı)",
       "period": "2017 - 2019",
       "responsibilities": [
-        "İlk Docker tabanlı sunucusuz (FaaS) platformlarından biri olan IronFunctions'a (sonradan Fn Project) yarı zamanlı açık kaynak katkıda bulundum.",
-        "IronFunctions web arayüzüne (Express + Vue) ilk 3 yazardan biri olarak katkıda bulundum ve baktım — JWT kimlik doğrulaması ve CI/CD Docker sürüm hattını ekledim.",
-        "Go FaaS motoruna, yükü stdin'e veren bir çalıştırıcı ve bir bağımlılık-yönetimi göçü dahil özellikler ve düzeltmeler kattım.",
-        "Platformu test etmek (dogfooding) için Go, Node ve Ruby ile örnek sunucusuz fonksiyonlar yazdım."
+        "Erken dönem Docker tabanlı serverless (FaaS) platformlarından IronFunctions'a (sonradan Fn Project) yarı zamanlı olarak açık kaynak katkıda bulundum.",
+        "IronFunctions web arayüzünün (Express + Vue) geliştirilmesine ve bakımına en çok katkı veren üç geliştiriciden biri olarak katıldım; JWT kimlik doğrulamasını ve Docker tabanlı CI/CD release pipeline'ını ekledim.",
+        "Go ile yazılmış FaaS motoruna, payload'ı stdin üzerinden ileten bir runner ve bağımlılık yönetimi geçişi dahil özellikler ve düzeltmeler kazandırdım.",
+        "Platformu kendi kullanımımızda sınamak (dogfooding) için Go, Node ve Ruby ile örnek serverless fonksiyonlar yazdım."
       ]
     }
   ]

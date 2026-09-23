@@ -1,65 +1,65 @@
 {
   "title": "Projeler",
-  "viewSource": "Kaynağı GitHub'da gör",
+  "viewSource": "Kaynak kodu GitHub'da görüntüle",
   "entries": [
     {
-      "title": "MCP Yapay Zeka Platformu",
+      "title": "MCP Yapay Zekâ Platformu",
       "technologies": "Python, FastAPI, Model Context Protocol, MongoDB, Redis, Terraform, AWS ECS",
-      "description": "Veltra'da, seyahat-aktivite kataloğunu yapay zeka asistanlarına sunan platformun baş yazarı — Claude ile ChatGPT uygulamalarıyla uyumlu MCP sunucuları ve ekip için dahili yapay zeka araçları; aktivite arama konektörü artık Anthropic'in herkese açık Claude konektör dizininde yayında.",
+      "description": "Veltra'da seyahat aktiviteleri kataloğunu yapay zekâ asistanlarına açan platformun ana geliştiricisi: Claude ve ChatGPT uygulamalarıyla uyumlu MCP sunucuları ve çalışanlar için şirket içi yapay zekâ araçları. Aktivite arama konektörü, Anthropic'in herkese açık Claude konektör dizininde yayında.",
       "repo": null
     },
     {
-      "title": "WareX — Lojistik SaaS API",
+      "title": "WareX — Lojistik SaaS API'si",
       "technologies": "Go, Echo, GORM, MySQL, JWT/RBAC, Minio/S3, GKE, CircleCI",
-      "description": "Gaussy'de, üretimdeki bir lojistik 'depo borsası' SaaS'ı olan WareX'in Go API'sinde kıdemli arka uç mühendisi ve ilk 3 yazardan biri — depo, sözleşme, çalışma alanı, belge ve fiyatlandırma dikeyleri ile ekibin entegrasyon test altyapısı sahiplenildi.",
+      "description": "Gaussy'de, canlıdaki lojistik “depo borsası” SaaS ürünü WareX'in Go API'sinde kıdemli backend mühendisi ve en çok katkı veren üç geliştiriciden biri; depo, sözleşme, çalışma alanı, belge ve fiyatlandırma modülleri ile ekibin entegrasyon test altyapısının sorumlusu.",
       "repo": null
     },
     {
-      "title": "golem — LINE-bot Fon Analitiği",
+      "title": "golem — LINE Bot ile Fon Analitiği",
       "technologies": "Ruby on Rails 5, React, JSON:API, LINE Messaging API, gnuplot",
-      "description": "Robotfund'da, fon ve tahvil analizlerini (net varlık değeri grafikleri, faktör analizi) kullanıcılara LINE Flex Mesajları ve üretilen grafikler olarak sunan, çok kiracılı Rails 5 + React platformunun baş yazarı; LINE webhook HMAC doğrulaması uygulandı.",
+      "description": "Robotfund'da, fon ve tahvil analizlerini (net aktif değer grafikleri, faktör analizi) kullanıcılara LINE Flex Message'lar ve otomatik üretilen grafiklerle ileten, HMAC webhook doğrulamalı, çok kiracılı Rails 5 + React platformunun ana geliştiricisi.",
       "repo": null
     },
     {
-      "title": "bumblebee — Yarış Koşulsuz TTS Önbellekleme Servisi",
-      "technologies": "Go, CSP concurrency, LAME (PCM→MP3), Docker, AWS",
-      "description": "Robotfund'da, metin-konuşma sunucu havuzunun önünde duran bir Go servisi tek başına geliştirildi — tasarımı gereği yarış koşulsuz (kanal-sahipli durum), PCM'den MP3'e dönüştürme, içerik-özeti önbellekleme ve sunucu başına yük dağıtımı ile, `go test -race` ile doğrulandı.",
+      "title": "bumblebee — Race Condition'sız TTS Önbellek Servisi",
+      "technologies": "Go, CSP eşzamanlılık modeli, LAME (PCM→MP3), Docker, AWS",
+      "description": "Robotfund'da tek başıma geliştirdiğim, bir TTS sunucu havuzunun önünde çalışan Go servisi: durumun kanallara ait olduğu tasarımıyla yapısal olarak race condition'sız; PCM'den MP3'e dönüştürme, içerik özeti (digest) tabanlı önbellekleme ve sunucu başına yük dağıtımı içerir, `go test -race` ile doğrulandı.",
       "repo": null
     },
     {
-      "title": "Reuters Piyasa Verisi Hattı",
+      "title": "Reuters Piyasa Verisi Pipeline'ı",
       "technologies": "Go, AWS Lambda, DynamoDB, S3, Reuters DataScope Select",
-      "description": "Robotfund'da, günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine alan bir Go AWS Lambda tek başına geliştirildi; çıkarılan MIT lisanslı bir Reuters DSS Go istemci kütüphanesi üzerine inşa edildi.",
+      "description": "Robotfund'da tek başıma geliştirdiğim Go AWS Lambda fonksiyonu: günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine aktarır; ayrı bir proje olarak çıkardığım MIT lisanslı Reuters DSS Go istemci kütüphanesi üzerine kuruludur.",
       "repo": "https://github.com/c0ze/dss_reuters_go"
     },
     {
-      "title": "FupIntuition — IoT/Uç İnsan Analitiği",
-      "technologies": "Go (amd64 + ARM), BLE beacons, WiFi sniffing, HashiCorp Vault, GPG-signed OTA, S3 apt repo",
-      "description": "Allm'de, mağaza içi uç cihazlar için uçtan uca bir Go arka plan servisi tek başına geliştirildi — BLE ile personel sayımı, WiFi ile tekrar eden müşteri sayımı ve yüz tanıma — bir web arayüzü ve tam imzalı kablosuz (OTA) güncelleme hattı ile.",
+      "title": "FupIntuition — IoT/Edge Kişi Analitiği",
+      "technologies": "Go (amd64 + ARM), BLE beacon, Wi-Fi sniffing, HashiCorp Vault, GPG imzalı OTA, S3 apt deposu",
+      "description": "Allm'de tek başıma geliştirdiğim, mağaza içi edge cihazlar için uçtan uca Go arka plan servisi: BLE ile personel sayımı, Wi-Fi ile tekrar gelen müşteri sayımı ve yüz tanıma; web arayüzü ve imzalı, eksiksiz bir OTA güncelleme pipeline'ı ile birlikte.",
       "repo": null
     },
     {
       "title": "FAST-ED Klinik Triyaj API'si",
       "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
-      "description": "Allm'de, hastaneler için sürümlenmiş bir inme/kalp triyaj API'sinin (Grape + GraphQL + Pundit) baş yazarı; HMAC istek imzalama ve sağlamlaştırılmış kimlik doğrulama ile birlikte Vue 2 + Apollo yönetici SPA'sı geliştirildi.",
+      "description": "Allm'de hastaneler için geliştirilen sürümlendirilmiş inme/kalp triyaj API'sinin (Grape + GraphQL + Pundit) ana geliştiricisi; HMAC ile istek imzalama, güçlendirilmiş kimlik doğrulama ve Vue 2 + Apollo tabanlı yönetim SPA'sı.",
       "repo": null
     },
     {
-      "title": "Griffon — Mobil MMORPG Arka Ucu",
+      "title": "Griffon — Mobil MMORPG Backend'i",
       "technologies": "Ruby, Padrino, ActiveRecord, MySQL, Resque, RSpec",
-      "description": "Aiming'de, yayınlanmış mobil MMORPG 'Griffon'un (幻塔戦記グリフォン, Japonya + Kore) canlı Ruby/Padrino arka ucunda mühendis — başarımlar, arkadaşlık, ödül dağıtımı ve lonca-savaşı eşleştirme sistemleri veritabanı düzeyinde idempotentlik ile bağımsız olarak sahiplenildi.",
+      "description": "Aiming'de, yayındaki mobil MMORPG Griffon'un (幻塔戦記グリフォン, Japonya + Kore) canlı Ruby/Padrino backend'inde mühendis; başarım, arkadaşlık, ödül dağıtımı ve lonca savaşı eşleştirme sistemlerinin veritabanı düzeyinde idempotentlikle bağımsız sorumlusu.",
       "repo": null
     },
     {
-      "title": "IronFunctions — Açık Kaynak Sunucusuz Platform",
+      "title": "IronFunctions — Açık Kaynak Serverless Platform",
       "technologies": "Go, Docker, Vue, Express, JWT, CircleCI",
-      "description": "iron.io'da, erken bir Docker tabanlı FaaS platformu olan IronFunctions'a (sonradan Fn Project) açık kaynak katkıda bulunuldu — web arayüzüne JWT kimlik doğrulaması ve CI/CD sürüm hattı eklendi, yüke stdin veren çalıştırıcı gibi motor özellikleri katıldı.",
+      "description": "iron.io'da, erken dönem Docker tabanlı FaaS platformu IronFunctions'a (sonradan Fn Project) açık kaynak katkı: web arayüzüne JWT kimlik doğrulaması ve CI/CD release pipeline'ı, motora ise payload'ı stdin üzerinden ileten runner gibi özellikler.",
       "repo": "https://github.com/iron-io/functions"
     },
     {
       "title": "Bu Özgeçmiş Sitesi",
       "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
-      "description": "Tek bir içerik kaynağından HTML'e ön-render edilen ve derleme sırasında dile özgü PDF ve DOCX özgeçmişleri üreten, statik ve çok dilli (EN/JA/TR) bir özgeçmiş sitesi; GitHub Pages'e dağıtıldı.",
+      "description": "Tek bir içerik kaynağından HTML olarak önceden render edilen ve derleme sırasında dile özgü PDF ve DOCX özgeçmişler üreten, statik ve çok dilli (EN/JA/TR) bir özgeçmiş sitesi; GitHub Pages üzerinde yayında.",
       "repo": "https://github.com/c0ze/resume"
     }
   ]

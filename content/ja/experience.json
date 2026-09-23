@@ -6,126 +6,126 @@
     {
       "title": "システムアーキテクト",
       "logo": "veltra.png",
-      "abstract": "VeltraのAIプラットフォームのリードエンジニア。旅行アクティビティカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを構築。アクティビティ検索コネクタはAnthropicの審査を経て、Claudeの公開コネクタディレクトリで提供中。",
-      "company": "Veltra (東京, リモート)",
+      "abstract": "VeltraのAIプラットフォームのリードエンジニア。旅行アクティビティカタログをClaudeやChatGPTなどのAIアシスタントに公開するModel Context Protocol（MCP）サービスを構築。アクティビティ検索コネクタはAnthropicの審査を通過し、Claudeの公開コネクタディレクトリに掲載中。",
+      "company": "Veltra（東京・リモート）",
       "period": "2024 - 現在",
       "responsibilities": [
-        "VeltraのMCPプラットフォームの主担当者として、旅行アクティビティカタログをAIアシスタント（Claude MCP AppsおよびChatGPT Apps）に公開し、社内向けAIツールを提供。",
-        "ClaudeとOpenAIの両アプリホストに対応するステートレスな「アクティビティ検索」MCPサーバー（Anthropicの審査を経てClaudeコネクタディレクトリで一般公開）、および社内向けGoogle AnalyticsとAWS読み取り専用のMCPツールを構築。",
-        "画像配信を有料CDNからAWS CloudFront上の自社開発ソリューションへ移行。",
-        "Python・Go・Nodeの各サービスにわたるアプリケーションとインフラの全般的なアーキテクチャ設計と計画。AWS ECSにTerraformとGitHub Actions CI/CDでデプロイ。",
-        "海外チームと日本チームのブリッジエンジニアとして活動し、レガシーシステムのMCP連携を主導。"
+        "VeltraのMCPプラットフォームの主要開発者として、旅行アクティビティカタログをAIアシスタント（Claude MCP Apps／ChatGPT Apps）へ公開し、社員向けのAIツールも提供。",
+        "ClaudeとOpenAIの両アプリホストに対応したステートレスな「アクティビティ検索」MCPサーバーを構築（Anthropicの審査を通過し、Claudeコネクタディレクトリで一般公開中）。あわせて社内向けにGoogle AnalyticsとAWSの読み取り専用MCPツールを開発。",
+        "画像配信を有料CDNから、AWS CloudFront上の自社開発の仕組みへ移行。",
+        "Python・Go・Nodeの各サービスについて、アプリケーションとインフラ全般のアーキテクチャ設計・計画を担当。TerraformとGitHub Actions（CI/CD）でAWS ECSへデプロイ。",
+        "海外チームと日本チームのブリッジエンジニアを務め、レガシーシステムのMCP連携を主導。"
       ]
     },
     {
-      "title": "シニア開発者",
+      "title": "シニアデベロッパー",
       "logo": "gaussy.png",
-      "abstract": "物流の「倉庫取引」SaaS本番システムWareXを支えるGo（Echo/GORM）APIのシニアバックエンドエンジニアであり、著者上位3名の一人。中核ドメインの各機能領域とチームの統合テスト基盤を担当。",
-      "company": "Gaussy (東京, リモート)",
+      "abstract": "本番稼働中の物流倉庫取引SaaS「WareX」を支えるGo（Echo/GORM）APIのシニアバックエンドエンジニア（コード貢献量上位3名）。中核ドメインの各領域と、チームの結合テスト基盤を担当。",
+      "company": "Gaussy（東京・リモート）",
       "period": "2020 - 2023",
       "responsibilities": [
-        "物流の「倉庫取引」SaaS本番システムWareXのGo（Echo / GORM）APIにおけるシニアバックエンドエンジニアであり、著者上位3名の一人（同社は2022年にGaussyとして法人化）。",
-        "倉庫（地理＋ライセンスでフィルタした検索）、契約、ワークスペース、ドキュメント、価格仕様の各リソース機能領域を、データモデルからRESTリソース、マイグレーションまで一貫して担当。",
-        "ロールベースアクセス制御（RBAC）ミドルウェアとサーバーサイドのマスアサインメント対策を実装し、体系的なリクエスト検証とパラメータ化クエリを徹底。",
-        "統合テストスイートの大部分を担当（チームのAPIテストが実行される共有テスト基盤を含む）。",
-        "データベースのマイグレーションとシード（goose）、Bugsnagによるエラー報告。Hubspot、Mailgunなどのサードパーティ連携。",
-        "Google Kubernetes EngineにCircleCIでデプロイし、シークレットはSOPSで管理。Vue/Nuxtの管理サイト・顧客ポータルのフロントエンド開発も一部担当。"
+        "本番稼働中の物流倉庫取引SaaS「WareX」のGo（Echo/GORM）APIを担うシニアバックエンドエンジニア。コード貢献量は上位3名（同社は2022年にGaussyとして法人化）。",
+        "倉庫（位置情報とライセンス条件による検索）、契約、ワークスペース、ドキュメント、価格仕様の各リソース領域を、データモデル・RESTリソース・マイグレーションまで一貫して担当。",
+        "ロールベースのアクセス制御（RBAC）ミドルウェアと、サーバーサイドのマスアサインメント対策を実装。リクエスト検証とパラメータ化クエリを体系的に適用。",
+        "チームのAPIテスト全体が動作する共通テスト基盤を含め、結合テストスイートの大部分を担当。",
+        "データベースのマイグレーションとシードデータ投入（goose）、Bugsnagによるエラー通知。HubSpot、Mailgunなど外部サービスとの連携。",
+        "CircleCIからGoogle Kubernetes Engineへデプロイし、シークレットはSOPSで管理。Vue/Nuxt製の管理画面・顧客ポータルのフロントエンド開発にも一部従事。"
       ]
     },
     {
-      "title": "シニア開発者",
+      "title": "シニアデベロッパー",
       "logo": "robotfund.png",
-      "abstract": "東京のロボアドバイザー系スタートアップにて、LINEボットのフィンテックプラットフォーム（Rails 5 + React）と、データ競合のないGo製メディア/音声合成キャッシュサービスのリード開発者。",
-      "company": "Robotfund (東京, ハイブリッド)",
+      "abstract": "東京のロボアドバイザー系スタートアップで、LINEボット型フィンテックプラットフォーム（Rails 5 + React）と、データ競合の起きないGo製メディア／TTSキャッシュサービスのリード開発者。",
+      "company": "Robotfund（東京・ハイブリッド）",
       "period": "2018 - 2020",
       "responsibilities": [
-        "マルチテナントのRails 5 JSON:API + Reactプラットフォームの主担当者として、ファンド・債券の分析（基準価額グラフ、要因分析）をLINE Flexメッセージや生成チャートとしてユーザーに提供。",
-        "LINE WebhookのHMAC署名検証、全コントローラーでのストロングパラメータによる認可、bcryptによる認証を実装。",
-        "音声合成（TTS）サーバー群の前段に立つGoサービスを単独で構築。設計上データ競合がなく（チャネル所有の状態管理）、PCMからMP3への変換、コンテンツダイジェストによるキャッシュ、ホスト単位の負荷分散を備え、CIで `go test -race` により検証。",
-        "Reuters DataScope Selectの市場データを毎日取り込み、冪等なDynamoDB/S3ステートマシンに格納するGo製AWS Lambdaを構築。MITライセンスのReuters DSS用Goクライアントライブラリを切り出し。",
-        "成熟したCI/CD：CircleCIによるビルド・デプロイ、DockerイメージをAWS ECRにプッシュ、タグ連動のリリース。"
+        "マルチテナント対応のRails 5 JSON:API + Reactプラットフォームを主担当として開発。ファンド・債券の分析結果（基準価額グラフ、ファクター分析）を、LINEのFlex Messageと自動生成チャートでユーザーに配信。",
+        "LINE WebhookのHMAC署名検証、全コントローラーでのStrong Parametersによる認可、bcryptによる認証を実装。",
+        "TTS（音声合成）サーバー群の前段に置くGoサービスを単独で開発。状態をチャネルに所有させる設計でデータ競合を構造的に排除し、PCM→MP3変換、コンテンツダイジェストによるキャッシュ、ホスト単位の負荷分散を実装。CIで`go test -race`により検証。",
+        "Reuters DataScope Selectの市場データを日次で取り込み、冪等なDynamoDB/S3ステートマシンに格納するGo製AWS Lambdaを開発。Reuters DSS用GoクライアントライブラリをMITライセンスで切り出し。",
+        "CircleCIによるビルド・デプロイ、AWS ECRへのDockerイメージのプッシュ、タグを起点としたリリースなど、成熟したCI/CDを運用。"
       ]
     },
     {
       "title": "シニア開発エンジニア",
       "logo": "allm.png",
-      "abstract": "医療IT・リテール分析企業にて2つの製品ラインを単独/リードで構築。エンドツーエンドのIoT/エッジ向け人流分析プロダクトと、バージョン管理された臨床向け脳卒中/心疾患トリアージAPI。",
-      "company": "Allm Inc (東京, オンサイト)",
+      "abstract": "医療IT・リテール分析企業で、2つの製品ラインを単独またはリードとして開発。エンドツーエンドのIoT／エッジ型人流分析プロダクトと、バージョン管理された臨床向け脳卒中・心疾患トリアージAPI。",
+      "company": "Allm Inc（東京・出社）",
       "period": "2014 - 2018",
       "responsibilities": [
-        "店舗内エッジデバイス（amd64およびARM）向けのエンドツーエンドなGoデーモンを単独で開発。BLEビーコンによるスタッフ計数、WiFiスニッフィングによるリピーター計数、顔認識、ならびにWeb設定UIを実装。",
-        "OTA（無線）アップデートのパイプラインを完備：amd64/armhfのクロスコンパイル、署名付きDebianパッケージのビルド、HashiCorp Vaultからのビルドシークレット取得、GPG署名リリース、テスト/リリースチャネルを備えたS3 aptリポジトリへの公開。",
-        "病院向けFAST-ED脳卒中/心疾患トリアージAPI（Ruby/Grape + GraphQL + Pundit）の主担当者。APIバージョニング、HMACリクエスト署名、ログイン試行ロックアウトとキーのローテーションを備えたbcrypt認証を実装。",
-        "トリアージ管理SPA（Vue 2 + Apollo）を共同開発しAWS S3/CloudFrontにデプロイ。マルチテナントのGo製データ取り込みデーモンにセンサーベンダードライバーを提供。",
-        "再利用可能なGoライブラリを自身の名前空間に切り出し。GitLab CIとDockerによるCI/CD。"
+        "店舗設置のエッジデバイス（amd64／ARM）向けGoデーモンを単独でエンドツーエンドに開発。BLEビーコンによるスタッフ数計測、Wi-Fiスニッフィングによるリピーター計測、顔認識を実装し、Web設定画面も提供。",
+        "OTAアップデートのパイプラインを一式構築：amd64/armhfのクロスコンパイル、署名付きDebianパッケージのビルド、HashiCorp Vaultからのビルド用シークレット取得、GPG署名付きリリース、testing／releaseチャネルを持つS3上のaptリポジトリへの公開。",
+        "病院向けFAST-ED脳卒中・心疾患トリアージAPI（Ruby/Grape + GraphQL + Pundit）を主担当として開発。APIバージョニング、HMACによるリクエスト署名、ログイン試行制限とキーローテーションを備えたbcrypt認証を実装。",
+        "トリアージ用管理SPA（Vue 2 + Apollo）を共同開発し、AWS S3/CloudFrontへデプロイ。マルチテナント型のGo製データ収集デーモンに、センサーベンダー向けドライバーを追加。",
+        "再利用可能なGoライブラリを個人の名前空間に切り出し。GitLab CIとDockerによるCI/CD。"
       ]
     },
     {
-      "title": "開発者",
+      "title": "デベロッパー",
       "logo": "aiming.png",
-      "abstract": "配信中のモバイルMMORPG（日本＋韓国）のRuby/Padrino製バックエンドのエンジニアとして、複数のゲーム機能領域を独立して担当。",
-      "company": "Aiming Inc (東京, オンサイト, 契約)",
+      "abstract": "配信中のモバイルMMORPG（日本・韓国）のRuby/Padrino製バックエンドエンジニアとして、複数のゲーム機能領域を単独で担当。",
+      "company": "Aiming Inc（東京・出社・業務委託）",
       "period": "2014",
       "responsibilities": [
-        "約60名のエンジニアによるコードベースにて、配信中のモバイルMMORPG「グリフォン」（日本＋韓国/Naver）のRuby/Padrino製バックエンドを担当。",
-        "実績（アチーブメント）、フレンド、報酬付与、ギルドバトルのマッチメイキングの各システムを、データモデルから型付きRPCサービス、マスターデータインポーター、マイグレーション、テストまで一貫して独立して担当。",
-        "ユニークインデックスによるデータベースレベルの冪等性を設計し、複数手順のゲーム内経済処理をトランザクションで保護。",
-        "構造的にマスアサインメントが起こり得ない型付きRPC APIをサーバーサイド認可付きで構築し、分岐を網羅したRSpecスイートで検証。",
-        "厳しい納期のアジャイル環境で、毎日数千人のアクティブユーザーがいるゲームの開発に従事。"
+        "エンジニア約60名規模のコードベースで、配信中のモバイルMMORPG『幻塔戦記グリフォン』（日本・韓国／Naver）のRuby/Padrino製バックエンド開発に従事。",
+        "実績（アチーブメント）、フレンド、報酬配布、ギルドバトルのマッチメイキングの各システムを、データモデル、型付きRPCサービス、マスターデータのインポーター、マイグレーション、テストまで単独で一貫して担当。",
+        "ユニークインデックスによりDBレベルで冪等性を担保し、複数ステップにわたるゲーム内経済の更新処理をトランザクションで保護。",
+        "構造上マスアサインメントが起こり得ない型付きRPC APIをサーバーサイド認可付きで構築し、分岐を網羅したRSpecテストで検証。",
+        "デイリーアクティブユーザー数千人規模のゲームで、短納期のアジャイル開発に従事。"
       ]
     },
     {
-      "title": "Dev Ops",
+      "title": "DevOpsエンジニア",
       "logo": "kii.png",
-      "abstract": "モバイルBaaSプラットフォームの利用量計測・課金パイプラインと、その周辺のAPIゲートウェイおよびPuppetベースのデプロイを担当。チーム初のGoコードも執筆。",
-      "company": "Kii Inc (東京, オンサイト)",
+      "abstract": "モバイル向けBaaSプラットフォームの利用量計測・課金パイプラインと、それを支えるAPIゲートウェイおよびPuppetによるデプロイを担当。チーム初のGoコードも作成。",
+      "company": "Kii Inc（東京・出社）",
       "period": "2012 - 2014",
       "responsibilities": [
-        "モバイルBaaSプラットフォーム向けのRuby製利用量計測・課金バッチを主担当者として共同リード。3scale APIゲートウェイからアプリ単位のAPI/ストレージ/分析の利用量を集計し、プラン超過を計算、Zuoraへ請求対象の利用量を冪等な作成・更新の照合付きで報告。",
+        "モバイル向けBaaSプラットフォームのRuby製利用量計測・課金バッチを、主要開発者として共同で主導。3scale APIゲートウェイからアプリごとのAPI・ストレージ・分析の利用量を集計してプラン超過分を算出し、冪等な作成・更新による突合処理でZuoraへ課金対象の利用量を連携。",
         "RSpec、Minitest、serverspecでテストし、Omnibus/RPMのcronジョブとしてパッケージ化。",
-        "Varnish + 3scale APIゲートウェイの計測レイヤーと、課金・ゲートウェイ基盤をデプロイするPuppetモジュール（VCL/Puppet）を構築・運用。",
-        "ZuoraおよびPayPal経由の決済連携。3scale、Varnish、fluentdによる利用量の追跡とロギング。",
-        "開発者ポータルの開発（Ruby on Rails、Backbone.js）とCloud Codeのメンテナンス（Node.js）。チーム初のGoコード（初期のKii Go SDK）を執筆。",
-        "各種自動化：Ruby/BashとPuppetによるレポート作成やAWSリソースのチューニング。"
+        "Varnish + 3scaleによるAPIゲートウェイの計測レイヤーと、課金・ゲートウェイ基盤をデプロイするPuppetモジュール（VCL/Puppet）を構築・運用。",
+        "ZuoraとPayPalによる決済連携。3scale、Varnish、fluentdによる利用量のトラッキングとログ収集。",
+        "開発者ポータルの開発（Ruby on Rails、Backbone.js）とCloud Codeの保守（Node.js）。チーム初のGoコード（初期のKii Go SDK）を作成。",
+        "Ruby/BashとPuppetによるレポート作成、AWSリソースのチューニングなど各種自動化。"
       ]
     },
     {
-      "title": "Dev Ops",
+      "title": "DevOpsエンジニア",
       "logo": "mobilous.png",
-      "abstract": "ホワイトラベルのノーコード・モバイルアプリ基盤において、ビルド/リリースとクラウドインフラを単独で担当。ネイティブビルドのパイプライン、S3でのリリース配信、Puppet/Vagrantによるプロビジョニング。",
-      "company": "Mobilous Inc (東京, オンサイト)",
+      "abstract": "ホワイトラベル型ノーコード・モバイルアプリ基盤で、ビルド・リリースとクラウドインフラを一人で担当。ネイティブビルドのパイプライン、S3によるリリース配信、Puppet/Vagrantによるプロビジョニング。",
+      "company": "Mobilous Inc（東京・出社）",
       "period": "2011 - 2012",
       "responsibilities": [
-        "ネイティブiOS/Androidアプリを生成するホワイトラベルのノーコード・アプリビルダーAppExeにて、ビルド/リリースおよびクラウドインフラを単独で担当。",
-        "ノーコードのアプリ定義から署名済みネイティブAPKを生成するオンデマンドのネイティブビルドサービスを構築（Ruby/Sinatra、前身はPython）。",
-        "Puppet + Vagrant（VirtualBox/AWSの両対応）でサーバースタック全体のプロビジョニングを記述：GlassFish、PostgreSQL、MongoDB、ログ転送、ファイアウォール、ならびにAndroid/iOSのビルド・リリース・バックアップスクリプト。",
-        "顧客ごとのAWSアカウント/インスタンス有効化のコントロールプレーンと、バージョン管理されたS3リリース配信ツールを構築。",
-        "Selenium駆動のパイプラインでAWSアカウント登録をエンドツーエンドに自動化し、チームのgitサーバーを運用。",
-        "監視と自動スケーリングを備えたスケーラブルなEC2インフラを設計。"
+        "ネイティブのiOS/Androidアプリを生成するホワイトラベル型ノーコード・アプリビルダー「AppExe」で、ビルド・リリースとクラウドインフラを一人で担当。",
+        "ノーコードのアプリ定義から署名済みのネイティブAPKを生成する、オンデマンドのネイティブビルドサービスを構築（Ruby/Sinatra。前身はPython製）。",
+        "Puppet + Vagrant（VirtualBox／AWS両対応）でサーバースタック全体のプロビジョニングを記述（GlassFish、PostgreSQL、MongoDB、ログ転送、ファイアウォール）。Android/iOSのビルド・リリース・バックアップ用スクリプトも作成。",
+        "顧客ごとにAWSアカウント／インスタンスを有効化するコントロールプレーンと、バージョン管理されたS3リリース配信ツールを構築。",
+        "Seleniumによるパイプラインで、AWSアカウントの登録をエンドツーエンドで自動化。チームのGitサーバーを運用。",
+        "監視とオートスケーリングを備えた、スケーラブルなEC2インフラを設計。"
       ]
     },
     {
-      "title": "契約開発者",
+      "title": "業務委託デベロッパー",
       "logo": "ryde.png",
-      "abstract": "Rydeのモバイル・Webサービスについて、Ruby on RailsとGraphQLを用いたバックエンド（および一部フロントエンド）開発をパートタイムで担当。",
-      "company": "Ryde Inc (東京, リモート - パートタイム)",
+      "abstract": "Rydeのモバイル・Webサービスのバックエンド（一部フロントエンド）開発を、Ruby on RailsとGraphQLでパートタイムにて担当。",
+      "company": "Ryde Inc（東京・リモート・パートタイム）",
       "period": "2021年7月 - 2022年7月",
       "responsibilities": [
-        "Ruby on Rails、GraphQLを使用したRydeサービス（モバイルおよびWeb）のバックエンド開発。",
-        "一部のフロントエンド開発（管理サイト、Ruby on Rails、React）。"
+        "Ruby on RailsとGraphQLによる、Rydeのサービス（モバイル・Web）のバックエンド開発。",
+        "一部フロントエンド開発（管理サイト。Ruby on Rails、React）。"
       ]
     },
     {
-      "title": "契約開発者",
+      "title": "業務委託デベロッパー",
       "logo": "iron.svg",
-      "abstract": "最初期のDockerベースのサーバーレス（FaaS）プラットフォームの一つであるIronFunctionsに、オープンソースのコントリビューターとしてパートタイムで参加（Web UIとエンジン）。",
-      "company": "Iron.io (米国, リモート - パートタイム)",
+      "abstract": "Dockerベースのサーバーレス（FaaS）基盤の草分けの一つであるIronFunctionsに、パートタイムのOSSコントリビューターとして参加（Web UIとエンジン）。",
+      "company": "Iron.io（米国・リモート・パートタイム）",
       "period": "2017 - 2019",
       "responsibilities": [
-        "初期のDockerベースのサーバーレス（FaaS）プラットフォームIronFunctions（後のFn Project）にオープンソースのコントリビューターとしてパートタイムで参加。",
-        "IronFunctionsのWeb UI（Express + Vue）に著者上位3名の一人として貢献・保守し、JWT認証とCI/CDのDockerリリースパイプラインを追加。",
-        "Go製のFaaSエンジンに、ペイロードをstdinに渡すランナーや依存管理の移行などの機能・修正を貢献。",
-        "プラットフォームをドッグフーディングするためのサンプルのサーバーレス関数をGo・Node・Rubyで作成。"
+        "初期のDockerベースのサーバーレス（FaaS）基盤IronFunctions（後のFn Project）に、パートタイムのOSSコントリビューターとして参加。",
+        "IronFunctionsのWeb UI（Express + Vue）の開発・保守に、コード貢献量上位3名の一人として参加。JWT認証と、DockerによるCI/CDリリースパイプラインを追加。",
+        "Go製FaaSエンジンに、ペイロードを標準入力で渡すランナーや依存関係管理の移行など、機能追加と不具合修正をコントリビュート。",
+        "プラットフォームのドッグフーディングとして、Go・Node・Rubyでサーバーレス関数のサンプルを作成。"
       ]
     }
   ]

@@ -1,15 +1,15 @@
 {
-  "title": "Yetenekler",
+  "title": "Yetkinlikler",
   "technicalSkills": [
-    "Go, Ruby ve Python'da yetkin. Yeni dilleri hızlıca öğrenebilir.",
-    "AI/LLM entegrasyonu — Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",
-    "AWS & GCP'de kapsamlı deneyim. EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase ile uygulamalı deneyim.",
-    "Node.js/Express ve Go/Echo ile backend geliştirme. Web ve mobil için RESTful ve GraphQL API tasarım deneyimi.",
-    "Docker konteynerizasyonu ve CI/CD. Sürekli entegrasyon ve dağıtım uygulamalarının erken benimseyicisi.",
-    "React, Vue ve Astro ile frontend geliştirme. Tüm projelerde Tailwind CSS kullanımı.",
+    "Go, Ruby ve Python'da ileri düzey yetkinlik; yeni dilleri hızla öğrenme becerisi.",
+    "Yapay zekâ/LLM entegrasyonu: Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",
+    "AWS ve GCP'de kapsamlı deneyim; EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run ve Firebase ile uygulamalı çalışma.",
+    "Node.js/Express ve Go/Echo ile backend geliştirme; web ve mobil için RESTful ve GraphQL API tasarımı deneyimi.",
+    "Docker ile konteynerleştirme ve CI/CD; sürekli entegrasyon ve sürekli dağıtım pratiklerini erken benimseyenlerden.",
+    "React, Vue ve Astro ile frontend geliştirme; tüm projelerde Tailwind CSS.",
     "Playwright ve go-rod ile tarayıcı otomasyonu ve web scraping.",
-    "Arch Linux (CachyOS) & Emacs kullanıcısı. Unix ortamlarında ve shell scripting'de çok rahat.",
+    "Arch Linux (CachyOS) ve Emacs kullanıcısı; Unix ortamlarında ve shell script yazımında son derece rahat.",
     "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi.",
-    "Güçlü regresyon disipliniyle AI-hızlandırmalı geliştirme — testleri, gözden geçirilebilirliği ve üretim güvenliğini korurken LLM'lerle hızlı geliştirme."
+    "Güçlü regresyon disipliniyle yapay zekâ destekli geliştirme: LLM'lerle hızlı teslimat yaparken testleri, gözden geçirilebilirliği ve canlı ortam güvenliğini korumak."
   ]
 }

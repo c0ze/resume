@@ -1,15 +1,15 @@
 {
   "title": "スキル",
   "technicalSkills": [
-    "Go、Ruby、Pythonに精通。新しい言語の習得も得意。",
-    "AI/LLM連携 — Anthropic APIやGemini API、Model Context Protocol（MCP）ツール、TTSエンジン（Edge TTS、Coqui）の活用。",
-    "AWS & GCPの豊富な経験。EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebaseの実務経験。",
-    "Node.js/ExpressおよびGo/Echoでのバックエンド開発。Web・モバイル向けRESTfulおよびGraphQL APIの設計経験。",
-    "Dockerコンテナ化とCI/CD。継続的インテグレーション・デプロイメントの早期採用者。",
-    "React、Vue、Astroでのフロントエンド開発。全プロジェクトでTailwind CSSを使用。",
-    "PlaywrightおよびGo-rodによるブラウザ自動化とWebスクレイピング。",
-    "Arch Linux（CachyOS）& Emacsユーザー。Unix環境やシェルスクリプトに精通。",
-    "TDD、BDD、アジャイル、GitHub駆動開発の経験。",
-    "回帰（デグレード）防止を徹底したAI活用開発 — LLMでスピーディーに実装しつつ、テスト・レビュー可能性・本番環境の安全性を維持。"
+    "Go・Ruby・Pythonに習熟。新しい言語の習得も早い。",
+    "AI／LLM連携：Anthropic API・Gemini API、Model Context Protocol（MCP）ツール、音声合成エンジン（Edge TTS、Coqui）の活用。",
+    "AWS・GCPの豊富な実務経験（EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebase）。",
+    "Node.js/ExpressおよびGo/Echoによるバックエンド開発。Web・モバイル向けRESTful API／GraphQL APIの設計経験。",
+    "Dockerによるコンテナ化とCI/CD。継続的インテグレーション／デプロイを早くから実践。",
+    "React、Vue、Astroによるフロントエンド開発。全プロジェクトでTailwind CSSを採用。",
+    "Playwright、go-rodによるブラウザ自動化とWebスクレイピング。",
+    "Arch Linux（CachyOS）とEmacsを常用。Unix環境とシェルスクリプトに精通。",
+    "TDD、BDD、アジャイル開発、GitHub中心の開発フローの経験。",
+    "リグレッション防止を徹底したAI活用開発：LLMで開発を高速化しつつ、テスト、レビューのしやすさ、本番環境の安全性を維持。"
   ]
 }
