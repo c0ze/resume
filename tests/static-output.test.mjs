@@ -156,7 +156,7 @@ test("each language lists three spoken languages with the TOEFL and JLPT certifi
   }
 
   const html = fs.readFileSync(staticHtmlPath, "utf8");
-  assert.ok(html.includes("TOEFL 263, 2004"), "expected the rail to show the TOEFL certificate");
+  assert.ok(html.includes("TOEFL 263 on the old CBT scale, 2004"), "expected the rail to show the TOEFL certificate");
   assert.ok(html.includes("JLPT Level 2, 2006"), "expected the rail to show the JLPT certificate");
 });
 
