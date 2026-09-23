@@ -137,7 +137,7 @@ npm run test:static
 - `record.json` carries the page's own vocabulary (rail labels, certificate and column heads, chat labels) and is translated in full. A test asserts the three files match in shape and differ in content.
 - If you add a field in one language, update the others in the same pass unless there is a good reason not to.
 - The email (`header.contactViaEmail`) stays out of the web page and appears only in the downloads.
-- `about.languagesContent` is printed verbatim after `about.languages` in the PDF/DOCX (the label goes through `fieldLabel()` in `scripts/labels.mjs`, so it may or may not end in a colon).
+- `about.languagesContent` is one line: `Language (Level; Certificate, Year)` joined by `, ` (ja: `言語（レベル／資格・年）` joined by `、`). `splitSpokenLanguages()` in `scripts/labels.mjs` splits it only on commas outside brackets, for the rail, the JSON Resume and the PDF (which breaks lines only between languages). The label goes through `fieldLabel()`, so it may or may not end in a colon.
 - Treat `content/` as the canonical source for visible resume content.
 - Do not hand-edit generated files in `dist/`.
 - Expect `public/resume-*.{pdf,docx,json}` and `public/arda.vcf` to change after builds because they are generated (gitignored) artifacts.

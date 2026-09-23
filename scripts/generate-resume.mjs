@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
-import { fieldLabel } from './labels.mjs';
+import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -247,9 +247,22 @@ function generateResume(language, flavor = null) {
   // Languages
   doc.x = PAGE.margin.left;
   doc.font(fonts.bold).fontSize(SIZE.body).fillColor(COLOR.black);
-  doc.text(fieldLabel(t.about.languages), { continued: true, width: contentWidth });
+  const languagesLabel = fieldLabel(t.about.languages);
+  const labelWidth = doc.widthOfString(languagesLabel);
+  doc.text(languagesLabel, { continued: true, width: contentWidth });
   doc.font(fonts.regular).fillColor(COLOR.dark);
-  doc.text(t.about.languagesContent, { width: contentWidth });
+  // Break only between languages, never inside one: left to PDFKit, a long
+  // line splits "Japanese" from its bracket, or "JLPT 2" from "級" in Japanese.
+  const languageSep = language === 'ja' ? '、' : ', ';
+  const languageLines = [];
+  for (const entry of splitSpokenLanguages(t.about.languagesContent)) {
+    const last = languageLines.length - 1;
+    const room = contentWidth - (last <= 0 ? labelWidth : 0) - 2;
+    const joined = last >= 0 ? languageLines[last] + languageSep + entry : null;
+    if (joined !== null && doc.widthOfString(joined) <= room) languageLines[last] = joined;
+    else languageLines.push(entry);
+  }
+  doc.text(languageLines.join(languageSep.trimEnd() + '\n'), { width: contentWidth });
   doc.moveDown(0.5);
 
   // ── Experience ──────────────────────────────────────────────────

@@ -38,3 +38,24 @@ export function fieldLabel(label, separator = ': ') {
   if (typeof label !== 'string') return separator;
   return label.replace(/[\s:：]+$/u, '') + separator;
 }
+
+/**
+ * Split `about.languagesContent` into one entry per spoken language.
+ *
+ * Entries are separated by a comma (en, tr) or 、 (ja). A certificate sits in
+ * the brackets with a comma of its own ("English (Near Native; TOEFL 263,
+ * 2004)"), so only commas outside brackets separate entries.
+ *
+ *   splitSpokenLanguages('Turkish (Native), English (Near Native; TOEFL 263, 2004)')
+ *     -> ['Turkish (Native)', 'English (Near Native; TOEFL 263, 2004)']
+ *
+ * @param {string} content
+ * @returns {string[]}
+ */
+export function splitSpokenLanguages(content) {
+  if (typeof content !== 'string') return [];
+  return content
+    .split(/\s*[,、，]\s*(?![^()（）]*[)）])/u)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+}

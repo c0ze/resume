@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { fieldLabel } from '../scripts/labels.mjs';
+import { fieldLabel, splitSpokenLanguages } from '../scripts/labels.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LANGUAGES = ['en', 'ja', 'tr'];
@@ -56,5 +56,25 @@ test('labels that are printed as-is keep their own trailing colon', () => {
     assert.match(read('pdf_meta.json').generatedOn, /[:：]$/, `${lang}: pdf_meta.generatedOn`);
     const info = read('education.json').entries?.[0]?.additionalInfo;
     if (info?.title) assert.match(info.title, /[:：]$/, `${lang}: additionalInfo.title`);
+  }
+});
+
+test('splitSpokenLanguages keeps a certificate comma inside its language', () => {
+  assert.deepEqual(
+    splitSpokenLanguages('Turkish (Native), English (Near Native; TOEFL 263, 2004), Japanese (Business; JLPT Level 2, 2006)'),
+    ['Turkish (Native)', 'English (Near Native; TOEFL 263, 2004)', 'Japanese (Business; JLPT Level 2, 2006)'],
+  );
+  assert.deepEqual(
+    splitSpokenLanguages('トルコ語（母語）、英語（準ネイティブ／TOEFL 263・2004年）'),
+    ['トルコ語（母語）', '英語（準ネイティブ／TOEFL 263・2004年）'],
+  );
+  assert.deepEqual(splitSpokenLanguages(undefined), []);
+});
+
+test('every shipped languages line splits into the same three languages', () => {
+  // The rail, the PDF line breaks and the JSON Resume all count on this.
+  for (const lang of LANGUAGES) {
+    const about = JSON.parse(fs.readFileSync(path.join(projectRoot, 'content', lang, 'about.json'), 'utf8'));
+    assert.equal(splitSpokenLanguages(about.languagesContent).length, 3, lang);
   }
 });

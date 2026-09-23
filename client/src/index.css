@@ -202,6 +202,13 @@
   }
 
   .rail__muted { color: var(--fg-2); }
+  .rail__cert {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--fg-2);
+    font: 400 11.5px/1.5 var(--mono);
+    font-variant-numeric: tabular-nums;
+  }
   .rail__sep { color: var(--fg-2); }
 
   .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }

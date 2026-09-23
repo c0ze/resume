@@ -143,6 +143,23 @@ test("static build emits JSON Resume exports with basics but without the web-onl
   }
 });
 
+test("each language lists three spoken languages with the TOEFL and JLPT certificates", () => {
+  // The certificates sit inside the brackets with a comma of their own
+  // ("TOEFL 263, 2004"). If a parser splits on every comma, the JSON Resume
+  // gains a bogus "2004)" language and the rail prints a stray line.
+  for (const lang of languages) {
+    const resume = JSON.parse(fs.readFileSync(path.join(clientDistDir, `resume-${lang}.json`), "utf8"));
+    assert.equal(resume.languages.length, 3, `expected three languages in resume-${lang}.json`);
+    const fluency = resume.languages.map((l) => l.fluency ?? "").join(" | ");
+    assert.match(fluency, /TOEFL 263/, `expected the TOEFL score in resume-${lang}.json`);
+    assert.match(fluency, /JLPT/, `expected the JLPT level in resume-${lang}.json`);
+  }
+
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  assert.ok(html.includes("TOEFL 263, 2004"), "expected the rail to show the TOEFL certificate");
+  assert.ok(html.includes("JLPT Level 2, 2006"), "expected the rail to show the JLPT certificate");
+});
+
 test("static build emits a vCard with the contact details", () => {
   const vcardPath = path.join(clientDistDir, "arda.vcf");
   assert.ok(fs.existsSync(vcardPath), `Expected vCard at ${vcardPath}`);

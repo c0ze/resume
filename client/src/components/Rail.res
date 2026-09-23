@@ -12,10 +12,23 @@ let normalizeUrl = url => String.startsWith(url, "http") ? url : "https://" ++ u
 let host = url =>
   url->String.replace("https://", "")->String.replace("http://", "")->String.replace("www.", "")
 
-// "Turkish (Native), English (Near Native)" → ["Turkish · Native", …]
+// "Turkish (Native), English (Near Native; TOEFL 263, 2004)" →
+// ["Turkish (Native)", "English (Near Native; TOEFL 263, 2004)"]. A comma inside
+// the brackets belongs to the certificate, so only top-level commas split.
 let spoken: string => array<string> = %raw(`
   function (s) {
-    return String(s || "").split(/\s*[,、，]\s*/).filter(Boolean);
+    return String(s || "")
+      .split(/\s*[,、，]\s*(?![^()（）]*[)）])/)
+      .filter(Boolean);
+  }
+`)
+
+// "English (Near Native; TOEFL 263, 2004)" → ("English (Near Native)", "TOEFL 263, 2004").
+// The certificate follows the level after ";" (en, tr) or "／" (ja).
+let splitCertificate: string => (string, string) = %raw(`
+  function (s) {
+    var m = String(s || "").match(/^(.*?)\s*[（(]([^()（）]*?)\s*[;；／]\s*([^()（）]*)[)）]\s*$/);
+    return m ? [m[1] + " (" + m[2] + ")", m[3]] : [String(s || ""), ""];
   }
 `)
 
@@ -56,7 +69,15 @@ let make = () => {
 
       <Group label={r.fields.languages}>
         {spoken(t.about.languagesContent)
-        ->Array.map(l => <p key=l> {React.string(Section.place(l))} </p>)
+        ->Array.map(l => {
+          let (spokenAt, certificate) = splitCertificate(l)
+          <p key=l>
+            {React.string(Section.place(spokenAt))}
+            {certificate == ""
+              ? React.null
+              : <span className="rail__cert"> {React.string(certificate)} </span>}
+          </p>
+        })
         ->React.array}
       </Group>
 

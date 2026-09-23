@@ -133,8 +133,8 @@ From Google Fonts (`client/index.html`):
 
 - **Grid**: `260px | 1fr`, gap 64px, max 1180px, padding 54px 40px 80px.
 - **Rail**: sticks under the bar when the viewport is at least 700px tall.
-  - Groups: location (plus years in Tokyo), spoken languages (one per line),
-    links, and the four downloads as a 2×2 grid of plain `<a download>` links
+  - Groups: location (plus years in Tokyo), spoken languages (one per line,
+    any certificate on a muted mono line under it), links, and the four downloads as a 2×2 grid of plain `<a download>` links
     that honour the `?flavor=` prefix.
   - Then the issue date and the certificate of issue, and Ask, which opens the
     chat.

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
+import { splitSpokenLanguages } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,14 +46,13 @@ function parseLocation(location) {
   return { address: location };
 }
 
-// Parse "Turkish (Native), English (Near Native)" into language entries.
+// Parse "Turkish (Native), English (Near Native; TOEFL 263, 2004)" into
+// language entries. Only top-level commas separate languages: a comma inside the
+// brackets belongs to the certificate, which stays in `fluency`.
 function parseLanguages(languagesContent) {
   if (typeof languagesContent !== 'string' || languagesContent.trim() === '') return [];
 
-  return languagesContent
-    .split(/[,、]\s*/)
-    .map((entry) => entry.trim())
-    .filter(Boolean)
+  return splitSpokenLanguages(languagesContent)
     .map((entry) => {
       const match = entry.match(/^(.*?)\s*[（(]([^)）]*)[)）]$/);
       if (match) return { language: match[1], fluency: match[2] };
