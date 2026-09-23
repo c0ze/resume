@@ -103,3 +103,23 @@ export function parse(src) {
   }
   return blocks;
 }
+
+// The part of a reply the voice has reached (`n` UTF-16 units of the raw text;
+// Infinity = all), safe to render as markdown: never half a surrogate pair, a
+// half-typed link shows as its label, and an open ** or ` is closed so the
+// word being spoken is not framed by markers. Based on ai.arda.tr's
+// reveal_prefix, plus: an opener with nothing after it yet (the voice pauses
+// right before a bold word) is dropped, not closed — "**" + "**" is not bold
+// here, so closing it would flash a literal "****".
+export function revealPrefix(text, n) {
+  const s0 = String(text == null ? "" : text);
+  if (!(n < s0.length)) return s0;
+  let s = s0.slice(0, Math.max(0, n));
+  const last = s.charCodeAt(s.length - 1);
+  if (last >= 0xd800 && last <= 0xdbff) s = s.slice(0, -1);
+  if (s.endsWith("*") && s0.charAt(s.length) === "*") s = s.slice(0, -1); // half a ** marker
+  s = s.replace(/\[([^\]\n]*)(\]\([^)\n]*)?$/, "$1");
+  if ((s.match(/\*\*/g) || []).length % 2) s = s.endsWith("**") ? s.slice(0, -2) : s + "**";
+  if ((s.match(/`/g) || []).length % 2) s = s.endsWith("`") ? s.slice(0, -1) : s + "`";
+  return s;
+}

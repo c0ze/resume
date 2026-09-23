@@ -131,6 +131,10 @@ type chatContent = {
   close: string,
   thinking: string,
   error: string,
+  // The ♪ mute toggle: its constant accessible name, and the state words.
+  voice: string,
+  voiceOn: string,
+  voiceOff: string,
   suggestions: array<string>,
 }
 

@@ -212,7 +212,8 @@ test("generated theme CSS contains all four renditions", () => {
   assert.equal(themeCss.split("--radius:").length - 1, 4, "expected every rendition to define --radius");
 });
 
-test("the page chrome (record.json) is translated for every language", () => {
+// record.json is the page chrome; chat.json the chat widget's labels (incl. the ♪ voice toggle).
+for (const file of ["record.json", "chat.json"]) test(`the page chrome (${file}) is translated for every language`, () => {
   const languages = ["en", "ja", "tr"];
   const shape = (value) =>
     typeof value === "object" && value !== null
@@ -225,7 +226,7 @@ test("the page chrome (record.json) is translated for every language", () => {
 
   const [reference, ...rest] = languages.map((lang) =>
     JSON.parse(
-      fs.readFileSync(path.resolve(process.cwd(), `content/${lang}/record.json`), "utf8")
+      fs.readFileSync(path.resolve(process.cwd(), `content/${lang}/${file}`), "utf8")
     )
   );
 
@@ -233,7 +234,7 @@ test("the page chrome (record.json) is translated for every language", () => {
     assert.deepEqual(
       shape(other),
       shape(reference),
-      `content/${languages[index + 1]}/record.json is not structurally aligned with content/en`
+      `content/${languages[index + 1]}/${file} is not structurally aligned with content/en`
     );
   }
 
@@ -245,7 +246,7 @@ test("the page chrome (record.json) is translated for every language", () => {
     );
     assert.ok(
       differing.length > Object.keys(reference).length / 2,
-      `content/${languages[index + 1]}/record.json looks like an untranslated copy of English`
+      `content/${languages[index + 1]}/${file} looks like an untranslated copy of English`
     );
   }
 });

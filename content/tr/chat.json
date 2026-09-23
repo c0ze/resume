@@ -7,6 +7,9 @@
   "close": "Sohbeti kapat",
   "thinking": "Düşünüyor…",
   "error": "Üzgünüm, şu anda asistana ulaşılamıyor. Lütfen birazdan tekrar deneyin.",
+  "voice": "Yanıtları sesli oku",
+  "voiceOn": "açık",
+  "voiceOff": "kapalı",
   "suggestions": [
     "Arda'nın Go deneyimi var mı?",
     "Kaç yıldır Python kullanıyor?",

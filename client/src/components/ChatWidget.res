@@ -7,6 +7,12 @@
 // Styled like ai.arda.tr: the construct orb revolves in the header and
 // sizzles on every streamed chunk, and a crackling 1-bit block cursor trails
 // the reply while it streams (OneBit.res / lib/onebit.js).
+//
+// Voice, as on ai.arda.tr (Voice.res / lib/voice.js): unless muted with the
+// ♪ toggle in the header, a request asks for speech in the page's language,
+// the reply is read aloud through the robot filter, its text is revealed only
+// as far as the voice has got, and the orb sizzles with the loudness. A new
+// question, closing the panel, a language switch or muting stops it.
 type chatMsg = {
   id: int,
   role: string, // "user" | "model"
@@ -54,20 +60,35 @@ let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %
 // Streaming variant: POSTs to the SSE /api/chat/stream endpoint and calls
 // onChunk(fullTextSoFar) as tokens arrive, onDone(fullText) at the end, or
 // onError() if the stream fails (caller falls back only before any token).
-// Aborts after 45s. SSE shape: `data: {"type":"thinking"|"chunk"|"done","text"?}`.
+// SSE shape: `data: {"type":"thinking"|"chunk"|"done","text"?}`.
+//
+// Voice: `extra` is spread into the body (Voice.requestFields: {voice, lang},
+// or {} when muted), and onEvent receives EVERY parsed event object, speech
+// ones included, before the transport acts on it, so the reply's speaker sees
+// `done` and `error` too. With voice the server holds `done` back until the
+// speech is sent, so the 45s deadline is an idle one: every read re-arms it.
 let postChatStream: (
   string,
   array<chatMsg>,
   string => unit,
   string => unit,
   unit => unit,
+  Voice.fields,
+  Voice.event => unit,
 ) => unit = %raw(`
-  function (message, history, onChunk, onDone, onError) {
+  function (message, history, onChunk, onDone, onError, extra, onEvent) {
     var hist = (history || []).map(function (m) {
       return { role: m.role, content: m.content };
     });
+    var body = { message: message, history: hist };
+    if (extra && typeof extra === "object") {
+      for (var key in extra) {
+        if (Object.prototype.hasOwnProperty.call(extra, key) && !(key in body)) body[key] = extra[key];
+      }
+    }
     var controller = new AbortController();
-    var timer = setTimeout(function () { controller.abort(); fail(); }, 45000);
+    function onDeadline() { controller.abort(); fail(); }
+    var timer = setTimeout(onDeadline, 45000);
     var settled = false;
     var reader;
     function closeReader() {
@@ -92,7 +113,7 @@ let postChatStream: (
     fetch("https://ai-arda-tr-api-599610058688.asia-northeast1.run.app/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-      body: JSON.stringify({ message: message, history: hist }),
+      body: JSON.stringify(body),
       signal: controller.signal,
     })
       .then(function (res) {
@@ -108,6 +129,8 @@ let postChatStream: (
             if (r.done) {
               buffer += decoder.decode(); // flush any trailing multi-byte char
             } else {
+              clearTimeout(timer);
+              timer = setTimeout(onDeadline, 45000);
               buffer += decoder.decode(r.value, { stream: true });
             }
             // SSE events are blank-line separated; tolerate LF or CRLF framing.
@@ -124,6 +147,9 @@ let postChatStream: (
               var obj;
               try { obj = JSON.parse(payload); } catch (e) { continue; }
               if (!obj || typeof obj !== "object") continue;
+              if (typeof onEvent === "function") {
+                try { onEvent(obj); } catch (e) {}
+              }
               if (obj.type === "chunk" && typeof obj.text === "string" && obj.text.length > 0) {
                 full += obj.text;
                 onChunk(full);
@@ -176,6 +202,8 @@ let listenForOpen: (unit => unit) => (unit => unit) = %raw(`
 `)
 
 
+let now: unit => float = %raw(`function () { return Date.now(); }`)
+
 let activeElement: unit => Nullable.t<Dom.element> = %raw(`
   function () {
     var el = typeof document !== "undefined" ? document.activeElement : null;
@@ -220,9 +248,29 @@ let message = (~who, ~msg: chatMsg, ~live) => {
   </div>
 }
 
+// Mute / unmute the construct's voice. The label is constant for screen
+// readers; `aria-pressed` carries the state. Below 600px the state word is
+// dropped and the struck-through ♪ alone shows "muted".
+module VoiceToggle = {
+  @react.component
+  let make = (~on: bool, ~c: Translations.chatContent) =>
+    <button
+      type_="button"
+      onClick={_ => Voice.setVoiceEnabled(!on)}
+      ariaPressed={on ? #"true" : #"false"}
+      ariaLabel={c.voice}
+      title={c.voice}
+      className="chat__voice">
+      <span className="chat__voice-glyph" ariaHidden=true> {React.string(`♪`)} </span>
+      <span className="chat__voice-word" ariaHidden=true>
+        {React.string(" " ++ (on ? c.voiceOn : c.voiceOff))}
+      </span>
+    </button>
+}
+
 @react.component
 let make = () => {
-  let {translations: t} = LanguageContext.useLanguage()
+  let {translations: t, language} = LanguageContext.useLanguage()
   let c = t.chat
   let r = t.record
   let (isOpen, setIsOpen) = React.useState(() => false)
@@ -236,6 +284,14 @@ let make = () => {
   let launcherRef = React.useRef(Nullable.null)
   let returnRef = React.useRef(Nullable.null)
   let orbRef = React.useRef(None)
+  // The reply being spoken: Some((messageId, revealed)) while its voice gates
+  // the text. `speakerRef` holds the live speaker with a token, so callbacks
+  // from a speaker that has since been replaced or stopped are dropped.
+  let (speech, setSpeech) = React.useState(() => None)
+  let (voiceOn, setVoiceOn) = React.useState(() => true)
+  let speakerRef = React.useRef(None)
+  let speakerToken = React.useRef(0)
+  let lastLevelAt = React.useRef(0.0)
 
   let nextId = () => {
     let id = idRef.current
@@ -249,10 +305,69 @@ let make = () => {
     | None => ()
     }
 
+  // Silence the current reply and show all of it.
+  let stopSpeech = () => {
+    speakerToken.current = speakerToken.current + 1
+    let current = speakerRef.current
+    speakerRef.current = None
+    setSpeech(_ => None)
+    switch current {
+    | Some(s) => Voice.stop(s)
+    | None => ()
+    }
+  }
+
+  // One speaker per reply. Created for every reply: when muted (or the
+  // server says voice off) it reveals everything at the first chunk, exactly
+  // like the text-only widget.
+  let startSpeech = modelId => {
+    stopSpeech()
+    let token = speakerToken.current
+    let live = () => speakerToken.current == token
+    let s = Voice.createSpeaker({
+      onReveal: n =>
+        if live() {
+          setSpeech(_ => n == Float.Constants.positiveInfinity ? None : Some((modelId, n)))
+        },
+      onLevel: level => {
+        // Sizzle at ~9 Hz scaled by loudness: the orb's heat tracks the voice.
+        let t = now()
+        if live() && level >= 0.03 && t -. lastLevelAt.current >= 110.0 {
+          lastLevelAt.current = t
+          sizzle(level *. 0.6)
+        }
+      },
+      onEnd: () =>
+        if live() {
+          speakerRef.current = None
+          setSpeech(_ => None)
+        },
+    })
+    speakerRef.current = Some(s)
+    s
+  }
+
+  // The visitor's mute choice lives in voice.js (localStorage "voice"); read
+  // it after hydration and follow every change.
+  React.useEffect0(() => {
+    setVoiceOn(_ => Voice.voiceEnabled())
+    Some(Voice.onVoiceChange(on => setVoiceOn(_ => on)))
+  })
+
+  // A language switch stops the voice mid-sentence.
+  React.useEffect1(() => {
+    stopSpeech()
+    None
+  }, [language])
+
   // Keep the transcript pinned to the latest message / thinking indicator.
   let lastLen = switch messages->Array.get(Array.length(messages) - 1) {
   | Some(m) => String.length(m.content)
   | None => 0
+  }
+  let shownKey = switch speech {
+  | Some((_, n)) => Float.toString(n)
+  | None => "-"
   }
   React.useEffect1(() => {
     switch listRef.current->Nullable.toOption {
@@ -260,7 +375,14 @@ let make = () => {
     | None => ()
     }
     None
-  }, [Int.toString(Array.length(messages)) ++ ":" ++ Int.toString(lastLen) ++ ":" ++ (busy ? "1" : "0")])
+  }, [
+    Int.toString(Array.length(messages)) ++
+    ":" ++
+    Int.toString(lastLen) ++
+    ":" ++
+    shownKey ++
+    ":" ++ (busy ? "1" : "0"),
+  ])
 
   // On open: remember what had focus, focus the input and wire
   // Escape-to-close. On close, the cleanup returns focus to where the reader
@@ -278,6 +400,8 @@ let make = () => {
       Some(
         () => {
           removeEscape()
+          // Closing (× or Escape) silences the reply.
+          stopSpeech()
           let back = switch returnRef.current->Nullable.toOption {
           | Some(el) => Some(el)
           | None => launcherRef.current->Nullable.toOption
@@ -320,6 +444,13 @@ let make = () => {
       setBusy(_ => true)
       setStreaming(_ => false)
       sizzle(0.4)
+      // Inside the send gesture (Enter, the send button, a quick prompt), or
+      // the browser keeps the audio muted. A new question interrupts the
+      // previous reply's voice.
+      if Voice.voiceEnabled() {
+        Voice.unlockAudio()
+      }
+      let speaker = startSpeech(modelId)
       postChatStream(
         trimmed,
         history,
@@ -336,6 +467,7 @@ let make = () => {
           setBusy(_ => false)
         },
         () => {
+          stopSpeech()
           if started.contents {
             let errorId = nextId()
             setMessages(prev =>
@@ -363,6 +495,8 @@ let make = () => {
             )
           }
         },
+        Voice.requestFields(Translations.languageToString(language)),
+        event => Voice.handle(speaker, event),
       )
     }
   }
@@ -395,6 +529,7 @@ let make = () => {
               <h2 id="chat-title" className="chat__title"> {React.string(c.title)} </h2>
               <p className="chat__sub"> {React.string("ai.arda.tr")} </p>
             </div>
+            <VoiceToggle on=voiceOn c />
             <button
               type_="button"
               onClick={_ => setIsOpen(_ => false)}
@@ -411,13 +546,22 @@ let make = () => {
               <div className="msg__txt"> <p> {React.string(c.greeting)} </p> </div>
             </div>
             {messages
-            ->Array.map(m =>
+            ->Array.map(m => {
+              // While spoken, a reply shows only as far as the voice has got,
+              // and keeps its cursor until the voice is done.
+              let spoken = switch speech {
+              | Some((id, n)) if id == m.id => Some(n)
+              | _ => None
+              }
               message(
                 ~who=m.role == "user" ? r.you : r.assistant,
-                ~msg=m,
-                ~live=streaming && m.id == lastId,
+                ~msg=switch spoken {
+                | Some(n) => {...m, content: Markdown.revealPrefix(m.content, n)}
+                | None => m
+                },
+                ~live=(streaming && m.id == lastId) || spoken != None,
               )
-            )
+            })
             ->React.array}
             {busy && !streaming
               ? <div className="msg msg--ai msg--wait">

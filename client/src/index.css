@@ -414,6 +414,26 @@
   }
   .x:hover { border-color: var(--fg); color: var(--fg); }
 
+  /* The ♪ voice toggle pairs with the close box (4px apart); it takes the
+     free space so the pair stays right-aligned. On: ink border; muted: a
+     hairline, like the close box at rest. */
+  .chat__voice {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: 28px;
+    margin-left: auto;
+    padding: 0 7px;
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    font: 400 12px/1 var(--mono);
+    white-space: nowrap;
+    transition: border-color .15s, color .15s;
+  }
+  .chat__voice[aria-pressed="false"] { border-color: var(--rule); color: var(--fg-2); }
+  .chat__voice:hover { border-color: var(--signal); color: var(--signal); }
+  .chat__voice + .x { margin-left: -8px; }
+
   .chat__log {
     display: grid;
     flex: 1;
@@ -634,6 +654,12 @@
   .contact { padding-left: 0; }
 
   .chat { right: 8px; left: 8px; bottom: 8px; width: auto; height: min(78vh, calc(100vh - var(--bar-h) - 24px)); }
+  /* Phones: the toggle is a 28px square like the close box, and the title
+     steps down so "Ardaについて質問する" still fits on one line at 390px. */
+  .chat__title { font-size: 21px; }
+  .chat__voice { justify-content: center; width: 28px; padding: 0; }
+  .chat__voice-word { display: none; }
+  .chat__voice[aria-pressed="false"] .chat__voice-glyph { text-decoration: line-through; }
   .artifacts__src { display: none; }
   .cert__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }

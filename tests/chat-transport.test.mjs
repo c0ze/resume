@@ -11,11 +11,13 @@ const end = source.search(/(?:var|let|const) scrollToBottom =/);
 assert.ok(start >= 0 && end > start, 'compiled chat transport boundaries must exist');
 const transport = source.slice(start, end) + '\nthis.postChat = postChat; this.postChatStream = postChatStream;';
 
-async function request(parts, { method = 'postChatStream', ok = true, timeout = false } = {}) {
+async function request(parts, { method = 'postChatStream', ok = true, timeout = false, extra, voice = false } = {}) {
   const events = [];
   let cancelled = 0;
   let deadline;
+  let armed = 0;
   let signal;
+  let body;
   const reader = {
     async read() {
       return parts.length ? { done: false, value: new TextEncoder().encode(parts.shift()) } : { done: true };
@@ -24,10 +26,11 @@ async function request(parts, { method = 'postChatStream', ok = true, timeout = 
   };
   const context = vm.createContext({
     TextDecoder, AbortController,
-    setTimeout(fn) { deadline = fn; return 1; },
+    setTimeout(fn) { deadline = fn; armed++; return 1; },
     clearTimeout() {},
     fetch(_url, options) {
       signal = options.signal;
+      body = JSON.parse(options.body);
       if (timeout) return new Promise((_resolve, reject) => {
         signal.addEventListener('abort', () => reject(new Error('aborted')));
         queueMicrotask(() => deadline());
@@ -40,10 +43,14 @@ async function request(parts, { method = 'postChatStream', ok = true, timeout = 
     const done = (text) => { events.push(['done', text]); resolve(); };
     const error = () => { events.push(['error']); resolve(); };
     if (method === 'postChat') context.postChat('hello', [], done, error);
-    else context.postChatStream('hello', [], (text) => events.push(['chunk', text]), done, error);
+    else if (voice) {
+      // The widget's call: voice fields from Voice.requestFields, and every event to the speaker.
+      context.postChatStream('hello', [], (text) => events.push(['chunk', text]), done, error,
+        extra, (event) => events.push(['event', event.type]));
+    } else context.postChatStream('hello', [], (text) => events.push(['chunk', text]), done, error);
   });
   await new Promise((resolve) => setImmediate(resolve));
-  return { events, cancelled, signal };
+  return { events, cancelled, signal, body, armed };
 }
 
 test('empty stream reports failure instead of inserting an empty reply', async () => {
@@ -89,4 +96,38 @@ test('deadline aborts a stalled request and reports failure once', async () => {
 
 test('non-streaming fallback rejects an HTTP error even if it contains reply text', async () => {
   assert.deepEqual((await request([], { method: 'postChat', ok: false })).events, [['error']]);
+});
+
+test('voice fields are spread into the stream request; muted requests carry none', async () => {
+  // The server only speaks when asked with voice:true and a lang; a muted visitor must send the
+  // exact text-only body, or the server would synthesise speech nobody hears.
+  const on = await request(['data: {"type":"done","text":"ok"}\n\n'], { voice: true, extra: { voice: true, lang: 'ja' } });
+  assert.deepEqual(on.body, { message: 'hello', history: [], voice: true, lang: 'ja' });
+  const muted = await request(['data: {"type":"done","text":"ok"}\n\n'], { voice: true, extra: {} });
+  assert.deepEqual(Object.keys(muted.body).sort(), ['history', 'message']);
+  const hostile = await request(['data: {"type":"done","text":"ok"}\n\n'], { voice: true, extra: { message: 'other' } });
+  assert.equal(hostile.body.message, 'hello', 'extra fields cannot replace the question');
+});
+
+test('every event, speech included, reaches the speaker before the transport acts on it', async () => {
+  const frames = [
+    '{"type":"thinking"}', '{"type":"voice","on":true}', '{"type":"chunk","text":"Hi."}',
+    '{"type":"speech","seq":0,"start":0,"end":3,"audio":null,"marks":[]}',
+    '{"type":"speech_end","upto":3}', '{"type":"done","text":"Hi."}',
+  ].map((f) => `data: ${f}\n\n`);
+  const result = await request(frames, { voice: true, extra: { voice: true, lang: 'en' } });
+  assert.deepEqual(result.events, [
+    ['event', 'thinking'], ['event', 'voice'], ['event', 'chunk'], ['chunk', 'Hi.'],
+    ['event', 'speech'], ['event', 'speech_end'], ['event', 'done'], ['done', 'Hi.'],
+  ]);
+});
+
+test('the deadline is re-armed by every read, so held-back speech does not time out', async () => {
+  // With voice the server holds `done` until the speech is sent: a slow but live stream must
+  // not be cut off at 45 s, while a silent one still is (see the deadline test above).
+  const frames = ['data: {"type":"chunk","text":"a"}\n\n', 'data: {"type":"speech","seq":0,"start":0,"end":1,"audio":null,"marks":[]}\n\n',
+    'data: {"type":"done","text":"a"}\n\n'];
+  const reads = frames.length;
+  const result = await request(frames, { voice: true, extra: {} });
+  assert.equal(result.armed, 1 + reads);
 });

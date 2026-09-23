@@ -175,8 +175,10 @@ What moves:
 - **Treeline**: `treeline(canvas, {seed: 3, px: 2, speed: 4})`, the only motion
   on the page itself.
 - **Chat orb**: `orb(canvas, {size: 40})` revolves while the panel is open and
-  `sizzle()`s on each streamed chunk.
-- **Chat cursor**: a `crackle()` block cursor trails the reply while it streams.
+  `sizzle()`s on each streamed chunk, then with the voice's loudness while a
+  reply is spoken.
+- **Chat cursor**: a `crackle()` block cursor trails the reply while it streams
+  and while it is spoken.
 - **Hover**: colour transitions of 150ms; nothing lifts, scales or slides.
 
 `onebit.js` is a verbatim copy of `../design-previews/onebit/onebit.js`. Do not
@@ -211,6 +213,10 @@ fork it: change the shared file first, then copy it to every site.
   - Layout: orb and "Ask about Arda" in the header, `ai ▸` / `you ▸` label
     columns, numbered mono quick prompts, and a terminal-line input with a `▸`
     prompt.
+  - Voice: a mono `♪ on` / `♪ off` toggle paired with the close box (ink
+    border when on, hairline when muted; below 600px a 28px `♪` square, struck
+    through when muted, and the title steps down to 21px). A spoken reply is
+    revealed only as far as the voice has got.
   - Behaviour is unchanged: SSE with the non-streaming fallback and timeouts,
     Escape, focus into the input on open, focus back to whatever opened it,
     safe element-only Markdown, and the `arda:open-chat` event.

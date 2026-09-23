@@ -39,6 +39,7 @@ before changing anything visual.
 - Tailwind CSS (reset and token-mapped colours; the visual system is plain CSS in `client/src/index.css`)
 - Big Shoulders Display (name) + IBM Plex Sans / Plex Mono / Plex Sans JP from Google Fonts (the PDF/DOCX embed their own fonts)
 - `client/src/lib/onebit.js` — the family's 1-bit canvas engine (treeline, chat orb, crackle cursor), a verbatim copy of `../design-previews/onebit/onebit.js`, bound in `client/src/OneBit.res`
+- `client/src/lib/voice.js` — the construct's spoken replies (robot voice, gated reveal, mute choice), a verbatim copy of `../design-previews/onebit/voice.js` (its header documents the protocol), bound in `client/src/Voice.res`
 - PDFKit + docx (PDF/DOCX resumes)
 - GitHub Actions + GitHub Pages (CI runs Node 24)
 
@@ -57,8 +58,8 @@ before changing anything visual.
 - vCard generator: `scripts/generate-vcard.mjs`
 - Theme contract check (v3: id set, roles and required tokens vs arda.tr's `config/themes.json`; soft-passes on older contracts): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
-- Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`)
-- Tests (static output, Markdown, labels, flavours, browser storage, and the compiled chat transport): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build)
+- Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`; also `revealPrefix`, the part of a spoken reply that is safe to render)
+- Tests (static output, Markdown, labels, flavours, browser storage, the compiled chat transport, and the voice's gated reveal): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build)
 
 ## Important Directories
 
@@ -86,6 +87,7 @@ npm run res:clean     # Clean ReScript build artifacts
 ## Key Features
 
 - **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda", styled like ai.arda.tr: a 1-bit orb that sizzles per streamed chunk and a crackle cursor) POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
+- **Chat voice** — as on ai.arda.tr, replies are read aloud unless the visitor mutes the `♪` toggle in the widget header (`aria-pressed`; labels `chat.voice`/`voiceOn`/`voiceOff`; the choice is localStorage `"voice"`, owned by `voice.js`). The stream request carries `Voice.requestFields(lang)` (`{voice: true, lang}` in the page's language, nothing when muted); each reply gets one speaker that sees every SSE event, gates the Markdown to what has been spoken (`revealPrefix`), keeps the crackle cursor while speaking, and sizzles the orb with the loudness. `unlockAudio()` runs inside the send gesture. A new question, closing (× / Escape), a language switch or muting stops it and shows the whole reply. With voice the server holds `done` back until the speech is sent, so the 45s stream deadline is an idle one (re-armed on every read). `tests/chat-voice.test.mjs` runs the real `voice.js` on a fake Web Audio clock with mocked speech events.
 - **Chat stream recovery** — streaming completion requires a complete `done` event. An interrupted reply keeps the text it received and adds an error message; the non-streaming fallback is tried only before any text arrives. `tests/chat-transport.test.mjs` runs the compiled transport against simulated responses and never contacts the bot.
 - **Blocked storage** — `localStorage` can throw (blocked site data, some private modes). The bootstrap in `client/index.html`, `ThemeContext.getStoredTheme` and `LanguageContext` all catch it and fall back to `xerox` / English; `tests/theme-storage.test.mjs` covers the theme side.
 - **Web-only `abstract`** — each experience carries an `abstract`, rendered as the lead line of its row in the Experience section, above the responsibilities. `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.

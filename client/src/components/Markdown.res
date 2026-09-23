@@ -6,6 +6,8 @@ type block
 type inlineTok
 
 @module("./markdownParse.mjs") external parse: string => array<block> = "parse"
+// The part of a spoken reply the voice has reached, safe to parse (see markdownParse.mjs).
+@module("./markdownParse.mjs") external revealPrefix: (string, float) => string = "revealPrefix"
 
 let bType: block => string = %raw(`function (b) { return b.type; }`)
 let bText: block => string = %raw(`function (b) { return b.text || ""; }`)
