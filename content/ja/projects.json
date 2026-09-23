@@ -35,13 +35,13 @@
     {
       "title": "FupIntuition — IoT/エッジ人流分析",
       "technologies": "Go (amd64 + ARM), BLEビーコン, Wi-Fiスニッフィング, HashiCorp Vault, GPG署名付きOTA, S3 aptリポジトリ",
-      "description": "Allmにて、店舗設置のエッジデバイス向けGoデーモンを単独でエンドツーエンドに開発。BLEによるスタッフ数計測、Wi-Fiによるリピーター計測、顔認識に加え、Web UIと署名付きOTAアップデートのパイプラインを一式構築。",
+      "description": "Allmにて、店舗設置のエッジデバイス向けGoデーモンを単独で開発。BLEによるスタッフ数計測、Wi-Fiによるリピーター計測、顔認識に加え、Web UIと署名付きOTAアップデートのパイプラインを一式構築。",
       "repo": null
     },
     {
       "title": "FAST-ED 臨床トリアージAPI",
       "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
-      "description": "Allmにて、病院向けのバージョン管理された脳卒中・心疾患トリアージAPI（Grape + GraphQL + Pundit）を主担当として開発。HMACによるリクエスト署名と堅牢な認証を実装し、Vue 2 + Apollo製の管理SPAも開発。",
+      "description": "Allmにて、病院向けのバージョン管理された脳卒中・心疾患トリアージAPI（Grape + GraphQL + Pundit）を主担当として開発。HMACによるリクエスト署名と、ログイン試行制限付きのbcrypt認証を実装。Vue 2 + Apollo製の管理SPAも共同開発。",
       "repo": null
     },
     {
@@ -59,7 +59,7 @@
     {
       "title": "本サイト（職務経歴書サイト）",
       "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
-      "description": "単一のコンテンツソースからHTMLを静的にプリレンダリングし、ビルド時に言語別のPDF版・DOCX版の職務経歴書を生成する多言語（EN/JA/TR）サイト。GitHub Pagesで公開。",
+      "description": "英語・日本語・トルコ語の静的な職務経歴書サイト。単一のコンテンツソースから、ページとPDF・DOCX・JSON Resume・vCardの各ファイルをビルド時に生成。GitHub Pagesで公開。",
       "repo": "https://github.com/c0ze/resume"
     }
   ]

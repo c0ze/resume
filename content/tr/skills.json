@@ -3,13 +3,13 @@
   "technicalSkills": [
     "Go, Ruby ve Python'da ileri düzey yetkinlik; yeni dilleri hızla öğrenme becerisi.",
     "Yapay zekâ/LLM entegrasyonu: Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",
-    "AWS ve GCP'de kapsamlı deneyim; EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run ve Firebase ile uygulamalı çalışma.",
+    "AWS ve GCP: EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run ve Firebase.",
     "Node.js/Express ve Go/Echo ile backend geliştirme; web ve mobil için RESTful ve GraphQL API tasarımı deneyimi.",
-    "Docker ile konteynerleştirme ve CI/CD; sürekli entegrasyon ve sürekli dağıtım pratiklerini erken benimseyenlerden.",
-    "React, Vue ve Astro ile frontend geliştirme; tüm projelerde Tailwind CSS.",
+    "Docker ile konteynerleştirme ve CI/CD (CircleCI, GitLab CI, GitHub Actions).",
+    "React, Vue ve Astro ile frontend geliştirme; stil için Tailwind CSS.",
     "Playwright ve go-rod ile tarayıcı otomasyonu ve web scraping.",
-    "Arch Linux (CachyOS) ve Emacs kullanıcısı; Unix ortamlarında ve shell script yazımında son derece rahat.",
+    "Arch Linux (CachyOS) ve Emacs kullanıcısı; Unix ortamlarında ve shell script yazımında rahat.",
     "TDD, BDD, Agile ve GitHub odaklı geliştirme deneyimi.",
-    "Güçlü regresyon disipliniyle yapay zekâ destekli geliştirme: LLM'lerle hızlı teslimat yaparken testleri, gözden geçirilebilirliği ve canlı ortam güvenliğini korumak."
+    "LLM destekli geliştirme; canlıya neyin çıkacağına yine testler ve kod incelemesi karar veriyor."
   ]
 }

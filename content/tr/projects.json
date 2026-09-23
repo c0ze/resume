@@ -35,13 +35,13 @@
     {
       "title": "FupIntuition — IoT/Edge Kişi Analitiği",
       "technologies": "Go (amd64 + ARM), BLE beacon, Wi-Fi sniffing, HashiCorp Vault, GPG imzalı OTA, S3 apt deposu",
-      "description": "Allm'de tek başıma geliştirdiğim, mağaza içi edge cihazlar için uçtan uca Go arka plan servisi: BLE ile personel sayımı, Wi-Fi ile tekrar gelen müşteri sayımı ve yüz tanıma; web arayüzü ve imzalı, eksiksiz bir OTA güncelleme pipeline'ı ile birlikte.",
+      "description": "Allm'de tek başıma geliştirdiğim, mağaza içi edge cihazlar için Go arka plan servisi: BLE ile personel sayımı, Wi-Fi ile tekrar gelen müşteri sayımı ve yüz tanıma; web arayüzü ve imzalı bir OTA güncelleme pipeline'ı ile birlikte.",
       "repo": null
     },
     {
       "title": "FAST-ED Klinik Triyaj API'si",
       "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
-      "description": "Allm'de hastaneler için geliştirilen sürümlendirilmiş inme/kalp triyaj API'sinin (Grape + GraphQL + Pundit) ana geliştiricisi; HMAC ile istek imzalama, güçlendirilmiş kimlik doğrulama ve Vue 2 + Apollo tabanlı yönetim SPA'sı.",
+      "description": "Allm'de hastaneler için geliştirilen sürümlendirilmiş inme/kalp triyaj API'sinin (Grape + GraphQL + Pundit) ana geliştiricisi; HMAC ile istek imzalama ve giriş kilitlemeli bcrypt kimlik doğrulaması. Vue 2 + Apollo tabanlı yönetim SPA'sını ekiple birlikte geliştirdim.",
       "repo": null
     },
     {
@@ -59,7 +59,7 @@
     {
       "title": "Bu Özgeçmiş Sitesi",
       "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
-      "description": "Tek bir içerik kaynağından HTML olarak önceden render edilen ve derleme sırasında dile özgü PDF ve DOCX özgeçmişler üreten, statik ve çok dilli (EN/JA/TR) bir özgeçmiş sitesi; GitHub Pages üzerinde yayında.",
+      "description": "HTML olarak önceden render edilen İngilizce, Japonca ve Türkçe statik özgeçmiş sitesi. Tek bir içerik kaynağı, derleme sırasında sayfayı ve PDF, DOCX, JSON Resume ve vCard dosyalarını üretir; GitHub Pages üzerinde yayında.",
       "repo": "https://github.com/c0ze/resume"
     }
   ]

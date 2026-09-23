@@ -45,7 +45,7 @@ let make = (~isOpen, ~onClose) => {
           </a>,
         )}
         {switch flavor {
-        | Some(name) => field(`?flavor=`, React.string(`${name} — ${r.amendmentNote}`))
+        | Some(name) => field(`?flavor=`, React.string(`${name}: ${r.amendmentNote}`))
         | None => React.null
         }}
       </dl>

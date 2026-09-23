@@ -1,15 +1,15 @@
 {
   "title": "Skills",
   "technicalSkills": [
-    "Proficient in Go, Ruby, and Python. Comfortable picking up new languages quickly.",
-    "AI/LLM integration — working with the Anthropic and Gemini APIs, Model Context Protocol (MCP) tooling, and TTS engines (Edge TTS, Coqui).",
-    "Extensive experience with AWS & GCP. Hands on with EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase.",
-    "Backend development with Node.js/Express and Go/Echo. Experience designing RESTful and GraphQL APIs for web and mobile.",
-    "Docker containerization and CI/CD. Early adopter of continuous integration and deployment practices.",
-    "Frontend development with React, Vue, and Astro. Tailwind CSS across all projects.",
+    "Proficient in Go, Ruby, and Python. Quick to pick up new languages.",
+    "AI/LLM integration: the Anthropic and Gemini APIs, Model Context Protocol (MCP) tooling, and TTS engines (Edge TTS, Coqui).",
+    "AWS and GCP: EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase.",
+    "Backend development with Node.js/Express and Go/Echo; REST and GraphQL API design for web and mobile.",
+    "Docker and CI/CD (CircleCI, GitLab CI, GitHub Actions).",
+    "Frontend development with React, Vue, and Astro, styled with Tailwind CSS.",
     "Browser automation and web scraping with Playwright and go-rod.",
-    "Arch Linux (CachyOS) & Emacs user. Very comfortable in unix environments and shell scripting.",
-    "Experience with TDD, BDD, Agile and GitHub driven development.",
-    "AI-accelerated development with strong regression discipline — using LLMs to ship quickly while preserving tests, reviewability, and production safety."
+    "Arch Linux (CachyOS) and Emacs user; comfortable in Unix environments and shell scripting.",
+    "TDD, BDD, Agile, and GitHub-based development workflows.",
+    "LLM-assisted development, with tests and code review still deciding what reaches production."
   ]
 }

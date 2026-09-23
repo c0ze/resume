@@ -1,7 +1,7 @@
 {
   "title": "About Me",
-  "paragraph1": "I build backend and platform systems where production software, cloud infrastructure, and AI agents meet. At Veltra, I work across Python, Go, and Node services on AWS, including Model Context Protocol integrations and internal AI tooling.",
-  "paragraph2": "Before that, Go/Ruby/Python systems across logistics, fintech, medical IT, and games — shipped and operated in Tokyo since 2004. I work as a bridge between overseas and Japan teams, in English and Japanese.",
+  "paragraph1": "I build backend services and the cloud infrastructure they run on. At Veltra I work on Python, Go, and Node services on AWS, including Model Context Protocol (MCP) integrations and internal AI tools.",
+  "paragraph2": "Before Veltra I built and ran Go, Ruby, and Python systems for logistics, fintech, medical IT, and game companies. I have been in Tokyo since 2004 and act as the bridge between overseas and Japan teams, in English and Japanese.",
   "languages": "Spoken languages:",
   "languagesContent": "Turkish (Native), English (Near Native; TOEFL 263, 2004), Japanese (Business; JLPT Level 2, 2006)"
 }

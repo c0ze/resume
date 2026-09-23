@@ -3,13 +3,13 @@
   "technicalSkills": [
     "Go・Ruby・Pythonに習熟。新しい言語の習得も早い。",
     "AI／LLM連携：Anthropic API・Gemini API、Model Context Protocol（MCP）ツール、音声合成エンジン（Edge TTS、Coqui）の活用。",
-    "AWS・GCPの豊富な実務経験（EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebase）。",
+    "AWS・GCPの実務経験（EC2、S3、DynamoDB、SES、IAM、Route53、Cloud Run、Firebase）。",
     "Node.js/ExpressおよびGo/Echoによるバックエンド開発。Web・モバイル向けRESTful API／GraphQL APIの設計経験。",
-    "Dockerによるコンテナ化とCI/CD。継続的インテグレーション／デプロイを早くから実践。",
-    "React、Vue、Astroによるフロントエンド開発。全プロジェクトでTailwind CSSを採用。",
+    "Dockerによるコンテナ化とCI/CD（CircleCI、GitLab CI、GitHub Actions）。",
+    "React、Vue、Astroによるフロントエンド開発（スタイリングはTailwind CSS）。",
     "Playwright、go-rodによるブラウザ自動化とWebスクレイピング。",
     "Arch Linux（CachyOS）とEmacsを常用。Unix環境とシェルスクリプトに精通。",
     "TDD、BDD、アジャイル開発、GitHub中心の開発フローの経験。",
-    "リグレッション防止を徹底したAI活用開発：LLMで開発を高速化しつつ、テスト、レビューのしやすさ、本番環境の安全性を維持。"
+    "LLMを活用した開発。本番に出すかどうかは、引き続きテストとコードレビューで判断。"
   ]
 }

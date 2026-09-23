@@ -25,7 +25,7 @@
       "responsibilities": [
         "Canlıdaki lojistik “depo borsası” SaaS ürünü WareX'in Go (Echo / GORM) API'sinde kıdemli backend mühendisi ve en çok katkı veren üç geliştiriciden biri olarak çalıştım (şirket 2022'de Gaussy adıyla şirketleşti).",
         "Depo (konum ve lisansa göre filtrelenen arama), sözleşme, çalışma alanı, belge ve fiyat tanımı kaynaklarını veri modellerinden REST kaynaklarına ve migration'lara kadar uçtan uca üstlendim.",
-        "Rol tabanlı erişim kontrolü (RBAC) middleware'i ve sunucu tarafında mass-assignment korumaları geliştirdim; istek doğrulamayı ve parametreli sorguları sistematik biçimde uyguladım.",
+        "Rol tabanlı erişim kontrolü (RBAC) middleware'i ve sunucu tarafında mass-assignment korumaları geliştirdim; ayrıca istek doğrulama ve parametreli sorgular uyguladım.",
         "Ekibin diğer API testlerinin üzerinde çalıştığı ortak test altyapısı dahil, entegrasyon test paketinin büyük bölümünü üstlendim.",
         "Veritabanı migration ve seed süreçlerini (goose) ve Bugsnag ile hata raporlamayı kurdum; HubSpot ve Mailgun gibi üçüncü taraf entegrasyonlarını geliştirdim.",
         "CircleCI ile Google Kubernetes Engine'e dağıtım yaptım ve secret'ları SOPS ile yönettim; Vue/Nuxt tabanlı yönetim ve müşteri portallarında da kısmen frontend geliştirdim."
@@ -42,17 +42,17 @@
         "LINE webhook'ları için HMAC imza doğrulaması, tüm controller'larda strong parameters ile yetkilendirme ve bcrypt ile güvenli kimlik doğrulama uyguladım.",
         "Bir TTS (metinden sese) sunucu havuzunun önünde çalışan Go servisini tek başıma geliştirdim. Durumun kanallara ait olduğu tasarımı sayesinde servis race condition'a yapısal olarak kapalı; PCM'den MP3'e dönüştürme, içerik özeti (digest) tabanlı önbellekleme ve sunucu başına yük dağıtımı sunuyor. Servisi CI'da `go test -race` ile doğruladım.",
         "Günlük Reuters DataScope Select piyasa verilerini idempotent bir DynamoDB/S3 durum makinesine aktaran bir Go AWS Lambda fonksiyonu geliştirdim; MIT lisanslı bir Reuters DSS Go istemci kütüphanesini ayrı bir proje olarak çıkardım.",
-        "Olgun bir CI/CD süreci işlettim: CircleCI ile derleme ve dağıtım, AWS ECR'ye gönderilen Docker imajları ve etiket (tag) tabanlı sürümler."
+        "CI/CD sürecini işlettim: CircleCI ile derleme ve dağıtım, AWS ECR'ye gönderilen Docker imajları ve etiket (tag) tabanlı sürümler."
       ]
     },
     {
       "title": "Kıdemli Geliştirme Mühendisi",
       "logo": "allm.png",
-      "abstract": "Sağlık bilişimi ve perakende analitiği alanlarında çalışan bir şirkette iki ürün hattının tek ya da lider geliştiricisi: uçtan uca bir IoT/edge mağaza içi kişi analitiği ürünü ve sürümlendirilmiş bir klinik inme/kalp triyaj API'si.",
+      "abstract": "Sağlık bilişimi ve perakende analitiği alanlarında çalışan bir şirkette iki ürün hattının tek ya da lider geliştiricisi: bir IoT/edge mağaza içi kişi analitiği ürünü ve hastaneler için sürümlendirilmiş bir inme/kalp triyaj API'si.",
       "company": "Allm Inc (Tokyo, Ofisten)",
       "period": "2014 - 2018",
       "responsibilities": [
-        "Mağaza içi edge cihazlar (amd64 ve ARM) için uçtan uca bir Go arka plan servisini (daemon) tek başıma geliştirdim: BLE beacon'larla personel sayımı, Wi-Fi sniffing ile tekrar gelen müşteri sayımı ve yüz tanıma; web tabanlı bir yapılandırma arayüzüyle birlikte.",
+        "Mağaza içi edge cihazlar (amd64 ve ARM) için bir Go arka plan servisini (daemon) tek başıma geliştirdim: BLE beacon'larla personel sayımı, Wi-Fi sniffing ile tekrar gelen müşteri sayımı ve yüz tanıma; web tabanlı bir yapılandırma arayüzüyle birlikte.",
         "OTA (kablosuz) güncelleme pipeline'ının tamamını kurdum: amd64/armhf için çapraz derleme, imzalı Debian paketleri, HashiCorp Vault'tan çekilen derleme secret'ları, GPG ile imzalanan sürümler ve testing/release kanallarına sahip bir S3 apt deposunda yayın.",
         "Hastaneler için FAST-ED inme/kalp triyaj API'sini (Ruby/Grape + GraphQL + Pundit) ana geliştirici olarak hayata geçirdim; API sürümleme, HMAC ile istek imzalama ve giriş kilitleme ile anahtar rotasyonu içeren bcrypt kimlik doğrulaması uyguladım.",
         "Triyaj yönetim SPA'sını (Vue 2 + Apollo) ekiple birlikte geliştirip AWS S3/CloudFront'a dağıttım; çok kiracılı bir Go veri toplama servisine sensör üreticileri için sürücüler ekledim.",
@@ -100,7 +100,7 @@
         "Puppet + Vagrant (VirtualBox ve AWS desteğiyle) ile tüm sunucu yığınının provisioning'ini yazdım: GlassFish, PostgreSQL, MongoDB, log aktarımı ve güvenlik duvarı; ayrıca Android/iOS derleme, sürüm ve yedekleme script'lerini hazırladım.",
         "Müşteri başına AWS hesabı/instance etkinleştirmesini yöneten bir kontrol düzlemi (control plane) ve S3 tabanlı, sürümlendirilmiş bir release dağıtım aracı geliştirdim.",
         "AWS hesap açılışını Selenium tabanlı bir pipeline ile uçtan uca otomatikleştirdim ve ekibin git sunucusunu işlettim.",
-        "İzleme ve otomatik ölçeklendirme içeren, ölçeklenebilir bir EC2 altyapısı tasarladım."
+        "İzleme ve otomatik ölçeklendirme içeren EC2 altyapısını tasarladım."
       ]
     },
     {
@@ -117,7 +117,7 @@
     {
       "title": "Sözleşmeli Yazılım Geliştirici",
       "logo": "iron.svg",
-      "abstract": "İlk Docker tabanlı serverless (FaaS) platformlarından IronFunctions'ın web arayüzüne ve motoruna yarı zamanlı açık kaynak katkı.",
+      "abstract": "Erken dönem Docker tabanlı serverless (FaaS) platformu IronFunctions'ın web arayüzüne ve motoruna yarı zamanlı açık kaynak katkı.",
       "company": "Iron.io (ABD, Uzaktan - Yarı Zamanlı)",
       "period": "2017 - 2019",
       "responsibilities": [

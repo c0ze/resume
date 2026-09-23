@@ -5,13 +5,13 @@
     {
       "title": "Travel Activity MCP Services",
       "technologies": "Python, FastAPI, Model Context Protocol, Terraform, AWS ECS",
-      "description": "Built Veltra MCP services that expose the travel-activity catalog to Claude and ChatGPT apps, along with internal analytics tooling; the activity-search connector is live in Anthropic's public Claude connector directory.",
+      "description": "MCP services at Veltra that expose the travel-activity catalog to Claude and ChatGPT apps, plus internal analytics tools. The activity-search connector is listed in Anthropic's public Claude connector directory.",
       "repo": null
     },
     {
       "title": "WareX — Logistics SaaS API",
       "technologies": "Go, Echo, GORM, MySQL, JWT/RBAC, Minio/S3, GKE, CircleCI",
-      "description": "Senior backend engineer and top-3 author on the Go API of WareX, a production logistics 'warehouse-exchange' SaaS at Gaussy — owned the warehouse, contract, workspace, document and pricing verticals plus the team's integration-test harness.",
+      "description": "Senior backend engineer and top-3 author on the Go API of WareX, a production logistics 'warehouse-exchange' SaaS at Gaussy. Owned the warehouse, contract, workspace, document and pricing resources and the team's integration-test harness.",
       "repo": null
     },
     {
@@ -23,7 +23,7 @@
     {
       "title": "bumblebee — Race-free TTS Caching Service",
       "technologies": "Go, CSP concurrency, LAME (PCM→MP3), Docker, AWS",
-      "description": "Solo Go service fronting a pool of text-to-speech servers — race-free by design (channel-owned state), with PCM-to-MP3 transcoding, content-digest caching and per-host load distribution, verified with `go test -race`, at Robotfund.",
+      "description": "Go service written alone at Robotfund, in front of a pool of text-to-speech servers: channel-owned state with no data races (verified with `go test -race`), PCM-to-MP3 transcoding, content-digest caching and per-host load distribution.",
       "repo": null
     },
     {
@@ -35,31 +35,31 @@
     {
       "title": "FupIntuition — IoT/Edge People Analytics",
       "technologies": "Go (amd64 + ARM), BLE beacons, WiFi sniffing, HashiCorp Vault, GPG-signed OTA, S3 apt repo",
-      "description": "Sole author of an end-to-end Go daemon for in-store edge devices — staff counting via BLE, repeat-customer counting via WiFi, and face recognition — with a web UI and a full signed over-the-air update pipeline, at Allm.",
+      "description": "Sole author, at Allm, of a Go daemon for in-store edge devices that counts staff via BLE and repeat customers via WiFi and runs face recognition, with a web UI and a signed over-the-air update pipeline.",
       "repo": null
     },
     {
       "title": "FAST-ED Clinical Triage API",
       "technologies": "Ruby, Grape, GraphQL, Pundit, HMAC, bcrypt",
-      "description": "Lead author of a versioned stroke/cardiac triage API for hospitals (Grape + GraphQL + Pundit) with HMAC request signing and hardened authentication, plus its Vue 2 + Apollo admin SPA, at Allm.",
+      "description": "Lead author, at Allm, of a versioned stroke/cardiac triage API for hospitals (Grape + GraphQL + Pundit), with HMAC request signing and bcrypt authentication with login lockout. Co-built its Vue 2 + Apollo admin SPA.",
       "repo": null
     },
     {
       "title": "Griffon — Mobile MMORPG Backend",
       "technologies": "Ruby, Padrino, ActiveRecord, MySQL, Resque, RSpec",
-      "description": "Backend engineer on the live Ruby/Padrino backend of the published mobile MMORPG 'Griffon' (幻塔戦記グリフォン, Japan + Korea) — independently owned the achievements, friendship, reward-distribution and guild-battle matchmaking systems with database-level idempotency, at Aiming.",
+      "description": "Backend engineer at Aiming on the live Ruby/Padrino backend of 'Griffon' (幻塔戦記グリフォン), a mobile MMORPG published in Japan and Korea. Owned the achievements, friendship, reward-distribution and guild-battle matchmaking systems, with idempotency enforced in the database.",
       "repo": null
     },
     {
       "title": "IronFunctions — Open-source Serverless Platform",
       "technologies": "Go, Docker, Vue, Express, JWT, CircleCI",
-      "description": "Open-source contributor to IronFunctions, an early Docker-based FaaS platform (later the Fn Project) — added JWT auth and the CI/CD release pipeline to its web UI and contributed engine features such as a payload-as-stdin runner, at iron.io.",
+      "description": "Open-source contributor to IronFunctions at iron.io, an early Docker-based FaaS platform (later the Fn Project). Added JWT auth and the CI/CD release pipeline to its web UI, and engine features such as a payload-as-stdin runner.",
       "repo": "https://github.com/iron-io/functions"
     },
     {
       "title": "This Résumé Site",
       "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
-      "description": "A static, multilingual (EN/JA/TR) résumé site prerendered to HTML, generating language-specific PDF and DOCX résumés at build time from a single content source, deployed to GitHub Pages.",
+      "description": "Static résumé site in English, Japanese and Turkish, prerendered to HTML. One content source produces the page and the PDF, DOCX, JSON Resume and vCard files at build time; hosted on GitHub Pages.",
       "repo": "https://github.com/c0ze/resume"
     }
   ]

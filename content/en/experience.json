@@ -10,22 +10,22 @@
       "company": "Veltra (Tokyo, Remote)",
       "period": "2024 - Present",
       "responsibilities": [
-        "Built a stateless 'activity search' MCP server compatible with Claude and OpenAI app hosts — approved by Anthropic and publicly listed in the Claude connector directory — plus internal Google Analytics and AWS read-only MCP tools.",
-        "Migrated image delivery from a paid CDN to a self-developed solution on AWS CloudFront.",
-        "General application and infrastructure architecture and planning across Python, Go and Node services, deployed on AWS ECS with Terraform and GitHub Actions CI/CD.",
-        "Acted as bridge engineer between the overseas and Japan teams, and led MCP integration of legacy systems."
+        "Built a stateless 'activity search' MCP server that runs in both Claude and OpenAI app hosts. Anthropic approved it and it is listed in the public Claude connector directory. Also built internal read-only MCP tools for Google Analytics and AWS.",
+        "Moved image delivery off a paid CDN onto an in-house setup on AWS CloudFront.",
+        "Application and infrastructure architecture for the Python, Go and Node services, which deploy to AWS ECS through Terraform and GitHub Actions.",
+        "Bridge engineer between the overseas and Japan teams; led the MCP integration of legacy systems."
       ]
     },
     {
       "title": "Senior Developer",
       "logo": "gaussy.png",
-      "abstract": "Senior backend engineer and top-3 author on the Go (Echo/GORM) API behind WareX, a production logistics 'warehouse-exchange' SaaS — owning core domain verticals and the team's integration-test harness.",
+      "abstract": "Senior backend engineer and top-3 author on the Go (Echo/GORM) API behind WareX, a production logistics 'warehouse-exchange' SaaS. Owned core domain areas and the team's integration-test harness.",
       "company": "Gaussy (Tokyo, Remote)",
       "period": "2020 - 2023",
       "responsibilities": [
         "Senior backend engineer and a top-3 author on the Go (Echo / GORM) API of WareX, a production logistics 'warehouse-exchange' SaaS (the company incorporated as Gaussy in 2022).",
-        "Owned the warehouse (geo + license-filtered search), contract, workspace, document and price-specification resource verticals end-to-end — data models, REST resources and migrations.",
-        "Built role-based access-control middleware and server-side mass-assignment guards, with systematic request validation and parameterized queries.",
+        "Owned the warehouse (geo- and license-filtered search), contract, workspace, document and price-specification resources, from data models to REST endpoints and migrations.",
+        "Built role-based access-control middleware and server-side mass-assignment guards, plus request validation and parameterized queries.",
         "Owned a large share of the integration-test suite, including the shared test harness the rest of the team's API tests run on.",
         "Database migration and seeding (goose) and Bugsnag error reporting; third-party integrations including Hubspot and Mailgun.",
         "Deployed on Google Kubernetes Engine via CircleCI with SOPS-managed secrets; some frontend work on the Vue/Nuxt admin and customer portals."
@@ -40,19 +40,19 @@
       "responsibilities": [
         "Lead author of a multi-tenant Rails 5 JSON:API + React platform delivering fund and bond analytics (net-asset-value graphs, factor analysis) to users as LINE Flex Messages and generated charts.",
         "Implemented LINE webhook HMAC signature verification, strong-parameter authorization across all controllers, and bcrypt-secured authentication.",
-        "Built a solo Go service fronting a pool of text-to-speech servers — race-free by design (channel-owned state), with PCM-to-MP3 transcoding, content-digest caching and per-host load distribution, validated with `go test -race` in CI.",
+        "Built, alone, a Go service in front of a pool of text-to-speech servers: channel-owned state with no data races (checked with `go test -race` in CI), PCM-to-MP3 transcoding, content-digest caching and per-host load distribution.",
         "Built a Go AWS Lambda ingesting daily Reuters DataScope Select market data into an idempotent DynamoDB/S3 state machine, and extracted an MIT-licensed Reuters DSS Go client library.",
-        "Mature CI/CD: CircleCI build-and-deploy with Docker images pushed to AWS ECR and tag-gated releases."
+        "CI/CD on CircleCI: builds and deploys, Docker images pushed to AWS ECR, releases gated on tags."
       ]
     },
     {
       "title": "Senior Development Engineer",
       "logo": "allm.png",
-      "abstract": "Solo/lead builder across two product lines at a medical-IT and retail-analytics company — an end-to-end IoT/edge people-analytics product and a versioned clinical stroke/cardiac triage API.",
+      "abstract": "Sole or lead developer on two product lines at a medical-IT and retail-analytics company: an IoT/edge people-analytics product and a versioned stroke/cardiac triage API for hospitals.",
       "company": "Allm Inc (Tokyo, Onsite)",
       "period": "2014 - 2018",
       "responsibilities": [
-        "Sole author of an end-to-end Go daemon for in-store edge devices (amd64 and ARM) — staff counting via BLE beacons, repeat-customer counting via WiFi sniffing, and face recognition — with a web configuration UI.",
+        "Sole author of a Go daemon for in-store edge devices (amd64 and ARM) that counted staff via BLE beacons and repeat customers via WiFi sniffing, ran face recognition, and had a web configuration UI.",
         "Built its full over-the-air update pipeline: cross-compiled amd64/armhf, built signed Debian packages, pulled build secrets from HashiCorp Vault, GPG-signed releases, and published to an S3 apt repository with testing/release channels.",
         "Lead author of a FAST-ED stroke/cardiac triage API for hospitals (Ruby/Grape + GraphQL + Pundit) with API versioning, HMAC request signing, and bcrypt auth with login lockout and rotating keys.",
         "Co-built the triage admin SPA (Vue 2 + Apollo) deployed to AWS S3/CloudFront, and contributed sensor-vendor drivers to a multi-tenant Go ingestion daemon.",
@@ -62,36 +62,36 @@
     {
       "title": "Developer",
       "logo": "aiming.png",
-      "abstract": "Backend engineer on the live Ruby/Padrino backend of a published mobile MMORPG (Japan + Korea), independently owning several gameplay feature verticals.",
+      "abstract": "Backend engineer on the live Ruby/Padrino backend of a mobile MMORPG published in Japan and Korea; owned several gameplay features on my own.",
       "company": "Aiming Inc (Tokyo, Onsite, Contract)",
       "period": "2014",
       "responsibilities": [
         "Backend engineer on the live Ruby/Padrino backend of 'Griffon', a published mobile MMORPG (Japan + Korea/Naver) in a ~60-engineer codebase.",
-        "Independently owned the achievements, friendship, reward-distribution and guild-battle matchmaking systems end-to-end — data model, typed-RPC service, master-data importer, migrations and tests.",
+        "Owned the achievements, friendship, reward-distribution and guild-battle matchmaking systems on my own: data model, typed-RPC service, master-data importer, migrations and tests.",
         "Designed database-level idempotency via unique indexes and wrapped multi-step in-game economy mutations in transactions.",
-        "Built a structurally mass-assignment-free typed-RPC API with server-side authorization, validated by branch-complete RSpec suites.",
-        "Worked in an Agile environment with tight deadlines on a game with thousands of daily active users."
+        "Built a typed-RPC API with server-side authorization whose structure rules out mass assignment, covered by RSpec suites that exercise every branch.",
+        "Shipped to tight Agile deadlines on a game with thousands of daily active users."
       ]
     },
     {
       "title": "Dev Ops",
       "logo": "kii.png",
-      "abstract": "Owned the usage-metering and billing pipeline for a mobile Backend-as-a-Service platform, plus the API-gateway and Puppet-based deployment around it — and wrote the team's first Go code.",
+      "abstract": "Owned the usage-metering and billing pipeline for a mobile Backend-as-a-Service platform, plus the API gateway and Puppet deployment around it. Also wrote the team's first Go code.",
       "company": "Kii Inc (Tokyo, Onsite)",
       "period": "2012 - 2014",
       "responsibilities": [
-        "Co-led (primary author) a Ruby usage-metering and billing batch for a mobile Backend-as-a-Service platform — aggregated per-app API/storage/analytics usage from a 3scale API gateway, computed plan overages, and reported billable usage to Zuora with idempotent create-or-update reconciliation.",
+        "Co-led, as primary author, a Ruby usage-metering and billing batch for a mobile Backend-as-a-Service platform. It aggregated per-app API, storage and analytics usage from a 3scale API gateway, computed plan overages, and reported billable usage to Zuora with idempotent create-or-update reconciliation.",
         "Tested with RSpec, Minitest and serverspec; packaged as an Omnibus/RPM cron job.",
         "Built and operated the Varnish + 3scale API-gateway metering layer and the Puppet modules (VCL/Puppet) that deployed the billing and gateway stack.",
         "Payment integration via Zuora and PayPal; usage tracking and logging with 3scale, Varnish and fluentd.",
         "Developer-portal development (Ruby on Rails, Backbone.js) and Cloud Code maintenance (Node.js); wrote the team's first Go code (an early Kii Go SDK).",
-        "Various automation: reports and AWS resource tuning in Ruby/Bash with Puppet."
+        "Automated reports and AWS resource tuning in Ruby and Bash, with Puppet."
       ]
     },
     {
       "title": "Dev Ops",
       "logo": "mobilous.png",
-      "abstract": "Sole build/release and cloud-infrastructure engineer for a white-label no-code mobile-app platform — the native build pipeline, S3 release delivery, and Puppet/Vagrant provisioning.",
+      "abstract": "Sole build/release and cloud-infrastructure engineer for a white-label no-code mobile-app platform: the native build pipeline, S3 release delivery, and Puppet/Vagrant provisioning.",
       "company": "Mobilous Inc (Tokyo, Onsite)",
       "period": "2011 - 2012",
       "responsibilities": [
@@ -100,7 +100,7 @@
         "Authored full server-stack provisioning with Puppet + Vagrant (dual VirtualBox/AWS): GlassFish, PostgreSQL, MongoDB, log shipping and firewall, plus the Android/iOS build, release and backup scripts.",
         "Built a per-customer AWS account/instance activation control plane and a versioned S3 release-delivery tool.",
         "Automated AWS account signup end-to-end with a Selenium-driven pipeline, and ran the team's git server.",
-        "Designed scalable EC2 infrastructure with monitoring and auto-scaling."
+        "Designed the EC2 infrastructure, with monitoring and auto-scaling."
       ]
     },
     {
@@ -117,12 +117,12 @@
     {
       "title": "Contract Developer",
       "logo": "iron.svg",
-      "abstract": "Part-time open-source contributor to IronFunctions, one of the first Docker-based serverless (FaaS) platforms — its web UI and engine.",
+      "abstract": "Part-time open-source contributor to the web UI and engine of IronFunctions, an early Docker-based serverless (FaaS) platform.",
       "company": "Iron.io (US, Remote - Part Time)",
       "period": "2017 - 2019",
       "responsibilities": [
         "Part-time open-source contributor to IronFunctions, an early Docker-based serverless (FaaS) platform (later the Fn Project).",
-        "Contributed to and helped maintain the IronFunctions web UI (Express + Vue) as a top-3 author — added JWT authentication and the CI/CD Docker release pipeline.",
+        "Top-3 author of the IronFunctions web UI (Express + Vue), which I also helped maintain. Added JWT authentication and the CI/CD Docker release pipeline.",
         "Contributed features and fixes to the Go FaaS engine, including a payload-as-stdin runner and a dependency-management migration.",
         "Wrote example serverless functions in Go, Node and Ruby to dogfood the platform."
       ]
