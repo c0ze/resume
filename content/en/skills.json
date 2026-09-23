@@ -3,7 +3,6 @@
   "technicalSkills": [
     "Proficient in Go, Ruby, and Python. Comfortable picking up new languages quickly.",
     "AI/LLM integration — working with the Anthropic and Gemini APIs, Model Context Protocol (MCP) tooling, and TTS engines (Edge TTS, Coqui).",
-    "Security-aware platform work: OAuth 2.1 / OIDC (PKCE, JWKS, refresh-token rotation, PAR, dynamic client registration), SSO, and RBAC.",
     "Extensive experience with AWS & GCP. Hands on with EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase.",
     "Backend development with Node.js/Express and Go/Echo. Experience designing RESTful and GraphQL APIs for web and mobile.",
     "Docker containerization and CI/CD. Early adopter of continuous integration and deployment practices.",

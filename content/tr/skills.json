@@ -3,7 +3,6 @@
   "technicalSkills": [
     "Go, Ruby ve Python'da yetkin. Yeni dilleri hızlıca öğrenebilir.",
     "AI/LLM entegrasyonu — Anthropic ve Gemini API'leri, Model Context Protocol (MCP) araçları ve TTS motorları (Edge TTS, Coqui) ile çalışma.",
-    "Güvenlik odaklı platform çalışması: OAuth 2.1 / OIDC (PKCE, JWKS, refresh-token rotasyonu, PAR, dinamik istemci kaydı), SSO ve RBAC.",
     "AWS & GCP'de kapsamlı deneyim. EC2, S3, DynamoDB, SES, IAM, Route53, Cloud Run, Firebase ile uygulamalı deneyim.",
     "Node.js/Express ve Go/Echo ile backend geliştirme. Web ve mobil için RESTful ve GraphQL API tasarım deneyimi.",
     "Docker konteynerizasyonu ve CI/CD. Sürekli entegrasyon ve dağıtım uygulamalarının erken benimseyicisi.",
