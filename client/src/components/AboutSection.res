@@ -1,66 +1,46 @@
-// Entry 01 — the Statement, set bilingually side by side.
-//
-// The reader is often Japanese-speaking and often on a phone; a record that
-// makes them switch languages to read the opening claim has already cost them
-// time. So the statement is written twice, in parallel columns, on the same
-// ruled band.
+// About. The first paragraph is the summary under the name (Intro.res); this
+// section carries the rest of the statement, then the whole statement again in
+// the companion language — Japanese for an English reader, English for
+// everyone else — so a reader on the other side of the table does not have to
+// switch languages to read the opening claim.
 
 let endonym = (lang: Translations.language) =>
   switch lang {
   | En => "English"
-  | Ja => "日本語"
-  | Tr => "Türkçe"
+  | Ja => `日本語`
+  | Tr => `Türkçe`
   }
 
-// The companion column: Japanese for an English reader, English for everyone
-// else. Both audiences named in the product brief get their own language plus
-// the one the other side of the table reads.
 let companion = (lang: Translations.language) =>
   switch lang {
   | Translations.En => Translations.Ja
   | Ja | Tr => En
   }
 
-let statement = (t: Translations.translations) => [
-  t.about.paragraph1,
-  t.about.paragraph2->Option.getOr(""),
-]
-
-let column = (lang, t: Translations.translations) => {
-  let code = Translations.languageToString(lang)
-  <div lang=code>
-    <p className="t-label" lang=code> {React.string(endonym(lang))} </p>
-    {statement(t)
-    ->Array.filter(p => p !== "")
-    ->Array.mapWithIndex((p, i) =>
-      <p key={Int.toString(i)} className="measure t-body mt-1.5">
-        {React.string(p)}
-      </p>
-    )
-    ->React.array}
-  </div>
-}
+let paragraphs = (t: Translations.translations) =>
+  [t.about.paragraph1, t.about.paragraph2->Option.getOr("")]->Array.filter(p => p !== "")
 
 @react.component
-let make = (~folios: Folio.t) => {
+let make = () => {
   let {language, translations: t, flavor} = LanguageContext.useLanguage()
   let other = companion(language)
-  let otherT = Translations.getTranslations(~flavor=?flavor, other)
+  let otherT = Translations.getTranslations(~flavor?, other)
+  let code = Translations.languageToString(other)
 
-  <Entry id="about" number="01" folio={folios.statement} major=true>
-    <Entry.Head
-      title={t.about.title}
-      meta={<span className="t-data pencil">
-        {React.string(
-          `${Translations.languageToString(language)->String.toUpperCase} / ${Translations.languageToString(
-              other,
-            )->String.toUpperCase}`,
-        )}
-      </span>}
-    />
-    <div className="bilingual">
-      {column(language, t)}
-      {column(other, otherT)}
-    </div>
-  </Entry>
+  <Section id="about" title={t.about.title}>
+    {switch t.about.paragraph2 {
+    | Some(p) if p !== "" =>
+      <Section.Row gutter={React.string(endonym(language))}>
+        <p className="row__prose"> {React.string(p)} </p>
+      </Section.Row>
+    | _ => React.null
+    }}
+    <Section.Row gutter={React.string(endonym(other))} gutterLang=code>
+      <div className="row__prose row__prose--companion" lang=code>
+        {paragraphs(otherT)
+        ->Array.mapWithIndex((p, i) => <p key={Int.toString(i)}> {React.string(p)} </p>)
+        ->React.array}
+      </div>
+    </Section.Row>
+  </Section>
 }

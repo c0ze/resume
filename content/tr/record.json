@@ -21,6 +21,9 @@
   "rendition": "Görünüm",
   "language": "Dil",
   "backToIndex": "İçindekilere dön",
+  "you": "siz",
+  "assistant": "yz",
+  "sections": "Bölümler",
   "fields": {
     "location": "Konum",
     "resident": "İkamet",
@@ -34,7 +37,10 @@
     "evidence": "Kanıt",
     "institution": "Kurum",
     "stack": "Teknoloji",
-    "source": "Kaynak"
+    "source": "Kaynak",
+    "links": "Bağlantılar",
+    "download": "İndir",
+    "ask": "Sor"
   },
   "columns": {
     "no": "No.",

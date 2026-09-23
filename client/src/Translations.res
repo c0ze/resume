@@ -142,10 +142,11 @@ type pdfMetaContent = {
   generatedOn: string,
 }
 
-// The record book's own vocabulary — field labels, column heads, the issue and
-// countersign copy. Kept out of the résumé sections proper because none of it
-// is a claim about Arda; it is the apparatus of the document. Translated in
-// full for all three languages: Japanese and Turkish are not fallbacks.
+// The page's own vocabulary — rail labels, the certificate of issue, chat
+// labels. Kept out of the résumé sections proper because none of it is a claim
+// about Arda; it is the apparatus of the document. Translated in full for all
+// three languages: Japanese and Turkish are not fallbacks. (The file name and
+// some keys date from the earlier "record book" design; the paths are kept.)
 type recordFields = {
   location: string,
   resident: string,
@@ -160,6 +161,9 @@ type recordFields = {
   institution: string,
   stack: string,
   source: string,
+  links: string,
+  download: string,
+  ask: string,
 }
 
 type recordColumns = {
@@ -197,6 +201,9 @@ type recordContent = {
   rendition: string,
   language: string,
   backToIndex: string,
+  you: string,
+  assistant: string,
+  sections: string,
   fields: recordFields,
   columns: recordColumns,
 }

@@ -21,6 +21,9 @@
   "rendition": "表示",
   "language": "言語",
   "backToIndex": "目次へ戻る",
+  "you": "あなた",
+  "assistant": "AI",
+  "sections": "セクション",
   "fields": {
     "location": "所在地",
     "resident": "在住",
@@ -34,7 +37,10 @@
     "evidence": "参照",
     "institution": "教育機関",
     "stack": "技術",
-    "source": "ソース"
+    "source": "ソース",
+    "links": "リンク",
+    "download": "ダウンロード",
+    "ask": "質問する"
   },
   "columns": {
     "no": "番号",

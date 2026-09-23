@@ -1,27 +1,24 @@
-// Local time where the record is kept. Renders a placeholder on the server,
-// then ticks every 30s on the client. Tabular figures, like every other number
-// on the page.
+// Local time where the résumé is kept, in the status bar: "JST 18:19:16".
+// Renders a placeholder on the server, then ticks every second on the client.
+// Tabular figures, so the bar does not shimmer as the digits change.
 let startClock: (string => unit) => (unit => unit) = %raw(`
   function (setTime) {
-    function fmt() {
-      try {
-        return new Intl.DateTimeFormat("en-GB", {
-          timeZone: "Asia/Tokyo",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }).format(new Date());
-      } catch (e) {
-        return "";
-      }
+    var fmt;
+    try {
+      fmt = new Intl.DateTimeFormat("en-GB", {
+        timeZone: "Asia/Tokyo",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    } catch (e) {
+      return function () {};
     }
-    setTime(fmt());
-    var id = setInterval(function () {
-      setTime(fmt());
-    }, 30000);
-    return function () {
-      clearInterval(id);
-    };
+    function tick() { setTime(fmt.format(new Date())); }
+    tick();
+    var id = setInterval(tick, 1000);
+    return function () { clearInterval(id); };
   }
 `)
 
@@ -31,5 +28,7 @@ let make = () => {
 
   React.useEffect0(() => Some(startClock(t => setTime(_ => t))))
 
-  <span className="pencil"> {React.string((time == "" ? "--:--" : time) ++ " JST")} </span>
+  <span className="bar__clock">
+    {React.string("JST " ++ (time == "" ? "--:--:--" : time))}
+  </span>
 }

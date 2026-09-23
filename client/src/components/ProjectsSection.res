@@ -1,46 +1,40 @@
-// Entry 04 — the works. Each one is a numbered sub-record: what it is, what it
-// was built with, and where the source is when the source is public. Three of
-// the ten have public repositories; the rest say so by omission rather than by
-// a dead link.
+// Projects. Each one: what it is, what it was built with (the only chips on
+// the page, because a stack is a list of names), and where the source is when
+// the source is public. Projects without a public repository say so by
+// omission rather than by a dead link.
+
+let stack: string => array<string> = %raw(`
+  function (s) { return String(s || "").split(/\s*,\s*/).filter(Boolean); }
+`)
 
 @react.component
-let make = (~folios: Folio.t) => {
+let make = () => {
   let {translations: t} = LanguageContext.useLanguage()
   let r = t.record
-  let entries = t.projects.entries
 
-  <Entry id="projects" number="04" folio={folios.works} major=true>
-    <Entry.Head
-      title={t.projects.title}
-      meta={<span className="t-data pencil">
-        {React.string(`${Int.toString(Array.length(entries))} ${r.entriesLabel}`)}
-      </span>}
-    />
-    <ul className="record">
-      {entries
-      ->Array.mapWithIndex((project, i) =>
-        <li key={Int.toString(i)}>
-          <h3 className="t-entry"> {React.string(project.title)} </h3>
-          <p className="measure t-body"> {React.string(project.description)} </p>
-          <p className="linklist">
-            <span className="t-label"> {React.string(r.fields.stack)} </span>
-            {React.string(` ${project.technologies}`)}
+  <Section id="projects" title={t.projects.title}>
+    {t.projects.entries
+    ->Array.mapWithIndex((project, i) =>
+      <Section.Row key={Int.toString(i)} gutter={React.string(Section.pad(i))}>
+        <h3 className="row__title"> {React.string(project.title)} </h3>
+        <p className="row__lead"> {React.string(project.description)} </p>
+        <ul className="chips" ariaLabel={r.fields.stack}>
+          {stack(project.technologies)
+          ->Array.map(name => <li key=name> {React.string(name)} </li>)
+          ->React.array}
+        </ul>
+        {switch project.repo->Nullable.toOption {
+        | Some(url) =>
+          <p className="row__meta">
+            <a href={url} target="_blank" rel="noopener noreferrer" title={t.projects.viewSource}>
+              {React.string(url->String.replace("https://", ""))}
+              {React.string(` ↗`)}
+            </a>
           </p>
-          {switch project.repo->Js.Nullable.toOption {
-          | Some(url) =>
-            <p className="linklist">
-              <span className="t-label"> {React.string(r.fields.source)} </span>
-              {React.string(" ")}
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                {React.string(url->String.replace("https://", ""))}
-                {React.string(` ↗`)}
-              </a>
-            </p>
-          | None => React.null
-          }}
-        </li>
-      )
-      ->React.array}
-    </ul>
-  </Entry>
+        | None => React.null
+        }}
+      </Section.Row>
+    )
+    ->React.array}
+  </Section>
 }

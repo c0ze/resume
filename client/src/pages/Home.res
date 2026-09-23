@@ -1,35 +1,24 @@
-// The bound record, in order: the index page, then the entries, then the
-// countersign. One route, one document.
+// The one route. The status bar, the treeline, then two columns: the meta rail
+// and the main column (name, position, summary, then every section). The chat
+// floats over it all. See DESIGN.md.
 
 @react.component
-let make = () => {
-  let {translations: t} = LanguageContext.useLanguage()
-  let folios = Folio.compute(t)
-
-  // The ruling is the layout grid, so it has to be re-measured whenever the
-  // page's measurements change — a new language, a new flavour, a resize, or
-  // the web fonts finally arriving.
-  React.useEffect1(() => Some(Quad.align()), [
-    Array.length(t.experience.jobs),
-    Array.length(t.skills.technicalSkills),
-    String.length(t.header.subtitle),
-  ])
-
-  <div className="sheet">
-    <Spine />
-    <main className="page">
-      <Masthead folios />
-      <Contents folios />
-      <IndexIssue folios />
-      <AboutSection folios />
-      <ExperienceSection folios />
-      <SkillsSection folios />
-      <ProjectsSection folios />
-      <EducationSection folios />
-      <ContactSection folios />
-      <Footer folios />
-    </main>
-    <Tag />
+let make = () =>
+  <div id="top" className="page">
+    <StatusBar />
+    <Treeline />
+    <div className="cv">
+      <Rail />
+      <main className="cv__main">
+        <Intro />
+        <AboutSection />
+        <ExperienceSection />
+        <SkillsSection />
+        <ProjectsSection />
+        <EducationSection />
+        <ContactSection />
+        <Footer />
+      </main>
+    </div>
     <ChatWidget />
   </div>
-}

@@ -16,4 +16,4 @@ public/arda.vcf
 # ReScript build artifacts
 *.res.mjs
 .bsb.lock
-lib/
+/lib/

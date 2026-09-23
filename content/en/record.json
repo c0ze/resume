@@ -21,6 +21,9 @@
   "rendition": "Rendition",
   "language": "Language",
   "backToIndex": "Back to index",
+  "you": "you",
+  "assistant": "ai",
+  "sections": "Sections",
   "fields": {
     "location": "Location",
     "resident": "Resident",
@@ -34,7 +37,10 @@
     "evidence": "Evidence",
     "institution": "Institution",
     "stack": "Stack",
-    "source": "Source"
+    "source": "Source",
+    "links": "Links",
+    "download": "Download",
+    "ask": "Ask"
   },
   "columns": {
     "no": "No.",
