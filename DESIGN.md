@@ -153,7 +153,11 @@ From Google Fonts (`client/index.html`):
   - Below 600px the host name and the clock drop out, so the bar never scrolls
     sideways.
 - **Breakpoints**:
-  - ≤900px: the rail stacks above main as a 3-column block.
+  - ≤900px: one column: the intro (name, position, summary) first, then the
+    rail as a 3-column block under a hairline, then the sections. The chat
+    launcher folds to a 44px `?` square (its label stays the accessible
+    name) and the page keeps 96px of bottom padding so the colophon scrolls
+    clear of it.
   - ≤600px: single column; rows stack with the gutter as a line above the
     entry.
   - Tested at 390px with no horizontal overflow.

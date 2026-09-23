@@ -3,8 +3,8 @@
 //
 // The downloads are plain <a download> links — they work without JavaScript,
 // can be copied into an ATS, and are crawlable. Filenames honour ?flavor= via
-// Download.artifacts. On a phone the rail stacks above the main column, so the
-// files are on the first screen.
+// Download.artifacts. Where the columns stack (≤900px) the rail follows the
+// intro, so a phone shows the name and position first and the files next.
 
 let currentYear: int = %raw(`new Date().getFullYear()`)
 

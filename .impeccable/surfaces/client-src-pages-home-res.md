@@ -54,8 +54,8 @@ plain, complete record, and take the file.
 - Every section is a mono label with a hairline.
 - Every entry is a `120px | 1fr` row: mono gutter on the left, entry on the
   right.
-- On a phone the rail stacks above main and the bar folds its nav into a
-  `§ section ▾` menu.
+- On a phone the intro comes first, the rail stacks under it, and the bar
+  folds its nav into a `§ section ▾` menu.
 
 ## Memorable moment
 

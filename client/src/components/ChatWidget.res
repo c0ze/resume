@@ -353,6 +353,7 @@ let make = () => {
   | None => -1
   }
 
+  // Below 900px the launcher shows only its `?` mark; the label stays its name.
   <>
     {isOpen
       ? React.null
@@ -362,8 +363,9 @@ let make = () => {
           onClick={_ => setIsOpen(_ => true)}
           ariaHaspopup=#dialog
           className="chat-launcher no-print">
-          {React.string(c.launcher)}
-          <span ariaHidden=true> {React.string(` ▸`)} </span>
+          <span className="chat-launcher__mark" ariaHidden=true> {React.string("?")} </span>
+          <span className="chat-launcher__label"> {React.string(c.launcher)} </span>
+          <span className="chat-launcher__arrow" ariaHidden=true> {React.string(` ▸`)} </span>
         </button>}
     {isOpen
       ? <div role="dialog" ariaLabelledby="chat-title" className="chat no-print">

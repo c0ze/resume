@@ -170,14 +170,21 @@
 
   /* ---- 3. The two columns ----------------------------------------------- */
 
+  /* Source order is intro, rail, main (so a phone reads the name first); the
+     grid puts the rail back in the left column, beside the intro and main. */
   .cv {
     display: grid;
     grid-template-columns: 260px minmax(0, 1fr);
-    gap: 64px;
+    grid-template-rows: auto 1fr;
+    column-gap: 64px;
+    row-gap: 0;
     max-width: 1180px;
     margin: 0 auto;
     padding: 54px 40px 80px;
   }
+  .intro { grid-column: 2; grid-row: 1; }
+  .rail { grid-column: 1; grid-row: 1 / span 2; }
+  .cv__main { grid-column: 2; grid-row: 2; min-width: 0; }
 
   /* ---- 4. Meta rail ----------------------------------------------------- */
 
@@ -352,6 +359,7 @@
     transition: background-color .15s, color .15s;
   }
   .chat-launcher:hover { background: var(--fg); color: var(--bg); }
+  .chat-launcher__mark { display: none; }
 
   .chat {
     position: fixed;
@@ -567,12 +575,31 @@
 }
 
 @media (max-width: 900px) {
-  .cv { grid-template-columns: minmax(0, 1fr); gap: 40px; padding: 36px 24px 72px; }
+  /* One column: intro, then the rail under a hairline, then main. */
+  .cv { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 40px; padding: 36px 24px 96px; }
+  .intro, .rail, .cv__main { grid-column: 1; grid-row: auto; }
+  .rail { padding-top: 24px; border-top: 1px solid var(--rule); }
   .rail dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 28px; }
   .rail__group + .rail__group { margin-top: 0; }
   .rail__dl { grid-column: span 2; }
   .rail__dl .dl { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .intro__name { font-size: clamp(52px, 13vw, 88px); }
+
+  /* The launcher folds to a 44px square mark in the corner, so it covers a
+     word, not a line; its full label stays its accessible name. The .cv
+     bottom padding lets the colophon scroll clear of it. */
+  .chat-launcher {
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+  .chat-launcher__label,
+  .chat-launcher__arrow { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .chat-launcher__mark { display: block; font: 900 24px/1 var(--display); }
 }
 
 @media (max-width: 600px) {
@@ -581,7 +608,7 @@
   .bar__clock { display: none; }
   .bar__lang { gap: 4px; }
 
-  .cv { padding: 28px 16px 88px; }
+  .cv { padding: 28px 16px 96px; }
   .rail dl { grid-template-columns: minmax(0, 1fr); gap: 22px; }
   .rail__dl { grid-column: auto; }
   .rail__dl .dl { grid-template-columns: 1fr 1fr; }
@@ -595,7 +622,6 @@
   .skills .row { grid-template-columns: 2.25rem minmax(0, 1fr); gap: 8px; }
   .contact { padding-left: 0; }
 
-  .chat-launcher { right: 12px; bottom: 12px; }
   .chat { right: 8px; left: 8px; bottom: 8px; width: auto; height: min(78vh, calc(100vh - var(--bar-h) - 24px)); }
   .artifacts__src { display: none; }
   .cert__row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
@@ -621,8 +647,8 @@
   .no-print, .bar, .treeline, .chat, .chat-launcher, .modal-panel { display: none !important; }
 
   body { font-size: 10pt; }
-  .cv { display: block; max-width: none; padding: 0; }
-  .rail { position: static; margin-bottom: 18pt; }
+  .cv { display: flex; flex-direction: column; max-width: none; padding: 0; }
+  .rail { order: -1; position: static; margin-bottom: 18pt; padding-top: 0; border-top: 0; }
   .rail dl { display: flex; flex-wrap: wrap; gap: 10pt 28pt; }
   .rail__group + .rail__group { margin-top: 0; }
   .intro__name { font-size: 40pt; }
