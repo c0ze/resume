@@ -104,7 +104,8 @@ current work on AI platform architecture.
 - Name **Arda Karaduman**; the site is the formal register of the family —
   restraint here is the point, not a limitation.
 - Voice is factual and unembellished; no growth-copy, no superlatives.
-- Employer logos are real assets in `public/` and are used as marks.
+- No employer logos on the page (`DESIGN.md`: no logos); the files in
+  `public/images/logos/` are not used.
 - Four downloadable formats are a promised capability, not a nice-to-have.
 
 ## Evidence on Hand
@@ -121,12 +122,15 @@ Real and verifiable — use freely:
   Verilog on a MIPS R3000 core at 90nm.
 - **B.Sc. Istanbul Bilgi University 2000–2004** — dissertation on parallel
   quantum-circuit simulation on Linux clusters (MPI); QFT, Grover, Shor.
-- 11 technical skill strings, 10 projects (3 with public repos), real employer
-  logos, real paper titles.
+- 10 technical skill strings, 10 projects (3 with public repos), real paper
+  titles.
+- Two language certificates, in `about.languagesContent`: TOEFL 263 (old CBT
+  scale, 2004) and JLPT Level 2 (2006).
 
 **Absent — must never be fabricated:** salary, references, testimonials,
-performance metrics, team sizes, revenue impact, certifications, or any
-quantified business outcome. None of it exists in the content.
+performance metrics, team sizes, revenue impact, certifications beyond the two
+language certificates above, or any quantified business outcome. None of it
+exists in the content.
 
 ## Product Principles
 

@@ -117,7 +117,7 @@ From Google Fonts (`client/index.html`):
 
 ```
 ┌ status bar (34px, sticky) ───────────────────────────────────────────────┐
-│ ▮ resume.arda.tr  about experience …      EN · JA · TR  JST 18:19  xerox │
+│ ▮ resume.arda.tr  about experience …   EN · JA · TR  JST 18:19:42  xerox │
 ├ treeline (52px, drifting) ───────────────────────────────────────────────┤
 │  rail (260px)        │  main                                             │
 │  LOCATION            │  ARDA                                             │
@@ -275,8 +275,8 @@ Values are never compared. A name mismatch only warns.
 It soft-passes when:
 
 - the contract cannot be fetched;
-- the contract is older than v3, as it is while arda.tr main still publishes
-  v2.
+- the contract is older than v3. arda.tr main publishes v3, so the check
+  runs for real.
 
 `THEMES_CONTRACT_PATH=../arda.tr/config/themes.json` checks against a local
 checkout.

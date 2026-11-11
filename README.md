@@ -36,7 +36,6 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 │   ├── postcss.config.cjs
 │   ├── tailwind.config.cjs
 │   ├── theme.json
-│   ├── tsconfig.json
 │   └── vite.config.ts
 ├── content/              # Resume content for each language
 ├── public/               # Static assets and generated PDFs
