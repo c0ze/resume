@@ -70,3 +70,11 @@ test('missingGlyphs still checks drawable characters and combining marks', () =>
   const font = { hasGlyphForCodePoint: (cp) => cp < 0x300 };
   assert.deepEqual(missingGlyphs(font, 'e\u0301 \u2122\uFE0F'), ['\u0301', '\u2122']);
 });
+
+// Japanese punctuation is a separator too, and brackets nest: stripping must
+// not glue the remaining words together or leave an empty "()" behind.
+test('stripCJK keeps words apart across Japanese separators and empties nested brackets', () => {
+  assert.equal(stripCJK('x (\u65E5\u672C (\u6771\u4EAC)) y'), 'x y');
+  assert.equal(stripCJK('x\uFF08Japan\u3001\u65E5\u672C\u3001Korea\uFF09y'), 'x (Japan, Korea) y');
+  assert.equal(stripCJK('Japan\uFF0C\u65E5\u672C\uFF1BKorea'), 'Japan, Korea');
+});

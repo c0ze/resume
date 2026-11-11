@@ -15,16 +15,25 @@ const CJK_RUN = new RegExp(`[${CJK}]+`, 'gu');
 // A string without Japanese is returned unchanged.
 export function stripCJK(text) {
   if (typeof text !== 'string' || !HAS_CJK.test(text)) return text;
-  return text
-    .replace(/（/g, '(')
-    .replace(/）/g, ')')
+  // Japanese delimiters become their ASCII forms first (they fall in the CJK
+  // range and would otherwise vanish with the run, gluing words together).
+  // A fullwidth bracket carries its own spacing, so it gets a space where it
+  // touches a word.
+  let out = text
+    .replace(/（/g, (_, i, s) => (i > 0 && !/\s/.test(s[i - 1]) ? ' (' : '('))
+    .replace(/）/g, (_, i, s) => (/[\p{L}\p{N}]/u.test(s[i + 1] ?? '') ? ') ' : ')'))
+    .replace(/[、，]/g, ', ')
+    .replace(/；/g, '; ')
     .replace(CJK_RUN, '')
     .replace(/\(\s*[,;]\s*/g, '(') //      "(, Japonya" → "(Japonya"
     .replace(/\s*[,;]\s*\)/g, ')') //      "Korea, )"   → "Korea)"
-    .replace(/([,;])\s*[,;]/g, '$1') //    "Japan; ; Korea" → "Japan; Korea"
-    .replace(/\s*\(\s*\)/g, '') //         "Griffon ()" → "Griffon"
-    .replace(/[ \t]{2,}/g, ' ')
-    .trim();
+    .replace(/([,;])\s*[,;]/g, '$1'); //   "Japan; ; Korea" → "Japan; Korea"
+  // Empty brackets, innermost first: "x ( ( )) y" → "x ( ) y" → "x y".
+  for (let prev; prev !== out; ) {
+    prev = out;
+    out = out.replace(/\s*\(\s*\)/g, '');
+  }
+  return out.replace(/[ \t]{2,}/g, ' ').trim();
 }
 
 // Apply `fn` to every string in a loaded content object.
