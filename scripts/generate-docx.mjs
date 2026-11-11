@@ -1,6 +1,6 @@
 import {
   Document, Packer, Paragraph, TextRun, HeadingLevel,
-  AlignmentType, BorderStyle, ShadingType, ExternalHyperlink,
+  AlignmentType, BorderStyle, ExternalHyperlink,
 } from 'docx';
 import fs from 'fs';
 import path from 'path';
@@ -37,6 +37,13 @@ function getFonts(language) {
   };
 }
 
+// Proofing language of every run, per document.
+const RUN_LANGUAGE = {
+  en: { value: 'en-US' },
+  ja: { value: 'ja-JP', eastAsia: 'ja-JP' },
+  tr: { value: 'tr-TR' },
+};
+
 const COLOR = {
   black: '1a1a1a',
   dark: '2d2d2d',
@@ -49,8 +56,11 @@ const COLOR = {
 function makeHelpers(FONT, language) {
   const jaSpacing = language === 'ja';
 
+  // A real Heading 1, so Word's outline and ATS parsers see the sections; the
+  // run keeps its explicit look, and the style is defined to match it.
   function sectionHeading(text) {
     return new Paragraph({
+      heading: HeadingLevel.HEADING_1,
       children: [
         new TextRun({
           text: jaSpacing ? text : text.toLocaleUpperCase(language),
@@ -255,10 +265,24 @@ async function generateDocx(language, flavor = null) {
   }));
 
   // ── Build document ──────────────────────────────────────────────
+  // Metadata mirrors the PDF's (title, author, subject, keywords).
   const doc = new Document({
     creator: t.pdf.author,
+    lastModifiedBy: t.pdf.author,
     title: t.pdf.title,
+    subject: t.pdf.subject,
     description: t.pdf.subject,
+    keywords: t.pdf.keywords,
+    styles: {
+      default: {
+        document: { run: { language: RUN_LANGUAGE[language] } },
+        // Word's default Heading 1 is 16pt blue; match the section heading instead.
+        heading1: {
+          run: { bold: true, size: 22, font: FONT.heading, color: COLOR.black },
+          paragraph: { outlineLevel: 0 },
+        },
+      },
+    },
     sections: [{
       properties: {
         page: {

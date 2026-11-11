@@ -137,3 +137,32 @@ test('the printed email and website are links in the PDF and the DOCX', () => {
     }
   }
 });
+
+// Word and ATS parsers read the DOCX's metadata, its language (for proofing
+// and hyphenation) and its heading styles (for the outline). They should say
+// what the PDF says.
+test('each DOCX carries the PDF metadata, its language and real section headings', () => {
+  const runLanguage = { en: 'en-US', ja: 'ja-JP', tr: 'tr-TR' };
+  for (const language of languages) {
+    const zip = readZip(path.join(publicDir, `resume-${language}.docx`));
+    const meta = content(language, 'pdf_meta');
+    const core = zip.get('docProps/core.xml');
+    assert.ok(core.includes(`<dc:title>${meta.title}</dc:title>`), `${language}: title`);
+    assert.ok(core.includes(`<dc:subject>${meta.subject}</dc:subject>`), `${language}: subject`);
+    assert.ok(core.includes(`<cp:keywords>${meta.keywords}</cp:keywords>`), `${language}: keywords`);
+    assert.ok(core.includes(`<cp:lastModifiedBy>${meta.author}</cp:lastModifiedBy>`), `${language}: lastModifiedBy`);
+
+    const defaults = zip.get('word/styles.xml').match(/<w:docDefaults>[\s\S]*?<\/w:docDefaults>/)[0];
+    assert.match(defaults, new RegExp(`<w:lang [^>]*w:val="${runLanguage[language]}"`), `${language}: run language`);
+
+    const xml = zip.get('word/document.xml');
+    const headings = [...xml.matchAll(/<w:p>(?:(?!<\/w:p>)[\s\S])*?<w:pStyle w:val="Heading1"\/>[\s\S]*?<\/w:p>/g)]
+      .map((m) => docxText(m[0]));
+    const titles = ['about', 'experience', 'skills', 'projects', 'education'].map((s) => content(language, s).title);
+    assert.deepEqual(
+      headings,
+      titles.map((title) => (language === 'ja' ? title : title.toLocaleUpperCase(language))),
+      `${language}: section headings use the Heading 1 style`
+    );
+  }
+});
