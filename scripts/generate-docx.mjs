@@ -53,7 +53,7 @@ function makeHelpers(FONT, language) {
     return new Paragraph({
       children: [
         new TextRun({
-          text: jaSpacing ? text : text.toUpperCase(),
+          text: jaSpacing ? text : text.toLocaleUpperCase(language),
           bold: true,
           size: 22,
           font: FONT.heading,

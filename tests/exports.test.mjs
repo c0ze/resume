@@ -45,3 +45,19 @@ for (const file of pdfFiles) {
     );
   });
 }
+
+// Upper-casing must follow the language: in Turkish i → İ, so a locale-blind
+// toUpperCase() prints "İŞ DENEYIMI" and "EĞITIM", a misspelling in the heading.
+const docxXml = (file) => readZip(path.join(publicDir, file)).get('word/document.xml');
+const docxText = (xml) => [...xml.matchAll(/<w:t(?: [^>]*)?>([^<]*)<\/w:t>/g)].map((m) => m[1]).join('');
+
+test('Turkish section headings are upper-cased the Turkish way', () => {
+  const pdfText = pdf('resume-tr.pdf').pages.map((p) => p.text).join('\n');
+  const docx = docxText(docxXml('resume-tr.docx'));
+  for (const heading of ['İŞ DENEYİMİ', 'EĞİTİM']) {
+    assert.ok(pdfText.includes(heading), `expected ${heading} in resume-tr.pdf`);
+    assert.ok(docx.includes(heading), `expected ${heading} in resume-tr.docx`);
+  }
+  assert.doesNotMatch(pdfText, /DENEYIMI|EĞITIM/);
+  assert.doesNotMatch(docx, /DENEYIMI|EĞITIM/);
+});

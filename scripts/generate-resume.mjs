@@ -173,7 +173,7 @@ function generateResume(language, flavor = null) {
     ensureSpace(200);
     doc.font(headingFont).fontSize(SIZE.sectionTitle).fillColor(COLOR.black);
     doc.x = PAGE.margin.left;
-    doc.text(title.toUpperCase(), { width: contentWidth, characterSpacing: 1.5 });
+    doc.text(title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 });
     doc.moveDown(0.15);
     drawRule();
     doc.moveDown(0.15);
