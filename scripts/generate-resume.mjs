@@ -365,12 +365,16 @@ function generateResume(language, flavor = null) {
   }
 
   // ── Footer ──────────────────────────────────────────────────────
+  // The footer sits in the bottom margin of the last content page. PDFKit
+  // starts a new page for any line that crosses the margin, so the margin is
+  // lifted while the footer is written and put back afterwards.
   const footerText = `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`;
+  const bottomMargin = doc.page.margins.bottom;
+  const footerY = doc.page.height - bottomMargin + 10;
   doc.font(headingRegular).fontSize(SIZE.footer).fillColor(COLOR.light);
-  doc.text(footerText, PAGE.margin.left, doc.page.height - PAGE.margin.bottom + 10, {
-    width: contentWidth,
-    align: 'center',
-  });
+  doc.page.margins.bottom = 0;
+  doc.text(footerText, PAGE.margin.left, footerY, { width: contentWidth, align: 'center' });
+  doc.page.margins.bottom = bottomMargin;
 
   // Finalize
   try {
