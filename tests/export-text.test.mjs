@@ -54,3 +54,19 @@ test('missingGlyphs names the characters a font cannot draw, ignoring whitespace
   assert.deepEqual(missingGlyphs(font, 'PCM\u2192MP3 \u2192 x\n'), ['\u2192']);
   assert.deepEqual(missingGlyphs(font, 'plain text'), []);
 });
+
+// Variation selectors and other default-ignorable format characters never need
+// a glyph of their own: the layout engine folds them into the character before
+// (an IVS picks a glyph variant) or drops them. Requiring one would fail the
+// build on valid text such as "\u2122\uFE0F" or an IVS-marked kanji.
+test('missingGlyphs does not ask for glyphs for variation selectors and invisible format characters', () => {
+  const exempt = [0xfe0f, 0xfe00, 0xe0100, 0xe01ef, 0x200d, 0x200c, 0x00ad, 0x2060, 0xfeff];
+  const font = { hasGlyphForCodePoint: (cp) => !exempt.includes(cp) };
+  const text = 'a\u2122\uFE0F \u845B\u{E0100} a\u200Db a\u200Cb co\u00ADop word\u2060joiner \uFEFFx \uFE00\u{E01EF}';
+  assert.deepEqual(missingGlyphs(font, text), []);
+});
+
+test('missingGlyphs still checks drawable characters and combining marks', () => {
+  const font = { hasGlyphForCodePoint: (cp) => cp < 0x300 };
+  assert.deepEqual(missingGlyphs(font, 'e\u0301 \u2122\uFE0F'), ['\u0301', '\u2122']);
+});

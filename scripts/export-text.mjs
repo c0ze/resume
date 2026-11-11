@@ -56,12 +56,17 @@ export function withGlyphFallbacks(obj) {
 }
 
 // The characters of `text` that `font` (a fontkit font) has no glyph for.
-// Whitespace and control characters are laid out, not drawn, so they are
-// skipped.
+// Skipped, because they never need a glyph of their own: whitespace and
+// control characters (laid out, not drawn) and default-ignorable code points
+// such as variation selectors (U+FE00-FE0F, U+E0100-E01EF, which fontkit folds
+// into the character before), ZWJ, ZWNJ, the soft hyphen, the word joiner
+// and the BOM. Combining marks are still checked.
+const NO_GLYPH_NEEDED = /[\s\p{Cc}\p{Default_Ignorable_Code_Point}]/u;
+
 export function missingGlyphs(font, text) {
   const missing = new Set();
   for (const char of String(text)) {
-    if (/[\s\p{Cc}]/u.test(char)) continue;
+    if (NO_GLYPH_NEEDED.test(char)) continue;
     if (!font.hasGlyphForCodePoint(char.codePointAt(0))) missing.add(char);
   }
   return [...missing];
