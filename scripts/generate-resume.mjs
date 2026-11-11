@@ -2,6 +2,7 @@ import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
@@ -9,16 +10,6 @@ import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
-
-function loadContent(language, section) {
-  const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`Error loading content file: ${filePath}`, error);
-    return {};
-  }
-}
 
 // ── Layout constants ────────────────────────────────────────────────
 const PAGE = {
@@ -414,16 +405,14 @@ function generateResume(language, flavor = null) {
   doc.text(footerText, PAGE.margin.left, footerY, { width: contentWidth, align: 'center' });
   doc.page.margins.bottom = bottomMargin;
 
-  // Finalize
-  try {
-    doc.end();
-    console.log(`[${language}] Finalizing PDF: ${outputFile}`);
-  } catch (e) {
-    console.error(`[${language}] Error during doc.end():`, e);
-  }
-
+  // Finalize. An error here, or while the file is written, fails the run.
   stream.on('finish', () => console.log(`[${language}] Successfully generated: ${outputFile}`));
-  stream.on('error', (err) => console.error(`[${language}] Error writing PDF:`, err));
+  stream.on('error', (err) => {
+    console.error(`[${language}] Error writing PDF ${outputFile}:`, err);
+    process.exitCode = 1;
+  });
+  doc.end();
+  console.log(`[${language}] Finalizing PDF: ${outputFile}`);
 }
 
 // ── Run ─────────────────────────────────────────────────────────────

@@ -1,22 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadContent } from './content.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 const siteUrl = 'https://resume.arda.tr';
-
-function loadContent(language, section) {
-  const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`Error loading content file: ${filePath}`, error);
-    return {};
-  }
-}
 
 // Escape text values per RFC 2426 (vCard 3.0): backslash, comma, semicolon, newline.
 function escapeVCardValue(value) {

@@ -5,6 +5,7 @@ import {
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, sanitizeContent } from './export-text.mjs';
 import { fieldLabel } from './labels.mjs';
@@ -12,16 +13,6 @@ import { fieldLabel } from './labels.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
-
-function loadContent(language, section) {
-  const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`Error loading content file: ${filePath}`, error);
-    return {};
-  }
-}
 
 // ── Typography constants (sizes in half-points) ─────────────────────
 function getFonts(language) {
@@ -299,13 +290,10 @@ async function generateDocx(language, flavor = null) {
   });
 
   const outputFile = path.join(projectRoot, 'public', `${artifactBase(flavor?.name, language)}.docx`);
-  try {
-    const buffer = await Packer.toBuffer(doc);
-    fs.writeFileSync(outputFile, buffer);
-    console.log(`[${language}] Successfully generated: ${outputFile}`);
-  } catch (err) {
-    console.error(`[${language}] Error generating DOCX:`, err);
-  }
+  // An error here rejects, and the run exits non-zero.
+  const buffer = await Packer.toBuffer(doc);
+  fs.writeFileSync(outputFile, buffer);
+  console.log(`[${language}] Successfully generated: ${outputFile}`);
 }
 
 // ── Run ─────────────────────────────────────────────────────────────

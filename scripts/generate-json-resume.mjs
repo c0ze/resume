@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { splitSpokenLanguages } from './labels.mjs';
 
@@ -9,16 +10,6 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 const SCHEMA_URL = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json';
-
-function loadContent(language, section) {
-  const filePath = path.join(projectRoot, 'content', language, `${section}.json`);
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`Error loading content file: ${filePath}`, error);
-    return {};
-  }
-}
 
 // Extract JSON Resume iso8601 dates ("YYYY") from a free-form period string.
 // "2024 - Present" → { startDate: "2024" }; "2020 - 2023" → both;
