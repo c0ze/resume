@@ -608,6 +608,7 @@ let make = () => {
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
               type_="text"
+              maxLength=20000
               value={input}
               onChange={e => {
                 let value = ReactEvent.Form.target(e)["value"]
