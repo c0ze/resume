@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import PDFDocument from 'pdfkit';
 
 import { stripCJK, sanitizeContent, withGlyphFallbacks, missingGlyphs } from '../scripts/export-text.mjs';
 
@@ -49,26 +50,55 @@ test('withGlyphFallbacks spells out characters the en/tr PDF fonts lack', () => 
   assert.deepEqual(withGlyphFallbacks({ a: ['x \u2192 y'], n: 1 }), { a: ['x -> y'], n: 1 });
 });
 
-test('missingGlyphs names the characters a font cannot draw, ignoring whitespace', () => {
-  const font = { hasGlyphForCodePoint: (cp) => cp < 0x2000 && cp !== 0x20 && cp !== 0x0a };
-  assert.deepEqual(missingGlyphs(font, 'PCM\u2192MP3 \u2192 x\n'), ['\u2192']);
+test('missingGlyphs names the characters a font cannot draw, ignoring control characters', () => {
+  const font = { hasGlyphForCodePoint: (cp) => cp < 0x2000 && cp !== 0x0a && cp !== 0x09 };
+  assert.deepEqual(missingGlyphs(font, 'PCM\u2192MP3 \u2192 x\n\t'), ['\u2192']);
   assert.deepEqual(missingGlyphs(font, 'plain text'), []);
+  // A space the font lacks is a box like any other character.
+  assert.deepEqual(missingGlyphs(font, 'x\u3000y'), ['\u3000']);
 });
 
-// Variation selectors and other default-ignorable format characters never need
-// a glyph of their own: the layout engine folds them into the character before
-// (an IVS picks a glyph variant) or drops them. Requiring one would fail the
-// build on valid text such as "\u2122\uFE0F" or an IVS-marked kanji.
-test('missingGlyphs does not ask for glyphs for variation selectors and invisible format characters', () => {
-  const exempt = [0xfe0f, 0xfe00, 0xe0100, 0xe01ef, 0x200d, 0x200c, 0x00ad, 0x2060, 0xfeff];
-  const font = { hasGlyphForCodePoint: (cp) => !exempt.includes(cp) };
-  const text = 'a\u2122\uFE0F \u845B\u{E0100} a\u200Db a\u200Cb co\u00ADop word\u2060joiner \uFEFFx \uFE00\u{E01EF}';
-  assert.deepEqual(missingGlyphs(font, text), []);
+// Some characters have no glyph of their own yet draw nothing: fontkit folds a
+// variation selector into the character before (an IVS picks a kanji variant),
+// and the Noto Serif/Sans fonts map ZWJ, ZWNJ, U+00AD, U+2060 and U+FEFF to an
+// invisible glyph. Other default-ignorable code points still draw a .notdef box
+// (U+180F in Noto Serif), and so do ZWJ and friends in the CJK fonts, so the
+// guard asks the font's own layout, through PDFKit as the generator does.
+const fontDir = path.join(projectRoot, 'public/fonts');
+const fontkitFont = (() => {
+  const doc = new PDFDocument({ autoFirstPage: false });
+  const cache = new Map();
+  return (file) => {
+    if (!cache.has(file)) {
+      doc.registerFont(file, path.join(fontDir, file));
+      doc.font(file);
+      cache.set(file, doc._font.font);
+    }
+    return cache.get(file);
+  };
+})();
+
+test('missingGlyphs passes variation selectors and invisible format characters the font hides', () => {
+  const serif = fontkitFont('NotoSerif-Regular.ttf');
+  const text = 'a\u2122\uFE0F a\uFE00b \u{E0100}x a\u200Db a\u200Cb co\u00ADop word\u2060joiner \uFEFFx';
+  assert.deepEqual(missingGlyphs(serif, text), []);
+  assert.deepEqual(missingGlyphs(fontkitFont('NotoSerifCJKJP-Regular.ttf'), '\u845B\u{E0100} \u845B\uFE00 co\u00ADop'), []);
+});
+
+test('missingGlyphs fails default-ignorables that still draw .notdef', () => {
+  const serif = fontkitFont('NotoSerif-Regular.ttf');
+  for (const cp of [0x115f, 0x1160, 0x180f, 0x3164, 0xffa0]) {
+    const char = String.fromCodePoint(cp);
+    assert.deepEqual(missingGlyphs(serif, `a${char}b`), [char], `U+${cp.toString(16).toUpperCase()}`);
+  }
+  // The CJK fonts have no invisible glyph for these: they would draw tofu.
+  const cjk = fontkitFont('NotoSerifCJKJP-Regular.ttf');
+  assert.deepEqual(missingGlyphs(cjk, 'a\u200Db a\u200Cb x\u2060y \uFEFFz'), ['\u200D', '\u200C', '\u2060', '\uFEFF']);
 });
 
 test('missingGlyphs still checks drawable characters and combining marks', () => {
   const font = { hasGlyphForCodePoint: (cp) => cp < 0x300 };
-  assert.deepEqual(missingGlyphs(font, 'e\u0301 \u2122\uFE0F'), ['\u0301', '\u2122']);
+  assert.deepEqual(missingGlyphs(font, 'e\u0301 \u2122 x'), ['\u0301', '\u2122']);
 });
 
 // Japanese punctuation is a separator too, and brackets nest: stripping must

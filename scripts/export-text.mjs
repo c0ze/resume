@@ -65,18 +65,29 @@ export function withGlyphFallbacks(obj) {
 }
 
 // The characters of `text` that `font` (a fontkit font) has no glyph for.
-// Skipped, because they never need a glyph of their own: whitespace and
-// control characters (laid out, not drawn) and default-ignorable code points
-// such as variation selectors (U+FE00-FE0F, U+E0100-E01EF, which fontkit folds
-// into the character before), ZWJ, ZWNJ, the soft hyphen, the word joiner
-// and the BOM. Combining marks are still checked.
-const NO_GLYPH_NEEDED = /[\s\p{Cc}\p{Default_Ignorable_Code_Point}]/u;
+// Control characters (line breaks, tabs) are laid out, not drawn, and
+// skipped. Spaces are not: a font without U+3000 or U+00A0 draws a box too,
+// and JavaScript's \s would also let U+FEFF through.
+//
+// A few characters may have no glyph of their own and still draw nothing:
+// fontkit folds variation selectors (U+FE00-FE0F, U+E0100-E01EF) into the
+// character before, and Noto Serif/Sans map the soft hyphen, ZWNJ, ZWJ, the
+// word joiner and the BOM to an invisible glyph. Each of those passes only when
+// the font's own layout confirms it draws no .notdef: the CJK fonts, for one,
+// draw ZWJ as a box. Every other character, default-ignorable or not, needs a
+// glyph.
+const LAYOUT_MAY_HIDE = /[\uFE00-\uFE0F\u{E0100}-\u{E01EF}\u00AD\u200C\u200D\u2060\uFEFF]/u;
+
+const drawsNotdef = (font, char) =>
+  typeof font.layout !== 'function' || font.layout(`a${char}a`).glyphs.some((glyph) => glyph.id === 0);
 
 export function missingGlyphs(font, text) {
   const missing = new Set();
   for (const char of String(text)) {
-    if (NO_GLYPH_NEEDED.test(char)) continue;
-    if (!font.hasGlyphForCodePoint(char.codePointAt(0))) missing.add(char);
+    if (/\p{Cc}/u.test(char)) continue;
+    if (font.hasGlyphForCodePoint(char.codePointAt(0))) continue;
+    if (LAYOUT_MAY_HIDE.test(char) && !drawsNotdef(font, char)) continue;
+    missing.add(char);
   }
   return [...missing];
 }
