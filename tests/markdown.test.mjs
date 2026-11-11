@@ -57,3 +57,44 @@ test("escapes raw HTML so model output cannot inject markup", () => {
 test("empty input renders without throwing", () => {
   assert.doesNotThrow(() => render(""));
 });
+
+// The bot separates numbered items with blank lines and indents sub-points
+// under them. Each of those used to start a new <ol>, so the reader saw
+// "1. 1. 1.".
+test("an ordered list stays one list across blank lines", () => {
+  const html = render("1. Go\n\n2. Ruby\n\n3. Python");
+  assert.equal((html.match(/<ol[\s>]/g) || []).length, 1);
+  assert.equal((html.match(/<li[^>]*>/g) || []).length, 3);
+});
+
+test("an indented sub-list nests inside its item and the numbering continues", () => {
+  const html = render("1. Go\n   - fast builds\n   - small binaries\n2. Ruby\n\n   - Rails\n3. Python");
+  assert.equal((html.match(/<ol[\s>]/g) || []).length, 1, "one ordered list");
+  assert.match(html, /<li[^>]*>Go<ul[^>]*><li[^>]*>fast builds<\/li><li[^>]*>small binaries<\/li><\/ul><\/li>/);
+  assert.match(html, /<li[^>]*>Ruby<ul[^>]*><li[^>]*>Rails<\/li><\/ul><\/li><li[^>]*>Python<\/li><\/ol>/);
+});
+
+test("an ordered list interrupted by a paragraph resumes at its number", () => {
+  const html = render("1. Go\n\nA note.\n\n2. Ruby");
+  assert.match(html, /<ol[^>]*start="2"[^>]*><li[^>]*>Ruby<\/li>/);
+});
+
+test("underscores and asterisks inside words or between spaces are not emphasis", () => {
+  for (const text of ["call snake_case_name here", "2 * 3 * 4 = 24", "a_b and c_d", "x*y*z"]) {
+    const html = render(text);
+    assert.doesNotMatch(html, /<em/, text);
+    assert.ok(html.includes(text), `expected "${text}" verbatim`);
+  }
+  assert.match(render("an _emphasis_ and a *stress*."), /<em[^>]*>emphasis<\/em> and a <em[^>]*>stress<\/em>\./);
+});
+
+test("a link URL may contain balanced parentheses", () => {
+  const html = render("see [Go](https://en.wikipedia.org/wiki/Go_(programming_language)) now");
+  assert.match(html, /href="https:\/\/en\.wikipedia\.org\/wiki\/Go_\(programming_language\)"[^>]*>Go<\/a> now/);
+});
+
+test("unsafe links stay plain text inside nested list items too", () => {
+  const html = render("1. ok\n   - [x](javascript:alert(1))");
+  assert.doesNotMatch(html, /<a /);
+  assert.doesNotMatch(html, /javascript:/);
+});

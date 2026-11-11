@@ -6,40 +6,79 @@
 // Supported subset (what the ai.arda.tr bot actually emits):
 //   **bold**, *italic* / _italic_, `code`, [text](url),
 //   "-" / "*" / "+" bullet lists, "1." ordered lists, ``` fenced code, paragraphs.
+//
+// Lists: a list runs on across blank lines while the next item is of the same
+// kind, and an indented item nests (one level) under the item above it. An
+// ordered list that does not start at 1 carries `start`. Items are
+// { inline, sub } where `sub` is a nested list block or null.
+//
+// Emphasis needs word boundaries: `_` and `*` inside a word (snake_case_name)
+// or with a space inside the markers (2 * 3 * 4) are literal.
 
-const UL = /^\s*[-*+]\s+(.*)$/;
-const OL = /^\s*\d+\.\s+(.*)$/;
+const LIST = /^([ \t]*)(?:[-*+]|(\d+)\.)\s+(.*)$/;
 const FENCE = /^\s*```/;
 const HEADING = /^\s*#{1,6}\s+/;
+// Link URLs may hold one level of balanced parentheses: …/Go_(programming_language).
 const INLINE =
-  /(\*\*([\s\S]+?)\*\*)|(`([^`]+?)`)|(\[([^\]]+?)\]\(([^)\s]+)\))|(\*([^*\n]+?)\*)|(_([^_\n]+?)_)/;
+  /(\*\*([\s\S]+?)\*\*)|(`([^`]+?)`)|(\[([^\]]+?)\]\(((?:[^()\s]|\([^()\s]*\))+)\))|(\*([^*\s](?:[^*\n]*?[^*\s])?)\*)|(_([^_\s](?:[^_\n]*?[^_\s])?)_)/;
+const WORD = /[\p{L}\p{N}_]/u;
 
 function tokenizeInline(input) {
   const s = String(input == null ? "" : input);
   const tokens = [];
   let rest = s;
   let guard = 0;
+  let prev = ""; // the character before `rest`
+  // Adjacent text runs merge into one token.
+  const pushText = (v) => {
+    const last = tokens[tokens.length - 1];
+    if (last && last.t === "text") last.v += v;
+    else tokens.push({ t: "text", v });
+  };
   while (rest.length > 0) {
     // Safety bound: preserve the remainder as text rather than dropping it.
     if (guard++ >= 5000) {
-      tokens.push({ t: "text", v: rest });
+      pushText(rest);
       break;
     }
     const m = INLINE.exec(rest);
     if (!m) {
-      tokens.push({ t: "text", v: rest });
+      pushText(rest);
       break;
     }
-    if (m.index > 0) tokens.push({ t: "text", v: rest.slice(0, m.index) });
+    // Single-marker emphasis must not touch a letter or digit on the outside.
+    if (m[8] != null || m[10] != null) {
+      const before = m.index > 0 ? rest.charAt(m.index - 1) : prev;
+      const after = rest.charAt(m.index + m[0].length);
+      if (WORD.test(before) || WORD.test(after)) {
+        pushText(rest.slice(0, m.index + 1));
+        prev = rest.charAt(m.index);
+        rest = rest.slice(m.index + 1);
+        continue;
+      }
+    }
+    if (m.index > 0) pushText(rest.slice(0, m.index));
     if (m[1] != null) tokens.push({ t: "bold", v: m[2] });
     else if (m[3] != null) tokens.push({ t: "code", v: m[4] });
     else if (m[5] != null) tokens.push({ t: "link", v: m[6], href: m[7] });
     else if (m[8] != null) tokens.push({ t: "italic", v: m[9] });
     else if (m[10] != null) tokens.push({ t: "italic", v: m[11] });
+    prev = m[0].charAt(m[0].length - 1);
     rest = rest.slice(m.index + m[0].length);
   }
   if (tokens.length === 0) tokens.push({ t: "text", v: "" });
   return tokens;
+}
+
+// Column of a list item's marker (a tab counts as four).
+const indentOf = (m) => m[1].replace(/\t/g, "    ").length;
+const isOrdered = (m) => m[2] != null;
+const sameKind = (m, block) => isOrdered(m) === (block.type === "ol");
+const listItem = (m) => ({ inline: tokenizeInline(m[3]), sub: null });
+function listBlock(m) {
+  const block = { type: isOrdered(m) ? "ol" : "ul", items: [listItem(m)] };
+  if (isOrdered(m) && Number(m[2]) !== 1) block.start = Number(m[2]);
+  return block;
 }
 
 export function parse(src) {
@@ -67,24 +106,38 @@ export function parse(src) {
       blocks.push({ type: "code", text: code.join("\n") });
       continue;
     }
-    // Unordered list.
-    if (UL.test(line)) {
-      const items = [];
-      while (i < lines.length && UL.test(lines[i])) {
-        items.push(tokenizeInline(lines[i].replace(UL, "$1")));
+    // List (unordered or ordered).
+    if (LIST.test(line)) {
+      const first = LIST.exec(line);
+      const base = indentOf(first);
+      const block = listBlock(first);
+      i++;
+      while (i < lines.length) {
+        if (blank(lines[i])) {
+          // A blank line ends the list unless an item of it comes next.
+          let j = i;
+          while (j < lines.length && blank(lines[j])) j++;
+          const next = j < lines.length ? LIST.exec(lines[j]) : null;
+          if (next && (indentOf(next) > base || sameKind(next, block))) {
+            i = j;
+            continue;
+          }
+          break;
+        }
+        const m = LIST.exec(lines[i]);
+        if (!m) break;
+        const parent = block.items[block.items.length - 1];
+        if (indentOf(m) > base && parent) {
+          if (parent.sub) parent.sub.items.push(listItem(m));
+          else parent.sub = listBlock(m);
+        } else if (sameKind(m, block)) {
+          block.items.push(listItem(m));
+        } else {
+          break; // the other kind of list starts a new block
+        }
         i++;
       }
-      blocks.push({ type: "ul", items });
-      continue;
-    }
-    // Ordered list.
-    if (OL.test(line)) {
-      const items = [];
-      while (i < lines.length && OL.test(lines[i])) {
-        items.push(tokenizeInline(lines[i].replace(OL, "$1")));
-        i++;
-      }
-      blocks.push({ type: "ol", items });
+      blocks.push(block);
       continue;
     }
     // Paragraph: gather consecutive plain lines.
@@ -92,8 +145,7 @@ export function parse(src) {
     while (
       i < lines.length &&
       !blank(lines[i]) &&
-      !UL.test(lines[i]) &&
-      !OL.test(lines[i]) &&
+      !LIST.test(lines[i]) &&
       !FENCE.test(lines[i])
     ) {
       para.push(lines[i].replace(HEADING, ""));

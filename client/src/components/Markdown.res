@@ -3,6 +3,7 @@
 // module only builds elements and validates link schemes.
 
 type block
+type item
 type inlineTok
 
 @module("./markdownParse.mjs") external parse: string => array<block> = "parse"
@@ -11,8 +12,11 @@ type inlineTok
 
 let bType: block => string = %raw(`function (b) { return b.type; }`)
 let bText: block => string = %raw(`function (b) { return b.text || ""; }`)
-let bItems: block => array<array<inlineTok>> = %raw(`function (b) { return b.items || []; }`)
+let bItems: block => array<item> = %raw(`function (b) { return b.items || []; }`)
+let bStart: block => option<int> = %raw(`function (b) { return b.start; }`)
 let bInline: block => array<inlineTok> = %raw(`function (b) { return b.inline || []; }`)
+let iInline: item => array<inlineTok> = %raw(`function (it) { return it.inline || []; }`)
+let iSub: item => option<block> = %raw(`function (it) { return it.sub || undefined; }`)
 let tKind: inlineTok => string = %raw(`function (t) { return t.t; }`)
 let tVal: inlineTok => string = %raw(`function (t) { return t.v || ""; }`)
 let tHref: inlineTok => string = %raw(`function (t) { return t.href || ""; }`)
@@ -43,10 +47,24 @@ let renderInline = toks =>
   })
   ->React.array
 
-let renderItems = items =>
-  items
-  ->Array.mapWithIndex((line, j) => <li key={Int.toString(j)}> {renderInline(line)} </li>)
-  ->React.array
+// A list block; an item's nested list renders inside its <li>.
+let rec renderList = (b, key) => {
+  let items =
+    bItems(b)
+    ->Array.mapWithIndex((it, j) =>
+      <li key={Int.toString(j)}>
+        {renderInline(iInline(it))}
+        {switch iSub(it) {
+        | Some(sub) => renderList(sub, "sub")
+        | None => React.null
+        }}
+      </li>
+    )
+    ->React.array
+  bType(b) == "ol"
+    ? <ol key className="md-list md-list--ol" start=?{bStart(b)}> {items} </ol>
+    : <ul key className="md-list"> {items} </ul>
+}
 
 // `after` is appended inside the last block when it is a paragraph (so the
 // streaming cursor sits at the end of the line, not under it); otherwise after
@@ -70,8 +88,7 @@ let make = (~text, ~after=?) => {
     ->Array.mapWithIndex((b, i) => {
       let key = Int.toString(i)
       switch bType(b) {
-      | "ul" => <ul key className="md-list"> {renderItems(bItems(b))} </ul>
-      | "ol" => <ol key className="md-list md-list--ol"> {renderItems(bItems(b))} </ol>
+      | "ul" | "ol" => renderList(b, key)
       | "code" =>
         <pre key className="md-pre"> <code> {React.string(bText(b))} </code> </pre>
       | _ => <p key> {renderInline(bInline(b))} {tail(i)} </p>

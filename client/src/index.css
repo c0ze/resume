@@ -469,6 +469,7 @@
   .md-list { padding-left: 18px; list-style: disc; }
   .md-list--ol { list-style: decimal; }
   .md-list li + li { margin-top: 3px; }
+  .md-list .md-list { margin-top: 3px; }
   .md-code { padding: 1px 5px; background: var(--bg); color: var(--signal); font: 400 .9em var(--mono); }
   .md-pre {
     overflow-x: auto;
