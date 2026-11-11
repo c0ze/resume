@@ -166,3 +166,19 @@ test('each DOCX carries the PDF metadata, its language and real section headings
     );
   }
 });
+
+// The PDFs are created tagged (MarkInfo /Marked true), which promises screen
+// readers and reflow a structure tree. It must not be empty.
+for (const file of pdfFiles) {
+  test(`${file}: the tagged PDF has a real structure tree`, () => {
+    const { tagged, structureTypes } = pdf(file);
+    assert.ok(tagged, 'expected a StructTreeRoot');
+    const count = (type) => structureTypes.filter((t) => t === type).length;
+    assert.equal(count('Document'), 1);
+    assert.equal(count('H1'), 1, 'the name');
+    assert.equal(count('H2'), 5, 'one per section');
+    assert.ok(count('L') >= 3, 'the responsibility, skill and paper lists');
+    assert.ok(count('LI') > 10 && count('LI') === count('LBody'), 'list items with bodies');
+    assert.ok(count('P') > 10, 'paragraphs');
+  });
+}

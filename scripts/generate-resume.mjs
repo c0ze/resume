@@ -161,6 +161,33 @@ function generateResume(language, flavor = null) {
   const lineGap = language === 'ja' ? 6 : 2;
   const bulletGap = language === 'ja' ? 5 : 1;
 
+  // ── Structure ───────────────────────────────────────────────────
+  // The PDF is tagged, so everything drawn goes into the structure tree:
+  // Document > H1 (name), H2 (sections), H3 (entries), P, L > LI > Lbl/LBody.
+  // Rules and the footer are marked as artifacts. Tags add marked-content
+  // operators only; they do not change what is drawn.
+  const root = doc.struct('Document');
+  doc.addStructure(root);
+
+  // Draw into a leaf element (`draw` runs at once, inside its marked content).
+  function tag(type, draw, parent = root) {
+    parent.add(doc.struct(type, draw));
+  }
+
+  // A container element (L, LI) filled by `fill(element)`.
+  function group(type, fill, parent = root) {
+    const element = doc.struct(type);
+    parent.add(element);
+    fill(element);
+    element.end();
+  }
+
+  function artifact(draw, options = undefined) {
+    doc.markContent('Artifact', options);
+    draw();
+    doc.endMarkedContent();
+  }
+
   // ── Helpers ─────────────────────────────────────────────────────
   // Centre across the content width: a box sized to widthOfString() is too
   // tight for CJK, where PDFKit's line breaker can wrap the last character.
@@ -171,10 +198,12 @@ function generateResume(language, flavor = null) {
 
   function drawRule() {
     const y = doc.y;
-    doc.strokeColor(COLOR.rule).lineWidth(0.5)
-       .moveTo(PAGE.margin.left, y)
-       .lineTo(doc.page.width - PAGE.margin.right, y)
-       .stroke();
+    artifact(() => {
+      doc.strokeColor(COLOR.rule).lineWidth(0.5)
+         .moveTo(PAGE.margin.left, y)
+         .lineTo(doc.page.width - PAGE.margin.right, y)
+         .stroke();
+    });
     doc.y = y + 6;
   }
 
@@ -185,7 +214,7 @@ function generateResume(language, flavor = null) {
     ensureSpace(200);
     doc.font(headingFont).fontSize(SIZE.sectionTitle).fillColor(COLOR.black);
     doc.x = PAGE.margin.left;
-    doc.text(title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 });
+    tag('H2', () => doc.text(title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 }));
     doc.moveDown(0.15);
     drawRule();
     doc.moveDown(0.15);
@@ -200,15 +229,23 @@ function generateResume(language, flavor = null) {
   // A bulleted item with a hanging indent: the bullet sits 10pt in, and every
   // line of the text, wrapped ones included, starts where the first line's
   // text does. Drawn in the current font, size and colour.
-  function bulletItem(text) {
+  function bulletItem(text, list) {
     ensureSpace(20); // keep the bullet and its first line on the same page
     const y = doc.y;
     const bulletX = PAGE.margin.left + 10;
     const textX = bulletX + doc.widthOfString('•  ');
     const right = PAGE.margin.left + contentWidth - 10;
-    doc.text('•', bulletX, y, { lineBreak: false });
-    doc.text(text, textX, y, { width: right - textX, lineGap: bulletGap });
+    group('LI', (item) => {
+      tag('Lbl', () => doc.text('•', bulletX, y, { lineBreak: false }), item);
+      tag('LBody', () => doc.text(text, textX, y, { width: right - textX, lineGap: bulletGap }), item);
+    }, list);
     doc.x = PAGE.margin.left;
+  }
+
+  function bulletList(items) {
+    group('L', (list) => {
+      for (const item of items) bulletItem(item, list);
+    });
   }
 
   // ── Header ──────────────────────────────────────────────────────
@@ -216,12 +253,12 @@ function generateResume(language, flavor = null) {
 
   // Name
   doc.font(headingFont).fontSize(SIZE.name).fillColor(COLOR.black);
-  textCenter(t.header.title);
+  tag('H1', () => textCenter(t.header.title));
   doc.moveDown(0.2);
 
   // Subtitle
   doc.font(fonts.italic || fonts.regular).fontSize(SIZE.subtitle).fillColor(COLOR.mid);
-  textCenter(t.header.subtitle);
+  tag('P', () => textCenter(t.header.subtitle));
   doc.moveDown(0.4);
 
   // Contact line: location · email · website
@@ -229,7 +266,7 @@ function generateResume(language, flavor = null) {
   const sep = '   ·   ';
   const contactStr = `${t.header.location}${sep}${t.header.contactViaEmail}${sep}${t.header.website}`;
   const contactY = doc.y;
-  textCenter(contactStr);
+  tag('P', () => textCenter(contactStr));
   // Make the email and the website clickable without changing how they look:
   // link annotations over where the centred line put them.
   const contactWidth = doc.widthOfString(contactStr);
@@ -258,12 +295,12 @@ function generateResume(language, flavor = null) {
   doc.font(fonts.regular).fontSize(SIZE.body).fillColor(COLOR.dark);
   doc.x = PAGE.margin.left;
   if (t.about.paragraph1) {
-    doc.text(t.about.paragraph1, { width: contentWidth, lineGap });
+    tag('P', () => doc.text(t.about.paragraph1, { width: contentWidth, lineGap }));
     doc.moveDown(0.3);
   }
   if (t.about.paragraph2) {
     doc.x = PAGE.margin.left;
-    doc.text(t.about.paragraph2, { width: contentWidth, lineGap });
+    tag('P', () => doc.text(t.about.paragraph2, { width: contentWidth, lineGap }));
     doc.moveDown(0.3);
   }
 
@@ -272,8 +309,7 @@ function generateResume(language, flavor = null) {
   doc.font(fonts.bold).fontSize(SIZE.body).fillColor(COLOR.black);
   const languagesLabel = fieldLabel(t.about.languages);
   const labelWidth = doc.widthOfString(languagesLabel);
-  doc.text(languagesLabel, { continued: true, width: contentWidth });
-  doc.font(fonts.regular).fillColor(COLOR.dark);
+  doc.font(fonts.regular);
   // Break only between languages, never inside one: left to PDFKit, a long
   // line splits "Japanese" from its bracket, or "JLPT 2" from "級" in Japanese.
   const languageSep = language === 'ja' ? '、' : ', ';
@@ -285,7 +321,12 @@ function generateResume(language, flavor = null) {
     if (joined !== null && doc.widthOfString(joined) <= room) languageLines[last] = joined;
     else languageLines.push(entry);
   }
-  doc.text(languageLines.join(languageSep.trimEnd() + '\n'), { width: contentWidth });
+  tag('P', () => {
+    doc.font(fonts.bold).fillColor(COLOR.black);
+    doc.text(languagesLabel, { continued: true, width: contentWidth });
+    doc.font(fonts.regular).fillColor(COLOR.dark);
+    doc.text(languageLines.join(languageSep.trimEnd() + '\n'), { width: contentWidth });
+  });
   doc.moveDown(0.5);
 
   // ── Experience ──────────────────────────────────────────────────
@@ -297,21 +338,23 @@ function generateResume(language, flavor = null) {
 
       // Job title — Company | Period (on same line)
       doc.x = PAGE.margin.left;
-      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      doc.text(job.title, { continued: true, width: contentWidth });
+      tag('H3', () => {
+        doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+        doc.text(job.title, { continued: true, width: contentWidth });
 
-      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
-      doc.text(`  —  ${job.company}`, { width: contentWidth });
+        doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+        doc.text(`  —  ${job.company}`, { width: contentWidth });
+      });
 
       doc.x = PAGE.margin.left;
       doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      doc.text(job.period, { width: contentWidth });
+      tag('P', () => doc.text(job.period, { width: contentWidth }));
       doc.moveDown(0.15);
 
       // Responsibilities
       if (Array.isArray(job.responsibilities)) {
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        for (const item of job.responsibilities) bulletItem(item);
+        bulletList(job.responsibilities);
       }
 
       if (i < t.experience.jobs.length - 1) doc.moveDown(0.4);
@@ -324,7 +367,7 @@ function generateResume(language, flavor = null) {
 
   if (Array.isArray(t.skills.technicalSkills)) {
     doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-    for (const skill of t.skills.technicalSkills) bulletItem(skill);
+    bulletList(t.skills.technicalSkills);
   }
   doc.moveDown(0.3);
 
@@ -337,17 +380,17 @@ function generateResume(language, flavor = null) {
 
       doc.x = PAGE.margin.left;
       doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      doc.text(project.title, { width: contentWidth });
+      tag('H3', () => doc.text(project.title, { width: contentWidth }));
 
       doc.x = PAGE.margin.left;
       doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      doc.text(project.technologies, { width: contentWidth });
+      tag('P', () => doc.text(project.technologies, { width: contentWidth }));
       doc.moveDown(0.1);
 
       if (project.description) {
         doc.x = PAGE.margin.left;
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        doc.text(project.description, { width: contentWidth, lineGap: bulletGap });
+        tag('P', () => doc.text(project.description, { width: contentWidth, lineGap: bulletGap }));
       }
 
       if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
@@ -363,30 +406,32 @@ function generateResume(language, flavor = null) {
       ensureSpace(50);
 
       doc.x = PAGE.margin.left;
-      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      doc.text(edu.degree, { continued: true, width: contentWidth });
+      tag('H3', () => {
+        doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+        doc.text(edu.degree, { continued: true, width: contentWidth });
 
-      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
-      doc.text(`  —  ${edu.institution}`, { width: contentWidth });
+        doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+        doc.text(`  —  ${edu.institution}`, { width: contentWidth });
+      });
 
       doc.x = PAGE.margin.left;
       doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      doc.text(edu.period, { width: contentWidth });
+      tag('P', () => doc.text(edu.period, { width: contentWidth }));
 
       if (edu.description) {
         doc.moveDown(0.1);
         doc.x = PAGE.margin.left;
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        doc.text(edu.description, { width: contentWidth, lineGap: bulletGap });
+        tag('P', () => doc.text(edu.description, { width: contentWidth, lineGap: bulletGap }));
       }
 
       if (edu.additionalInfo && Array.isArray(edu.additionalInfo.items)) {
         doc.moveDown(0.15);
         doc.x = PAGE.margin.left;
         doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
-        doc.text(edu.additionalInfo.title, { width: contentWidth });
+        tag('P', () => doc.text(edu.additionalInfo.title, { width: contentWidth }));
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        for (const item of edu.additionalInfo.items) bulletItem(item);
+        bulletList(edu.additionalInfo.items);
       }
 
       if (i < t.education.entries.length - 1) doc.moveDown(0.4);
@@ -402,8 +447,12 @@ function generateResume(language, flavor = null) {
   const footerY = doc.page.height - bottomMargin + 10;
   doc.font(headingRegular).fontSize(SIZE.footer).fillColor(COLOR.light);
   doc.page.margins.bottom = 0;
-  doc.text(footerText, PAGE.margin.left, footerY, { width: contentWidth, align: 'center' });
+  artifact(
+    () => doc.text(footerText, PAGE.margin.left, footerY, { width: contentWidth, align: 'center' }),
+    { type: 'Pagination' }
+  );
   doc.page.margins.bottom = bottomMargin;
+  root.end();
 
   // Finalize. An error here, or while the file is written, fails the run.
   stream.on('finish', () => console.log(`[${language}] Successfully generated: ${outputFile}`));
