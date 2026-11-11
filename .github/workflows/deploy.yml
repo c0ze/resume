@@ -17,6 +17,14 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
+# Pushes share the "pages" group, so runs deploy one at a time and in order:
+# skip runs queued between the one in progress and the latest, but never cancel
+# a deployment in progress. A pull request gets its own group (a newer push to
+# it cancels the older build), so it cannot block or cancel a deployment.
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -57,12 +65,6 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-    # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-    # Job-level, so pull-request builds never queue behind (or cancel) a deployment.
-    concurrency:
-      group: "pages"
-      cancel-in-progress: false
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
