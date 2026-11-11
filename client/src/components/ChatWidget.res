@@ -501,6 +501,12 @@ let make = () => {
     }
   }
 
+  let focusInput = () =>
+    switch inputRef.current->Nullable.toOption {
+    | Some(el) => focusEl(el)
+    | None => ()
+    }
+
   let canSend = String.trim(input) !== "" && !busy
   let lastId = switch messages->Array.get(Array.length(messages) - 1) {
   | Some(m) => m.id
@@ -575,7 +581,15 @@ let make = () => {
             ? <div className="chat__prompts">
                 {c.suggestions
                 ->Array.mapWithIndex((s, i) =>
-                  <button key={Int.toString(i)} type_="button" onClick={_ => submit(s)}>
+                  <button
+                    key={Int.toString(i)}
+                    type_="button"
+                    onClick={_ => {
+                      submit(s)
+                      // The prompts unmount once a message exists; keep the
+                      // keyboard in the input rather than dropping it on <body>.
+                      focusInput()
+                    }}>
                     <em ariaHidden=true> {React.string(Int.toString(i + 1))} </em>
                     {React.string(s)}
                   </button>
@@ -601,7 +615,11 @@ let make = () => {
               }}
               placeholder={c.placeholder}
               ariaLabel={c.placeholder}
-              disabled={busy}
+              // Read-only, not disabled, while a reply is on its way: disabling
+              // the focused input sends focus to <body>, and the reader would
+              // have to click back in after every question. Submitting is
+              // blocked by `busy` in submit() and by the send button.
+              readOnly={busy}
             />
             <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="chat__send">
               {React.string(c.send)}

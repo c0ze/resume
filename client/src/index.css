@@ -512,7 +512,7 @@
   }
   .chat__form input:focus-visible { outline: none; }
   .chat__form input::placeholder { color: var(--fg-2); }
-  .chat__form input:disabled { opacity: .6; }
+  .chat__form input:read-only { opacity: .6; }
   .chat__send { color: var(--fg-2); font-size: 12px; transition: color .15s; }
   .chat__send:not(:disabled):hover { color: var(--signal); }
   .chat__send:disabled { opacity: .45; cursor: default; }
