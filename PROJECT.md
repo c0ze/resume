@@ -56,10 +56,11 @@ before changing anything visual.
 - DOCX generator: `scripts/generate-docx.mjs`
 - JSON Resume generator: `scripts/generate-json-resume.mjs`
 - vCard generator: `scripts/generate-vcard.mjs`
+- Generator helpers: `scripts/content.mjs` (`loadContent`, shared by the four generators; a missing or malformed content file throws, so the build fails) and `scripts/export-text.mjs` (the en/tr sanitising — Japanese runs stripped, characters the Noto fonts lack spelled out — the glyph check behind the PDF generator's build-time guard, and the ISO issue date printed after "Generated on")
 - Theme contract check (v3: id set, roles and required tokens vs arda.tr's `config/themes.json`; soft-passes on older contracts): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`; also `revealPrefix`, the part of a spoken reply that is safe to render)
-- Tests (static output, Markdown, labels, flavours, browser storage, the compiled chat transport, and the voice's gated reveal): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build)
+- Tests (static output, the PDF/DOCX files themselves, Markdown, labels, flavours, browser storage, the compiled chat transport, and the voice's gated reveal): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build; `tests/helpers/` reads PDFKit's PDFs and the DOCX zips without extra dependencies)
 
 ## Important Directories
 

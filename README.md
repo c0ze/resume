@@ -117,7 +117,7 @@ npm run check
 npm run test:static
 ```
 
-`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX/JSON resumes and the vCard, `artifact-status.json` reports all generated artifacts, the JSON Resume exports carry the basics but none of the web-only abstracts, the vCard is well-formed, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output.
+`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX/JSON resumes and the vCard, `artifact-status.json` reports all generated artifacts, the JSON Resume exports carry the basics but none of the web-only abstracts, the vCard is well-formed, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output. `tests/exports.test.mjs` reads the PDF and DOCX files themselves: no footer-only last page, no missing glyphs, hanging bullets, links, the structure tree, Turkish headings, the ISO issue date and the DOCX metadata.
 
 ## Content Workflow
 
