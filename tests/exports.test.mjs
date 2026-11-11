@@ -93,3 +93,25 @@ for (const file of pdfFiles) {
     assert.deepEqual(missing.map((line) => line.text), []);
   });
 }
+
+// A wrapped bullet must hang: its second and later lines align with the text
+// after the bullet, not with the bullet or the left margin, or the list reads
+// as one block of prose.
+for (const file of pdfFiles) {
+  test(`${file}: wrapped bullet lines hang-indent past the bullet`, () => {
+    const lines = pdf(file).pages.flatMap((p) => p.lines);
+    let bullets = 0;
+    for (const [i, marker] of lines.entries()) {
+      if (!marker.text.startsWith('•')) continue;
+      bullets++;
+      for (const line of lines.slice(i + 1)) {
+        if (line.text.startsWith('•') || line.font !== marker.font || line.size !== marker.size) break;
+        assert.ok(
+          line.x > marker.x,
+          `"${line.text.slice(0, 40)}…" starts at x=${line.x}, left of its bullet at x=${marker.x}`
+        );
+      }
+    }
+    assert.ok(bullets > 10, 'expected the experience and skills bullets');
+  });
+}

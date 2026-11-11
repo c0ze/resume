@@ -206,6 +206,20 @@ function generateResume(language, flavor = null) {
     }
   }
 
+  // A bulleted item with a hanging indent: the bullet sits 10pt in, and every
+  // line of the text, wrapped ones included, starts where the first line's
+  // text does. Drawn in the current font, size and colour.
+  function bulletItem(text) {
+    ensureSpace(20); // keep the bullet and its first line on the same page
+    const y = doc.y;
+    const bulletX = PAGE.margin.left + 10;
+    const textX = bulletX + doc.widthOfString('•  ');
+    const right = PAGE.margin.left + contentWidth - 10;
+    doc.text('•', bulletX, y, { lineBreak: false });
+    doc.text(text, textX, y, { width: right - textX, lineGap: bulletGap });
+    doc.x = PAGE.margin.left;
+  }
+
   // ── Header ──────────────────────────────────────────────────────
   doc.y = PAGE.margin.top;
 
@@ -288,15 +302,7 @@ function generateResume(language, flavor = null) {
       // Responsibilities
       if (Array.isArray(job.responsibilities)) {
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        for (const item of job.responsibilities) {
-          ensureSpace(20);
-          doc.x = PAGE.margin.left;
-          doc.text(`•  ${item}`, {
-            width: contentWidth - 10,
-            indent: 10,
-            lineGap: bulletGap,
-          });
-        }
+        for (const item of job.responsibilities) bulletItem(item);
       }
 
       if (i < t.experience.jobs.length - 1) doc.moveDown(0.4);
@@ -309,11 +315,7 @@ function generateResume(language, flavor = null) {
 
   if (Array.isArray(t.skills.technicalSkills)) {
     doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-    for (const skill of t.skills.technicalSkills) {
-      ensureSpace(20);
-      doc.x = PAGE.margin.left;
-      doc.text(`•  ${skill}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
-    }
+    for (const skill of t.skills.technicalSkills) bulletItem(skill);
   }
   doc.moveDown(0.3);
 
@@ -375,10 +377,7 @@ function generateResume(language, flavor = null) {
         doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
         doc.text(edu.additionalInfo.title, { width: contentWidth });
         doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        for (const item of edu.additionalInfo.items) {
-          doc.x = PAGE.margin.left;
-          doc.text(`•  ${item}`, { width: contentWidth - 10, indent: 10, lineGap: bulletGap });
-        }
+        for (const item of edu.additionalInfo.items) bulletItem(item);
       }
 
       if (i < t.education.entries.length - 1) doc.moveDown(0.4);
