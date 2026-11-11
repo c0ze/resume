@@ -266,3 +266,17 @@ test("the JSON-LD Person links every profile and names the degree as the content
     assert.ok(degrees.includes(credential.name), `"${credential.name}" is not a degree in content/en/education.json`);
   }
 });
+
+// An <aside> or <footer> inside <main> is not exposed as a top-level
+// complementary / contentinfo landmark, so screen-reader landmark navigation
+// misses the rail and the colophon.
+test("the rail and the colophon are top-level landmarks, outside <main>", () => {
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  const mains = html.match(/<main[\s>][\s\S]*?<\/main>/g) ?? [];
+  assert.equal(mains.length, 1, "expected exactly one <main>");
+  assert.doesNotMatch(mains[0], /<aside[\s>]/, "the rail must not sit inside <main>");
+  assert.doesNotMatch(mains[0], /<footer[\s>]/, "the colophon must not sit inside <main>");
+  assert.match(html, /<aside [^>]*class="rail"/);
+  assert.match(html, /<footer class="colophon"/);
+  assert.match(mains[0], /id="experience"/, "the sections stay in <main>");
+});

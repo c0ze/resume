@@ -126,7 +126,9 @@ npm run test:static
   typographic marks and hairline rules (see `DESIGN.md` → Components). If an
   icon becomes necessary, prefer inline SVG over adding a package.
 - Page structure: `pages/Home.res` = `StatusBar` + `Treeline` + (`Rail` | main
-  column: `Intro`, the six sections, `Footer`) + `ChatWidget`. Sections are
+  column: `Intro`, the six sections, `Footer`) + `ChatWidget`. Only the six
+  sections are in `<main>`; the rail `<aside>` and the colophon `<footer>`
+  stay outside it, so they are top-level landmarks. Sections are
   built from `components/Section.res` (`Section` = mono label + rule,
   `Section.Row` = mono gutter + body; `Section.ids` is the nav order).
 - Canvas work goes through `OneBit.res` (`useCanvas`, `useRepaintOnTheme`);

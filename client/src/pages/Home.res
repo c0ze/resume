@@ -5,24 +5,31 @@
 // The intro comes first in the source so that, where the columns stack (≤900px),
 // a phone shows the name, the position and the summary before the rail. On a
 // wide screen the grid puts the rail back in the left column beside both.
+//
+// Landmarks: the grid lives on a plain wrapper, so the rail <aside> and the
+// colophon <footer> are top-level (complementary, contentinfo) rather than
+// nested in <main>, which holds the sections. <main> is an unstyled block
+// inside .cv__main, so the layout is unchanged.
 
 @react.component
 let make = () =>
   <div id="top" className="page">
     <StatusBar />
     <Treeline />
-    <main className="cv">
+    <div className="cv">
       <Intro />
       <Rail />
       <div className="cv__main">
-        <AboutSection />
-        <ExperienceSection />
-        <SkillsSection />
-        <ProjectsSection />
-        <EducationSection />
-        <ContactSection />
+        <main>
+          <AboutSection />
+          <ExperienceSection />
+          <SkillsSection />
+          <ProjectsSection />
+          <EducationSection />
+          <ContactSection />
+        </main>
         <Footer />
       </div>
-    </main>
+    </div>
     <ChatWidget />
   </div>
