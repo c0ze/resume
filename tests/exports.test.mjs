@@ -182,3 +182,21 @@ for (const file of pdfFiles) {
     assert.ok(count('P') > 10, 'paragraphs');
   });
 }
+
+// JSON Resume's education.url is the institution's website. The thesis repo
+// is not that, and the papers belong in `publications`.
+test('the JSON Resume lists the papers as publications and no thesis repo as a school URL', () => {
+  for (const language of languages) {
+    const resume = JSON.parse(fs.readFileSync(path.join(publicDir, `resume-${language}.json`), 'utf8'));
+    for (const entry of resume.education) {
+      assert.doesNotMatch(entry.url ?? '', /github\.com/, `${language}: ${entry.institution} url`);
+    }
+    const papers = content(language, 'education').entries.flatMap((e) => e.additionalInfo?.items ?? []);
+    assert.equal(resume.publications?.length, papers.length, `${language}: one publication per paper`);
+    for (const publication of resume.publications) {
+      assert.match(publication.releaseDate, /^\d{4}$/);
+      assert.ok(publication.name && publication.publisher, `${language}: name and publisher`);
+      assert.ok(!publication.name.includes('('), `${language}: the venue is not part of the title`);
+    }
+  }
+});

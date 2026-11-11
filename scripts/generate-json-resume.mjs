@@ -51,6 +51,15 @@ function parseLanguages(languagesContent) {
     });
 }
 
+// "2011: Cache Implementation … (IPSJ Transactions …, T-SLDM)" →
+// { name, publisher, releaseDate: "2011" }. An item in another shape keeps
+// its whole text as the name.
+function parsePublication(item) {
+  const match = item.match(/^(\d{4}):\s*(.+?)\s*[（(]([^()（）]+)[)）]$/);
+  if (!match) return { name: item };
+  return { name: match[2], publisher: match[3], releaseDate: match[1] };
+}
+
 function profileUsername(url) {
   const segments = new URL(url).pathname.split('/').filter(Boolean);
   return segments[segments.length - 1];
@@ -98,12 +107,18 @@ function generateJsonResume(language, flavor = null) {
     highlights: job.responsibilities ?? [],
   }));
 
+  // education.url is the institution's website in the schema; the content's
+  // links are thesis repositories, which have no place in it, so they are
+  // left out.
   const education = (t.education.entries ?? []).map((entry) => ({
     institution: entry.institution,
-    ...(entry.links?.[0]?.url ? { url: entry.links[0].url } : {}),
     studyType: entry.degree,
     ...parsePeriod(entry.period),
   }));
+
+  const publications = (t.education.entries ?? [])
+    .flatMap((entry) => entry.additionalInfo?.items ?? [])
+    .map(parsePublication);
 
   const skills = (t.skills.technicalSkills ?? []).map((skill) => ({ name: skill }));
 
@@ -118,7 +133,7 @@ function generateJsonResume(language, flavor = null) {
     ...(project.repo ? { url: project.repo } : {}),
   }));
 
-  const resume = { $schema: SCHEMA_URL, basics, work, education, skills, languages, projects };
+  const resume = { $schema: SCHEMA_URL, basics, work, education, publications, skills, languages, projects };
 
   // Omit sections with no source data.
   for (const [section, value] of Object.entries(resume)) {
