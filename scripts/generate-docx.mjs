@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
+import { sanitizeContent } from './export-text.mjs';
 import { fieldLabel } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,25 +21,6 @@ function loadContent(language, section) {
     console.error(`Error loading content file: ${filePath}`, error);
     return {};
   }
-}
-
-// Strip CJK characters and surrounding parentheses for non-JA documents
-function stripCJK(text) {
-  if (typeof text !== 'string') return text;
-  let result = text.replace(/\s*[（(][^\)）]*[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+[^\)）]*[)）]/g, '');
-  result = result.replace(/[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+/g, '');
-  return result.trim();
-}
-
-function sanitizeContent(obj) {
-  if (typeof obj === 'string') return stripCJK(obj);
-  if (Array.isArray(obj)) return obj.map(sanitizeContent);
-  if (obj && typeof obj === 'object') {
-    const out = {};
-    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeContent(v);
-    return out;
-  }
-  return obj;
 }
 
 // ── Typography constants (sizes in half-points) ─────────────────────

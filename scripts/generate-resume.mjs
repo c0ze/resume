@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
+import { sanitizeContent } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,28 +18,6 @@ function loadContent(language, section) {
     console.error(`Error loading content file: ${filePath}`, error);
     return {};
   }
-}
-
-// Strip CJK characters and surrounding parentheses/whitespace for non-JA PDFs
-// e.g. "Gentosenki Griffin (幻塔戦記グリフォン)" → "Gentosenki Griffin"
-function stripCJK(text) {
-  if (typeof text !== 'string') return text;
-  // Remove parenthesized CJK blocks like (幻塔戦記グリフォン) or （幻塔戦記グリフォン）
-  let result = text.replace(/\s*[（(][^\)）]*[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+[^\)）]*[)）]/g, '');
-  // Remove any remaining lone CJK characters
-  result = result.replace(/[\u3000-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]+/g, '');
-  return result.trim();
-}
-
-function sanitizeContent(obj) {
-  if (typeof obj === 'string') return stripCJK(obj);
-  if (Array.isArray(obj)) return obj.map(sanitizeContent);
-  if (obj && typeof obj === 'object') {
-    const out = {};
-    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeContent(v);
-    return out;
-  }
-  return obj;
 }
 
 // ── Layout constants ────────────────────────────────────────────────
