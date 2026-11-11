@@ -17,10 +17,11 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
-# Pushes share the "pages" group, so runs deploy one at a time and in order:
-# skip runs queued between the one in progress and the latest, but never cancel
-# a deployment in progress. A pull request gets its own group (a newer push to
-# it cancels the older build), so it cannot block or cancel a deployment.
+# Pushes and manual runs share the "pages" group: one run at a time, a run in
+# progress is never cancelled, and of the runs waiting only the most recently
+# queued one is kept (GitHub orders by queueing, not by commit). A pull request
+# gets its own group (a newer push to it cancels the older build), so it cannot
+# block or cancel a deployment.
 concurrency:
   group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.ref) || 'pages' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
