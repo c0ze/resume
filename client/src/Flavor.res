@@ -41,14 +41,23 @@ let currentName: unit => option<string> = %raw(`
   }
 `)
 
-// Download filename prefix: "<flavor>-" when the active flavor ships this
-// language, "" otherwise (fall back to the base artifact).
-let artifactPrefix = (language: string): string =>
+// The flavor in effect for `language`: the ?flavor= name, when such a flavor
+// exists and ships that language. An unknown or unshipped name is ignored,
+// so nothing (the certificate included) presents it as applied.
+let active = (language: string): option<string> =>
   switch currentName() {
   | Some(name) =>
     switch get(name) {
-    | Some(flavor) if flavor.exportLangs->Array.includes(language) => `${flavor.name}-`
-    | _ => ""
+    | Some(flavor) if flavor.exportLangs->Array.includes(language) => Some(flavor.name)
+    | _ => None
     }
+  | None => None
+  }
+
+// Download filename prefix: "<flavor>-" when the active flavor ships this
+// language, "" otherwise (fall back to the base artifact).
+let artifactPrefix = (language: string): string =>
+  switch active(language) {
+  | Some(name) => `${name}-`
   | None => ""
   }

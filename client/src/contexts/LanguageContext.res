@@ -5,6 +5,7 @@ type contextValue = {
   // The unflavoured record, so the masthead can strike what a ?flavor= override
   // replaced instead of quietly presenting the amendment as the original.
   base: Translations.translations,
+  // The flavor applied to `translations`, if any (never an unknown name).
   flavor: option<string>,
 }
 
@@ -54,7 +55,8 @@ let make = (~initialLanguage=Translations.En, ~children) => {
     }
   )
 
-  let flavor = Flavor.currentName()
+  // Only a flavor that exists and ships this language; see Flavor.active.
+  let flavor = Flavor.active(Translations.languageToString(language))
   let translations = Translations.getTranslations(~flavor=?flavor, language)
   let base = Translations.getTranslations(language)
 
