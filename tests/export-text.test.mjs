@@ -108,3 +108,20 @@ test('stripCJK keeps words apart across Japanese separators and empties nested b
   assert.equal(stripCJK('x\uFF08Japan\u3001\u65E5\u672C\u3001Korea\uFF09y'), 'x (Japan, Korea) y');
   assert.equal(stripCJK('Japan\uFF0C\u65E5\u672C\uFF1BKorea'), 'Japan, Korea');
 });
+
+// Separators and brackets left behind by the strip are cleaned until nothing
+// empty is left, and a bracket group removed between two words leaves a space.
+test('stripCJK leaves no empty list slot, no empty bracket and no glued words', () => {
+  assert.equal(stripCJK('\u65E5\u672C\u3001\u6771\u4EAC'), '');
+  assert.equal(stripCJK('Japan\u3001\u65E5\u3001\u65E5\u3001Korea'), 'Japan, Korea');
+  assert.equal(stripCJK('x ((\u65E5\u672C), (\u6771\u4EAC)) y'), 'x y');
+  assert.equal(stripCJK('x(\u65E5\u672C)y'), 'x y');
+});
+
+test('stripCJK handles deeply nested brackets in linear time', () => {
+  const depth = 16000;
+  const nested = 'x ' + '('.repeat(depth) + '\u65E5' + ')'.repeat(depth) + ' y';
+  const start = performance.now();
+  assert.equal(stripCJK(nested), 'x y');
+  assert.ok(performance.now() - start < 250, 'expected one pass, not one per nesting level');
+});

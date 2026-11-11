@@ -12,6 +12,7 @@ const CJK_RUN = new RegExp(`[${CJK}]+`, 'gu');
 // keeping everything else in a bracket:
 //   "Griffon'un (幻塔戦記グリフォン, Japonya + Kore)" → "Griffon'un (Japonya + Kore)"
 //   "'Griffon' (幻塔戦記グリフォン), a mobile MMORPG" → "'Griffon', a mobile MMORPG"
+//   "x ((日本), (東京)) y" → "x y"
 // A string without Japanese is returned unchanged.
 export function stripCJK(text) {
   if (typeof text !== 'string' || !HAS_CJK.test(text)) return text;
@@ -19,21 +20,51 @@ export function stripCJK(text) {
   // range and would otherwise vanish with the run, gluing words together).
   // A fullwidth bracket carries its own spacing, so it gets a space where it
   // touches a word.
-  let out = text
+  const stripped = text
     .replace(/（/g, (_, i, s) => (i > 0 && !/\s/.test(s[i - 1]) ? ' (' : '('))
     .replace(/）/g, (_, i, s) => (/[\p{L}\p{N}]/u.test(s[i + 1] ?? '') ? ') ' : ')'))
     .replace(/[、，]/g, ', ')
     .replace(/；/g, '; ')
-    .replace(CJK_RUN, '')
-    .replace(/\(\s*[,;]\s*/g, '(') //      "(, Japonya" → "(Japonya"
-    .replace(/\s*[,;]\s*\)/g, ')') //      "Korea, )"   → "Korea)"
-    .replace(/([,;])\s*[,;]/g, '$1'); //   "Japan; ; Korea" → "Japan; Korea"
-  // Empty brackets, innermost first: "x ( ( )) y" → "x ( ) y" → "x y".
-  for (let prev; prev !== out; ) {
-    prev = out;
-    out = out.replace(/\s*\(\s*\)/g, '');
+    .replace(CJK_RUN, '');
+
+  // One pass over the brackets with a stack: each group is tidied when it
+  // closes, and a group left empty is dropped (marked, so the level above can
+  // decide whether a space must stand in for it).
+  const levels = [''];
+  for (const char of stripped) {
+    if (char === '(') {
+      levels.push('');
+    } else if (char === ')' && levels.length > 1) {
+      const inner = tidyLevel(levels.pop()).trim();
+      levels[levels.length - 1] += inner ? `(${inner})` : DROPPED;
+    } else {
+      levels[levels.length - 1] += char;
+    }
   }
-  return out.replace(/[ \t]{2,}/g, ' ').trim();
+  while (levels.length > 1) {
+    const unclosed = levels.pop(); // an unmatched "(" stays as written
+    levels[levels.length - 1] += `(${unclosed}`;
+  }
+  return tidyLevel(levels[0]).replace(/[ \t]{2,}/g, ' ').trim();
+}
+
+const DROPPED = '\u0000';
+
+// Tidy the text of one bracket level (a group, or the whole string): a
+// dropped group becomes a space between two words and nothing next to
+// punctuation; list slots the strip emptied collapse ("Japan, , Korea" →
+// "Japan, Korea"); and a separator left at either end goes ("(, Japonya" →
+// "(Japonya", "日本、東京" → "").
+function tidyLevel(level) {
+  return level
+    .replace(/\s*\u0000[\s\u0000]*/g, (gap, i, s) => {
+      const before = s[i - 1] ?? '';
+      const after = s[i + gap.length] ?? '';
+      return before && after && !/[\s(]/.test(before) && !/[\s,;.:!?)]/.test(after) ? ' ' : '';
+    })
+    .replace(/([,;])(?:\s*[,;])+/g, '$1')
+    .replace(/^\s*[,;]\s*/, '')
+    .replace(/\s*[,;]\s*$/, '');
 }
 
 // Apply `fn` to every string in a loaded content object.
