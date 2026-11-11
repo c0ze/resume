@@ -30,7 +30,7 @@ const COLOR = {
   black: '#1a1a1a',
   dark: '#2d2d2d',
   mid: '#555555',
-  light: '#888888',
+  light: '#595959', // 7:1 on white; #888888 was 3.5:1 at 8-9pt
   rule: '#cccccc',
 };
 
