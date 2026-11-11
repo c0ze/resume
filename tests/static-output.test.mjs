@@ -250,3 +250,19 @@ for (const file of ["record.json", "chat.json"]) test(`the page chrome (${file})
     );
   }
 });
+
+// The JSON-LD Person in client/index.html is hand-written; it must not drift
+// from the content it describes.
+test("the JSON-LD Person links every profile and names the degree as the content does", () => {
+  const template = fs.readFileSync(path.resolve(process.cwd(), "client/index.html"), "utf8");
+  const person = JSON.parse(template.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const contact = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/contact.json"), "utf8"));
+  for (const { url } of contact.socialLinks) {
+    assert.ok(person.sameAs.includes(url), `expected sameAs to include ${url}`);
+  }
+  const education = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/education.json"), "utf8"));
+  const degrees = education.entries.map((entry) => entry.degree);
+  for (const credential of person.hasCredential) {
+    assert.ok(degrees.includes(credential.name), `"${credential.name}" is not a degree in content/en/education.json`);
+  }
+});
