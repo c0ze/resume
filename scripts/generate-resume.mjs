@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
-import { issueDate, sanitizeContent } from './export-text.mjs';
+import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -103,6 +103,25 @@ function setupFonts(doc, language) {
   return fonts;
 }
 
+// Fail the build instead of shipping tofu: every string drawn must have a
+// glyph for each character in the font it is drawn in. (Standard PDF fonts,
+// used only when the Noto files are missing, carry no fontkit font and are
+// not checked.)
+function guardGlyphs(doc, language) {
+  const text = doc.text.bind(doc);
+  doc.text = (str, ...rest) => {
+    const font = doc._font?.font;
+    if (typeof font?.hasGlyphForCodePoint === 'function') {
+      const missing = missingGlyphs(font, str);
+      if (missing.length > 0) {
+        const codes = missing.map((c) => `U+${c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')} "${c}"`);
+        throw new Error(`[${language}] ${doc._font.name} has no glyph for ${codes.join(', ')} in: ${str}`);
+      }
+    }
+    return text(str, ...rest);
+  };
+}
+
 // ── Generator ───────────────────────────────────────────────────────
 function generateResume(language, flavor = null) {
   const base = {
@@ -115,8 +134,9 @@ function generateResume(language, flavor = null) {
     pdf: loadContent(language, 'pdf_meta'),
   };
   const raw = flavor ? applyFlavor(base, flavor, language) : base;
-  // Strip CJK from EN/TR since those fonts don't support Japanese characters
-  const t = language === 'ja' ? raw : sanitizeContent(raw);
+  // Strip CJK from EN/TR since those fonts don't support Japanese characters,
+  // and spell out the few other characters they have no glyph for.
+  const t = language === 'ja' ? raw : withGlyphFallbacks(sanitizeContent(raw));
 
   const doc = new PDFDocument({
     size: PAGE.size,
@@ -140,6 +160,7 @@ function generateResume(language, flavor = null) {
   doc.pipe(stream);
 
   const fonts = setupFonts(doc, language);
+  guardGlyphs(doc, language);
   const contentWidth = doc.page.width - PAGE.margin.left - PAGE.margin.right;
 
   // Use sans-serif for headings (or same font for JA)

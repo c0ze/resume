@@ -27,16 +27,44 @@ export function stripCJK(text) {
     .trim();
 }
 
-// Apply stripCJK to every string in a loaded content object.
-export function sanitizeContent(obj) {
-  if (typeof obj === 'string') return stripCJK(obj);
-  if (Array.isArray(obj)) return obj.map(sanitizeContent);
+// Apply `fn` to every string in a loaded content object.
+function mapStrings(obj, fn) {
+  if (typeof obj === 'string') return fn(obj);
+  if (Array.isArray(obj)) return obj.map((v) => mapStrings(v, fn));
   if (obj && typeof obj === 'object') {
     const out = {};
-    for (const [k, v] of Object.entries(obj)) out[k] = sanitizeContent(v);
+    for (const [k, v] of Object.entries(obj)) out[k] = mapStrings(v, fn);
     return out;
   }
   return obj;
+}
+
+// Apply stripCJK to every string in a loaded content object.
+export function sanitizeContent(obj) {
+  return mapStrings(obj, stripCJK);
+}
+
+// Characters the en/tr PDF fonts (Noto Serif, Noto Sans) have no glyph for,
+// and what to print instead. The content keeps the real character: the web
+// page and the DOCX (whose fonts are the reader's) show it as written.
+const GLYPH_FALLBACKS = [['\u2192', '->']];
+
+export function withGlyphFallbacks(obj) {
+  return mapStrings(obj, (text) =>
+    GLYPH_FALLBACKS.reduce((out, [from, to]) => out.replaceAll(from, to), text)
+  );
+}
+
+// The characters of `text` that `font` (a fontkit font) has no glyph for.
+// Whitespace and control characters are laid out, not drawn, so they are
+// skipped.
+export function missingGlyphs(font, text) {
+  const missing = new Set();
+  for (const char of String(text)) {
+    if (/[\s\p{Cc}]/u.test(char)) continue;
+    if (!font.hasGlyphForCodePoint(char.codePointAt(0))) missing.add(char);
+  }
+  return [...missing];
 }
 
 // The date of issue printed after pdf_meta.generatedOn: the ISO date

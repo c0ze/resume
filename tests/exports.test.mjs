@@ -84,3 +84,12 @@ test('the "generated on" date is the ISO date of the build, in the PDF and the D
     );
   }
 });
+
+// A character the embedded font has no glyph for prints as an empty box
+// ("tofu"): "LAME (PCM→MP3)" did, in the en/tr PDFs.
+for (const file of pdfFiles) {
+  test(`${file}: every character drawn has a glyph in its font`, () => {
+    const missing = pdf(file).pages.flatMap((p) => p.lines).filter((line) => line.notdef > 0);
+    assert.deepEqual(missing.map((line) => line.text), []);
+  });
+}

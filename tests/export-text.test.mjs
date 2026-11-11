@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { stripCJK, sanitizeContent } from '../scripts/export-text.mjs';
+import { stripCJK, sanitizeContent, withGlyphFallbacks, missingGlyphs } from '../scripts/export-text.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -41,4 +41,16 @@ test('the Turkish Griffon project keeps "Japonya + Kore" in the export', () => {
   const exported = sanitizeContent(projects).entries.map((e) => e.description).join('\n');
   assert.match(exported, /Griffon'un \(Japonya \+ Kore\) canlı/);
   assert.doesNotMatch(exported, /\(\s*,/);
+});
+
+// Noto Serif and Noto Sans, the en/tr PDF fonts, have no arrows.
+test('withGlyphFallbacks spells out characters the en/tr PDF fonts lack', () => {
+  assert.equal(withGlyphFallbacks('LAME (PCM\u2192MP3)'), 'LAME (PCM->MP3)');
+  assert.deepEqual(withGlyphFallbacks({ a: ['x \u2192 y'], n: 1 }), { a: ['x -> y'], n: 1 });
+});
+
+test('missingGlyphs names the characters a font cannot draw, ignoring whitespace', () => {
+  const font = { hasGlyphForCodePoint: (cp) => cp < 0x2000 && cp !== 0x20 && cp !== 0x0a };
+  assert.deepEqual(missingGlyphs(font, 'PCM\u2192MP3 \u2192 x\n'), ['\u2192']);
+  assert.deepEqual(missingGlyphs(font, 'plain text'), []);
 });
