@@ -55,14 +55,24 @@ function runBootstrap(store) {
   const classes = new Set();
   const root = { classList: { add: (c) => classes.add(c) }, style: {}, lang: 'en' };
   const written = {};
+  const themeColor = { content: '#efede6' };
   vm.runInNewContext(bootstrap, {
-    document: { documentElement: root },
+    document: {
+      documentElement: root,
+      querySelector: (selector) => (selector === 'meta[name="theme-color"]' ? themeColor : null),
+    },
     localStorage: {
       getItem: (k) => store(k),
       setItem: (k, v) => { written[k] = v; },
     },
   });
-  return { classes: [...classes].sort(), colorScheme: root.style.colorScheme, lang: root.lang, written };
+  return {
+    classes: [...classes].sort(),
+    colorScheme: root.style.colorScheme,
+    lang: root.lang,
+    written,
+    themeColor: themeColor.content,
+  };
 }
 
 test('bootstrap paints the default rendition when storage is blocked', () => {
@@ -92,4 +102,57 @@ test('bootstrap ignores values that are not renditions, including prototype keys
     assert.deepEqual(r.classes, ['xerox'], bad);
     assert.deepEqual(r.written, {}, bad);
   }
+});
+
+// The browser chrome (theme-color) should match the page, which follows the
+// stored rendition, not the OS light/dark setting: a reader on a dark OS sees
+// the default paper-coloured xerox page and should get a paper-coloured bar.
+const renditionBg = Object.fromEntries(
+  [...readFileSync(new URL('../client/src/theme.css', import.meta.url), 'utf8')
+    .matchAll(/^\.([\w-]+) \{\n  --bg: (#[0-9a-f]{6});/gm)].map((m) => [m[1], m[2]])
+);
+
+test('index.html has one theme-color meta, not one per OS colour scheme', () => {
+  const metas = indexHtml.match(/<meta name="theme-color"[^>]*>/g) ?? [];
+  assert.equal(metas.length, 1);
+  assert.doesNotMatch(metas[0], /media=/);
+  assert.match(metas[0], new RegExp(`content="${renditionBg.xerox}"`));
+});
+
+test("bootstrap sets theme-color to the rendition's --bg", () => {
+  assert.deepEqual(Object.keys(renditionBg).sort(), ['night', 'night-hc', 'xerox', 'xerox-hc']);
+  for (const [id, bg] of Object.entries(renditionBg)) {
+    assert.equal(runBootstrap((k) => (k === 'resume-theme' ? id : null)).themeColor, bg, id);
+  }
+  assert.equal(runBootstrap(() => { throw new Error('blocked'); }).themeColor, renditionBg.xerox);
+});
+
+test("switching rendition sets theme-color to the page's --bg", (t) => {
+  const classes = new Set();
+  const themeColor = { content: '#efede6' };
+  const root = {
+    classList: { add: (...c) => c.forEach((x) => classes.add(x)), remove: (...c) => c.forEach((x) => classes.delete(x)) },
+    style: {},
+  };
+  const prior = ['document', 'getComputedStyle', 'localStorage'].map((k) => [k, Object.getOwnPropertyDescriptor(globalThis, k)]);
+  const define = (k, value) => Object.defineProperty(globalThis, k, { configurable: true, value });
+  define('document', {
+    documentElement: root,
+    querySelector: (selector) => (selector === 'meta[name="theme-color"]' ? themeColor : null),
+  });
+  define('getComputedStyle', (el) => ({
+    getPropertyValue: (name) => (el === root && name === '--bg' ? ` ${renditionBg[[...classes].find((c) => c in renditionBg)]}` : ''),
+  }));
+  define('localStorage', { setItem() {} });
+  t.after(() => {
+    for (const [k, d] of prior) {
+      if (d) Object.defineProperty(globalThis, k, d);
+      else delete globalThis[k];
+    }
+  });
+
+  Theme.applyThemeToDOM('night', true);
+  assert.equal(themeColor.content, renditionBg.night);
+  Theme.applyThemeToDOM('xerox-hc', false);
+  assert.equal(themeColor.content, renditionBg['xerox-hc']);
 });

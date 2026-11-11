@@ -7,8 +7,8 @@
     <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
     <link rel="canonical" href="https://resume.arda.tr/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#efede6" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#060708" media="(prefers-color-scheme: dark)" />
+    <!-- The active rendition's --bg; the bootstrap below and ThemeContext set it. -->
+    <meta name="theme-color" content="#efede6" />
 
     <!--
       Rendition + language bootstrap. Blocking on purpose: without it a reader
@@ -19,11 +19,16 @@
       Stored ids from earlier designs migrate by role (light → xerox,
       HC light → xerox-hc, dark → night, HC dark → night-hc) and the migrated
       id is written back. Keep in sync with ThemeContext.res.
+
+      theme-color follows the rendition, not the OS colour scheme. The page's
+      CSS has not loaded yet, so the --bg values are repeated here (from
+      scripts/generate-theme.mjs; tests/theme-storage.test.mjs checks them).
     -->
     <script>
       (function () {
         var root = document.documentElement;
         var RENDITIONS = { xerox: 0, "xerox-hc": 0, night: 1, "night-hc": 1 };
+        var BG = { xerox: "#efede6", "xerox-hc": "#ffffff", night: "#060708", "night-hc": "#000000" };
         var LEGACY = {
           ruled: "xerox", alucard: "xerox", light: "xerox",
           "ruled-hc": "xerox-hc", paper: "xerox-hc", "light-hc": "xerox-hc",
@@ -48,6 +53,8 @@
         root.classList.add(t);
         if (RENDITIONS[t]) root.classList.add("dark");
         root.style.colorScheme = RENDITIONS[t] ? "dark" : "light";
+        var themeColor = document.querySelector('meta[name="theme-color"]');
+        if (themeColor) themeColor.content = BG[t];
         try {
           var l = localStorage.getItem("resume-lang");
           if (l === "en" || l === "ja" || l === "tr") root.lang = l;

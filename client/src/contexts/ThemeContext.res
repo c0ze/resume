@@ -88,6 +88,11 @@ let applyThemeToDOM: (string, bool) => unit = %raw(`
     } else {
       root.style.colorScheme = "light";
     }
+    // The browser chrome follows the rendition: its --bg, now that the class
+    // is on <html> and the stylesheet is loaded.
+    var themeColor = document.querySelector('meta[name="theme-color"]');
+    var bg = getComputedStyle(root).getPropertyValue("--bg").trim();
+    if (themeColor && bg) themeColor.content = bg;
     try { localStorage.setItem("resume-theme", themeStr); } catch (e) {}
   }
 `)
