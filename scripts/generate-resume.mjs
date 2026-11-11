@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
-import { sanitizeContent } from './export-text.mjs';
+import { issueDate, sanitizeContent } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -368,7 +368,7 @@ function generateResume(language, flavor = null) {
   // The footer sits in the bottom margin of the last content page. PDFKit
   // starts a new page for any line that crosses the margin, so the margin is
   // lifted while the footer is written and put back afterwards.
-  const footerText = `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`;
+  const footerText = `${t.pdf.generatedOn} ${issueDate()}`;
   const bottomMargin = doc.page.margins.bottom;
   const footerY = doc.page.height - bottomMargin + 10;
   doc.font(headingRegular).fontSize(SIZE.footer).fillColor(COLOR.light);

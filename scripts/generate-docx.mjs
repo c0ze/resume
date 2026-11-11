@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
-import { sanitizeContent } from './export-text.mjs';
+import { issueDate, sanitizeContent } from './export-text.mjs';
 import { fieldLabel } from './labels.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -234,7 +234,7 @@ async function generateDocx(language, flavor = null) {
   // ── Footer ──────────────────────────────────────────────────────
   children.push(new Paragraph({
     children: [new TextRun({
-      text: `${t.pdf.generatedOn} ${new Date().toLocaleDateString()}`,
+      text: `${t.pdf.generatedOn} ${issueDate()}`,
       size: 16,
       font: FONT.heading,
       color: COLOR.light,

@@ -61,3 +61,26 @@ test('Turkish section headings are upper-cased the Turkish way', () => {
   assert.doesNotMatch(pdfText, /DENEYIMI|EĞITIM/);
   assert.doesNotMatch(docx, /DENEYIMI|EĞITIM/);
 });
+
+// "Generated on" must be unambiguous in every language (11/12 reads as
+// 11 December in Turkey and Japan) and must be the build's own date, the one
+// the web page prints as "Issued", not the generating machine's clock.
+test('the "generated on" date is the ISO date of the build, in the PDF and the DOCX', () => {
+  const html = fs.readFileSync(path.join(projectRoot, 'dist/client/index.html'), 'utf8');
+  const issued = content('en', 'record').issued;
+  const issuedOn = html.match(new RegExp(`${issued}\\s*(?:<!-- -->)?\\s*(\\d{4}-\\d{2}-\\d{2})`))?.[1];
+  assert.ok(issuedOn, 'expected the web page to print its ISO issue date');
+
+  for (const file of pdfFiles) {
+    const generatedOn = content(pdfLanguage(file), 'pdf_meta').generatedOn;
+    const footer = pdf(file).pages.at(-1).lines.find((line) => line.text.startsWith(generatedOn));
+    assert.equal(footer?.text, `${generatedOn} ${issuedOn}`, `${file} footer`);
+  }
+  for (const language of languages) {
+    const generatedOn = content(language, 'pdf_meta').generatedOn;
+    assert.ok(
+      docxText(docxXml(`resume-${language}.docx`)).includes(`${generatedOn} ${issuedOn}`),
+      `expected resume-${language}.docx to say "${generatedOn} ${issuedOn}"`
+    );
+  }
+});

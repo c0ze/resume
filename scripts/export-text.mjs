@@ -1,4 +1,4 @@
-// Text clean-up shared by the en/tr PDF and DOCX generators.
+// Text helpers shared by the PDF and DOCX generators.
 //
 // The en/tr exports are set in fonts without Japanese glyphs, so Japanese
 // that appears inside English or Turkish text (a game's original title, say)
@@ -37,4 +37,12 @@ export function sanitizeContent(obj) {
     return out;
   }
   return obj;
+}
+
+// The date of issue printed after pdf_meta.generatedOn: the ISO date
+// (YYYY-MM-DD, UTC) of the build, the same date the web page prints as
+// "Issued". scripts/build-static.mjs pins RESUME_BUILD_TIME once per build;
+// a generator run on its own falls back to now.
+export function issueDate() {
+  return (process.env.RESUME_BUILD_TIME ?? new Date().toISOString()).slice(0, 10);
 }
