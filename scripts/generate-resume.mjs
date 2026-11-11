@@ -237,7 +237,25 @@ function generateResume(language, flavor = null) {
   doc.font(headingRegular).fontSize(SIZE.contact).fillColor(COLOR.dark);
   const sep = '   ·   ';
   const contactStr = `${t.header.location}${sep}${t.header.contactViaEmail}${sep}${t.header.website}`;
+  const contactY = doc.y;
   textCenter(contactStr);
+  // Make the email and the website clickable without changing how they look:
+  // link annotations over where the centred line put them.
+  const contactWidth = doc.widthOfString(contactStr);
+  if (contactWidth <= contentWidth) {
+    const lineHeight = doc.currentLineHeight();
+    let x = PAGE.margin.left + (contentWidth - contactWidth) / 2;
+    for (const [segment, url] of [
+      [`${t.header.location}${sep}`, null],
+      [t.header.contactViaEmail, `mailto:${t.header.contactViaEmail}`],
+      [sep, null],
+      [t.header.website, t.header.website],
+    ]) {
+      const width = doc.widthOfString(segment);
+      if (url) doc.link(x, contactY, width, lineHeight, url);
+      x += width;
+    }
+  }
   doc.moveDown(0.6);
 
   drawRule();

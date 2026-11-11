@@ -1,6 +1,6 @@
 import {
   Document, Packer, Paragraph, TextRun, HeadingLevel,
-  AlignmentType, BorderStyle, ShadingType,
+  AlignmentType, BorderStyle, ShadingType, ExternalHyperlink,
 } from 'docx';
 import fs from 'fs';
 import path from 'path';
@@ -127,6 +127,7 @@ async function generateDocx(language, flavor = null) {
 
   const children = [];
   const sep = '   ·   ';
+  const contactRun = { size: 18, font: FONT.heading, color: COLOR.dark };
 
   // ── Header ──────────────────────────────────────────────────────
   children.push(
@@ -141,8 +142,18 @@ async function generateDocx(language, flavor = null) {
       spacing: { after: 60 },
     }),
     new Paragraph({
+      // The email and the website are links, set like the rest of the line.
       children: [
-        new TextRun({ text: `${t.header.location}${sep}${t.header.contactViaEmail}${sep}${t.header.website}`, size: 18, font: FONT.heading, color: COLOR.dark }),
+        new TextRun({ text: `${t.header.location}${sep}`, ...contactRun }),
+        new ExternalHyperlink({
+          link: `mailto:${t.header.contactViaEmail}`,
+          children: [new TextRun({ text: t.header.contactViaEmail, ...contactRun })],
+        }),
+        new TextRun({ text: sep, ...contactRun }),
+        new ExternalHyperlink({
+          link: t.header.website,
+          children: [new TextRun({ text: t.header.website, ...contactRun })],
+        }),
       ],
       alignment: AlignmentType.CENTER,
       spacing: { after: 80 },

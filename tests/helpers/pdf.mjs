@@ -144,7 +144,11 @@ export function readPdf(file) {
     const annots = page.match(/\/Annots \[([^\]]*)\]/);
     const links = annots
       ? [...annots[1].matchAll(/(\d+) 0 R/g)]
-          .map((m) => objects.get(Number(m[1])).dict.match(/\/URI \(([^)]*)\)/))
+          .map((m) => {
+            const annot = objects.get(Number(m[1])).dict;
+            const action = ref(annot, 'A');
+            return (action ? objects.get(action).dict : annot).match(/\/URI \(([^)]*)\)/);
+          })
           .filter(Boolean)
           .map((m) => m[1])
       : [];

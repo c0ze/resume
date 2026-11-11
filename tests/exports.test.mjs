@@ -115,3 +115,25 @@ for (const file of pdfFiles) {
     assert.ok(bullets > 10, 'expected the experience and skills bullets');
   });
 }
+
+// The email and the website are printed on every résumé; a reader expects to
+// click them, in the PDF and in Word.
+test('the printed email and website are links in the PDF and the DOCX', () => {
+  for (const language of languages) {
+    const { contactViaEmail, website } = content(language, 'header');
+    const expected = [`mailto:${contactViaEmail}`, website];
+
+    const links = pdf(`resume-${language}.pdf`).pages[0].links;
+    for (const url of expected) assert.ok(links.includes(url), `resume-${language}.pdf: expected a link to ${url}`);
+
+    const zip = readZip(path.join(publicDir, `resume-${language}.docx`));
+    const rels = zip.get('word/_rels/document.xml.rels');
+    const xml = zip.get('word/document.xml');
+    for (const url of expected) {
+      const id = rels.match(new RegExp(`Id="([^"]+)"[^>]*Target="${url}"[^>]*TargetMode="External"`))?.[1]
+        ?? rels.match(new RegExp(`Target="${url}"[^>]*Id="([^"]+)"`))?.[1];
+      assert.ok(id, `resume-${language}.docx: expected an external relationship to ${url}`);
+      assert.match(xml, new RegExp(`<w:hyperlink [^>]*r:id="${id}"`), `resume-${language}.docx: expected a hyperlink to ${url}`);
+    }
+  }
+});
