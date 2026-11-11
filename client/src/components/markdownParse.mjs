@@ -10,7 +10,9 @@
 // Lists: a list runs on across blank lines while the next item is of the same
 // kind, and an indented item nests (one level) under the item above it. An
 // ordered list that does not start at 1 carries `start`. Items are
-// { inline, sub } where `sub` is a nested list block or null.
+// { inline, subs } where `subs` holds the nested list blocks: consecutive
+// nested items of one kind form one block, and a change of kind (a bullet,
+// then a numbered step) starts another.
 //
 // Emphasis needs word boundaries: `_` and `*` inside a word (snake_case_name)
 // or with a space inside the markers (2 * 3 * 4) are literal.
@@ -74,7 +76,7 @@ function tokenizeInline(input) {
 const indentOf = (m) => m[1].replace(/\t/g, "    ").length;
 const isOrdered = (m) => m[2] != null;
 const sameKind = (m, block) => isOrdered(m) === (block.type === "ol");
-const listItem = (m) => ({ inline: tokenizeInline(m[3]), sub: null });
+const listItem = (m) => ({ inline: tokenizeInline(m[3]), subs: [] });
 function listBlock(m) {
   const block = { type: isOrdered(m) ? "ol" : "ul", items: [listItem(m)] };
   if (isOrdered(m) && Number(m[2]) !== 1) block.start = Number(m[2]);
@@ -128,8 +130,9 @@ export function parse(src) {
         if (!m) break;
         const parent = block.items[block.items.length - 1];
         if (indentOf(m) > base && parent) {
-          if (parent.sub) parent.sub.items.push(listItem(m));
-          else parent.sub = listBlock(m);
+          const sub = parent.subs[parent.subs.length - 1];
+          if (sub && sameKind(m, sub)) sub.items.push(listItem(m));
+          else parent.subs.push(listBlock(m));
         } else if (sameKind(m, block)) {
           block.items.push(listItem(m));
         } else {

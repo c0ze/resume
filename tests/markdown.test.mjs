@@ -98,3 +98,24 @@ test("unsafe links stay plain text inside nested list items too", () => {
   assert.doesNotMatch(html, /<a /);
   assert.doesNotMatch(html, /javascript:/);
 });
+
+// A bullet and a numbered step under the same item are two nested lists, not
+// one list of whichever kind came first.
+test("mixed nested lists keep their own kinds, and the outer list stays whole", () => {
+  const html = render("1. parent\n   - bullet\n   1. step\n2. next");
+  assert.match(
+    html,
+    /^<div[^>]*><ol[^>]*><li>parent<ul[^>]*><li>bullet<\/li><\/ul><ol[^>]*><li>step<\/li><\/ol><\/li><li>next<\/li><\/ol><\/div>$/
+  );
+
+  const reverse = render("- a\n   1. one\n   - b\n- c");
+  assert.match(
+    reverse,
+    /^<div[^>]*><ul[^>]*><li>a<ol[^>]*><li>one<\/li><\/ol><ul[^>]*><li>b<\/li><\/ul><\/li><li>c<\/li><\/ul><\/div>$/
+  );
+});
+
+test("a nested ordered list keeps its start number", () => {
+  const html = render("1. a\n   - note\n   3. x\n   4. y\n2. b");
+  assert.match(html, /<li>a<ul[^>]*><li>note<\/li><\/ul><ol[^>]*start="3"[^>]*><li>x<\/li><li>y<\/li><\/ol><\/li><li>b<\/li>/);
+});

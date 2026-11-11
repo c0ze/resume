@@ -16,7 +16,7 @@ let bItems: block => array<item> = %raw(`function (b) { return b.items || []; }`
 let bStart: block => option<int> = %raw(`function (b) { return b.start; }`)
 let bInline: block => array<inlineTok> = %raw(`function (b) { return b.inline || []; }`)
 let iInline: item => array<inlineTok> = %raw(`function (it) { return it.inline || []; }`)
-let iSub: item => option<block> = %raw(`function (it) { return it.sub || undefined; }`)
+let iSubs: item => array<block> = %raw(`function (it) { return it.subs || []; }`)
 let tKind: inlineTok => string = %raw(`function (t) { return t.t; }`)
 let tVal: inlineTok => string = %raw(`function (t) { return t.v || ""; }`)
 let tHref: inlineTok => string = %raw(`function (t) { return t.href || ""; }`)
@@ -47,17 +47,16 @@ let renderInline = toks =>
   })
   ->React.array
 
-// A list block; an item's nested list renders inside its <li>.
+// A list block; an item's nested lists render inside its <li>.
 let rec renderList = (b, key) => {
   let items =
     bItems(b)
     ->Array.mapWithIndex((it, j) =>
       <li key={Int.toString(j)}>
         {renderInline(iInline(it))}
-        {switch iSub(it) {
-        | Some(sub) => renderList(sub, "sub")
-        | None => React.null
-        }}
+        {iSubs(it)
+        ->Array.mapWithIndex((sub, k) => renderList(sub, Int.toString(k)))
+        ->React.array}
       </li>
     )
     ->React.array
