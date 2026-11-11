@@ -88,6 +88,16 @@ async function writeSitemap(outputPath, resumeArtifacts, vcardExists) {
   console.log(`Sitemap saved to ${sitemapPath}`);
 }
 
+// Put the prerendered app into the client's index.html: at the standard
+// <!--ssr-outlet--> placeholder, or inside <div id="root"></div>. Function
+// replacers, because a string replacement would expand $&, $1, $$ … that the
+// rendered content happens to contain.
+export function injectAppHtml(template, appHtml) {
+  return template
+    .replace('<!--ssr-outlet-->', () => appHtml)
+    .replace('<div id="root"></div>', () => `<div id="root">${appHtml}</div>`);
+}
+
 async function build() {
   try {
     console.log('Starting static site generation...');
@@ -140,12 +150,7 @@ async function build() {
     const appHtml = appRender.html;
 
     // 8. Inject app HTML into the template
-    template = template.replace('<!--ssr-outlet-->', appHtml); // Standard placeholder
-    // Or, if your template uses <div id="root"></div> and you want to replace its content:
-    template = template.replace(
-      '<div id="root"></div>',
-      `<div id="root">${appHtml}</div>`
-    );
+    template = injectAppHtml(template, appHtml);
 
     // 9. Save the final HTML to dist/client/index.html
     // This effectively makes dist/client the final output directory for the static site.
@@ -230,4 +235,5 @@ async function build() {
   }
 }
 
-build();
+// Build when run as a script (`npm run build`), not when a test imports the module.
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) build();
