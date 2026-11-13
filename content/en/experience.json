@@ -27,7 +27,7 @@
         "Owned the warehouse (geo- and license-filtered search), contract, workspace, document and price-specification resources, from data models to REST endpoints and migrations.",
         "Built role-based access-control middleware and server-side mass-assignment guards, plus request validation and parameterized queries.",
         "Owned a large share of the integration-test suite, including the shared test harness the rest of the team's API tests run on.",
-        "Database migration and seeding (goose) and Bugsnag error reporting; third-party integrations including Hubspot and Mailgun.",
+        "Database migration and seeding (goose) and Bugsnag error reporting; third-party integrations including HubSpot and Mailgun.",
         "Deployed on Google Kubernetes Engine via CircleCI with SOPS-managed secrets; some frontend work on the Vue/Nuxt admin and customer portals."
       ]
     },
