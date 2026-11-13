@@ -26,9 +26,14 @@ let make = () => {
         {switch project.repo->Nullable.toOption {
         | Some(url) =>
           <p className="row__meta">
-            <a href={url} target="_blank" rel="noopener noreferrer" title={t.projects.viewSource}>
+            <a
+              className="url-text"
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={t.projects.viewSource}>
               {React.string(url->String.replace("https://", ""))}
-              {React.string(` ↗`)}
+              <span className="ext" ariaHidden=true> {React.string(` ↗`)} </span>
             </a>
           </p>
         | None => React.null

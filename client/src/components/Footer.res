@@ -19,7 +19,7 @@ let make = () => {
         <span ariaHidden=true> {React.string(` · `)} </span>
         <a href={Build.repo} target="_blank" rel="noopener noreferrer">
           {React.string(t.footer.source->Option.getOr("source"))}
-          {React.string(` ↗`)}
+          <span className="ext" ariaHidden=true> {React.string(` ↗`)} </span>
         </a>
       </p>
     | None => React.null

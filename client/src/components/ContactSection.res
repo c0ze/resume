@@ -23,14 +23,14 @@ let make = () => {
           {socials
           ->Array.map(link =>
             <li key={link.name}>
-              <a href={link.url} target="_blank" rel="me noopener noreferrer">
+              <a className="url-text" href={link.url} target="_blank" rel="me noopener noreferrer">
                 {React.string(bare(link.url)->String.replaceRegExp(%re("/\/$/"), ""))}
               </a>
             </li>
           )
           ->React.array}
           <li>
-            <a href={normalizeUrl(t.header.website)} rel="me">
+            <a className="url-text" href={normalizeUrl(t.header.website)} rel="me">
               {React.string(bare(t.header.website))}
             </a>
           </li>

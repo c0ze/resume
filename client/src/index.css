@@ -697,6 +697,11 @@
   .row { break-inside: avoid; padding: 8pt 0; }
   .colophon { margin-top: 20pt; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; color: #333333; }
+  /* A link whose text is already its address (the contact list, the site
+     link in the rail, a project's repo) prints it once; the ↗ (opens in a
+     new tab) means nothing on paper. */
+  a.url-text::after { content: none; }
+  .ext { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

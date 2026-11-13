@@ -83,7 +83,7 @@ let make = () => {
 
       <Group label={r.fields.links}>
         <p className="rail__links">
-          <a href={normalizeUrl(t.header.website)} rel="me">
+          <a className="url-text" href={normalizeUrl(t.header.website)} rel="me">
             {React.string(host(t.header.website))}
           </a>
           {socials

@@ -56,7 +56,7 @@ let make = () => {
                   {j === 0 ? React.null : <span ariaHidden=true> {React.string(` · `)} </span>}
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
                     {React.string(link.label)}
-                    {React.string(` ↗`)}
+                    <span className="ext" ariaHidden=true> {React.string(` ↗`)} </span>
                   </a>
                 </React.Fragment>
               )

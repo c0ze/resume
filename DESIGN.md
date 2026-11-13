@@ -235,7 +235,8 @@ fork it: change the shared file first, then copy it to every site.
 - The bar, treeline, chat, launcher, switches, downloads and dialogs are hidden.
 - The rail prints as a compact header row.
 - Rows do not break across pages.
-- External links print their URL.
+- External links print their URL, unless their text already is the URL
+  (`.url-text`); the `↗` new-tab mark (`.ext`) is not printed.
 
 ## Do's and Don'ts
 
