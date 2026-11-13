@@ -56,6 +56,7 @@ before changing anything visual.
 - DOCX generator: `scripts/generate-docx.mjs`
 - JSON Resume generator: `scripts/generate-json-resume.mjs`
 - vCard generator: `scripts/generate-vcard.mjs`
+- PDF layout decisions (subtitle size, where a block may break across pages; tested in `tests/pdf-layout.test.mjs`): `scripts/pdf-layout.mjs`
 - Generator helpers: `scripts/content.mjs` (`loadContent`, shared by the four generators; a missing or malformed content file throws, so the build fails) and `scripts/export-text.mjs` (the en/tr sanitising — Japanese runs stripped, characters the Noto fonts lack spelled out — the glyph check behind the PDF generator's build-time guard, and the ISO issue date printed after "Generated on")
 - Theme contract check (v3: id set, roles and required tokens vs arda.tr's `config/themes.json`; soft-passes on older contracts): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`

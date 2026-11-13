@@ -6,6 +6,7 @@ import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
+import { fitFontSize } from './pdf-layout.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -307,12 +308,15 @@ function generateResume(language, flavor = null) {
 
   // Subtitle: one line. A long one (the japan-bridge flavour in Japanese is
   // 475pt at 11pt against 451pt) steps down in size until it fits rather than
-  // wrapping, which in Japanese breaks mid-word; 9.5pt is the floor.
-  doc.font(fonts.italic || fonts.regular).fontSize(SIZE.subtitle).fillColor(COLOR.mid);
-  for (let size = SIZE.subtitle; size > SIZE.subtitleMin && doc.widthOfString(t.header.subtitle) > contentWidth; ) {
-    size = Math.max(SIZE.subtitleMin, size - 0.25);
-    doc.fontSize(size);
-  }
+  // wrapping, which in Japanese breaks mid-word; below the 9.5pt floor the
+  // build fails.
+  doc.font(fonts.italic || fonts.regular).fillColor(COLOR.mid);
+  const subtitleSize = fitFontSize(
+    (size) => doc.fontSize(size).widthOfString(t.header.subtitle),
+    contentWidth,
+    { from: SIZE.subtitle, floor: SIZE.subtitleMin, label: flavor ? `${flavor.name}/${language}` : language },
+  );
+  doc.fontSize(subtitleSize);
   tag('P', () => textCenter(t.header.subtitle));
   doc.moveDown(0.4);
 
