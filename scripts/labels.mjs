@@ -5,11 +5,11 @@
 // different ways:
 //
 //   Printed as-is (the colon is part of the string, and must stay):
-//     education.entries[].additionalInfo.title  "Selected Papers:" / "論文:"
-//     pdf_meta.generatedOn                      "Generated on:" / "生成日:"
+//     education.entries[].additionalInfo.title  "Selected Papers:" / "主な論文："
 //
-//   Composed with a separator by the generator (the colon must NOT be there):
-//     about.languages                           "Spoken languages:" / "言語"
+//   Composed with a separator by the generator (any colon is replaced):
+//     about.languages                           "Spoken languages:" / "語学"
+//     pdf_meta.generatedOn                      "Generated on:" / "作成日："
 //
 // `about.languages` was written with a colon in en and tr but without one in
 // ja, so the PDF and DOCX printed "Spoken languages:: …" and
@@ -19,8 +19,10 @@
 // is safe whichever convention it follows, and the JSON schema — which is a
 // contract with four generators and the ai.arda.tr bot — stays untouched.
 //
-// This is deliberately NOT applied to every label. The two values above rely
-// on their trailing colon; stripping it globally would break them.
+// This is deliberately NOT applied to every label. The as-is value above
+// relies on its trailing colon; stripping it globally would break it.
+// pdf_meta.generatedOn moved to the composed list on 2026-11-14: printed
+// as-is before the date, "作成日：" left a full-width colon and a space.
 
 /**
  * Compose a field label with its separator, tolerating a label that already

@@ -34,26 +34,30 @@ test('fieldLabel is idempotent and honours a custom separator', () => {
   assert.equal(fieldLabel('言語', '：'), '言語：');
 });
 
-test('no shipped about.languages value produces a doubled colon', () => {
+test('no shipped composed label produces a doubled colon or gap', () => {
   // The regression: en and tr carried their own trailing colon while ja did
-  // not, so the generators printed "Spoken languages:: …".
+  // not, so the generators printed "Spoken languages:: …"; and "作成日：" was
+  // printed with a space after it, a double gap before the date.
   for (const lang of LANGUAGES) {
-    const about = JSON.parse(
-      fs.readFileSync(path.join(projectRoot, 'content', lang, 'about.json'), 'utf8'),
-    );
-    const composed = fieldLabel(about.languages) + about.languagesContent;
-    assert.doesNotMatch(composed, /[:：]\s*[:：]/, `${lang}: doubled separator in "${composed.slice(0, 40)}…"`);
-    assert.match(composed, /[:：]/, `${lang}: separator missing entirely`);
+    const read = (f) =>
+      JSON.parse(fs.readFileSync(path.join(projectRoot, 'content', lang, f), 'utf8'));
+    const about = read('about.json');
+    for (const composed of [
+      fieldLabel(about.languages) + about.languagesContent,
+      fieldLabel(read('pdf_meta.json').generatedOn) + '2026-11-14',
+    ]) {
+      assert.doesNotMatch(composed, /[:：]\s*[:：]|：\s/, `${lang}: doubled separator in "${composed.slice(0, 40)}…"`);
+      assert.match(composed, /[:：]/, `${lang}: separator missing entirely`);
+    }
   }
 });
 
 test('labels that are printed as-is keep their own trailing colon', () => {
-  // These are NOT passed through fieldLabel — the generators print them
+  // This one is NOT passed through fieldLabel — the generators print it
   // verbatim, so the colon in the content file is load-bearing.
   for (const lang of LANGUAGES) {
     const read = (f) =>
       JSON.parse(fs.readFileSync(path.join(projectRoot, 'content', lang, f), 'utf8'));
-    assert.match(read('pdf_meta.json').generatedOn, /[:：]$/, `${lang}: pdf_meta.generatedOn`);
     const info = read('education.json').entries?.[0]?.additionalInfo;
     if (info?.title) assert.match(info.title, /[:：]$/, `${lang}: additionalInfo.title`);
   }

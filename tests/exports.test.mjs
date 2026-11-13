@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 import { readPdf } from './helpers/pdf.mjs';
 import { readZip } from './helpers/zip.mjs';
+import { fieldLabel } from '../scripts/labels.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(projectRoot, 'public');
@@ -35,7 +36,7 @@ test('every language has a PDF to check', () => {
 for (const file of pdfFiles) {
   test(`${file}: the last page carries content, not only the "generated on" footer`, () => {
     const { pages } = pdf(file);
-    const generatedOn = content(pdfLanguage(file), 'pdf_meta').generatedOn;
+    const generatedOn = fieldLabel(content(pdfLanguage(file), 'pdf_meta').generatedOn).trim();
     const last = pages.at(-1).lines;
     const footer = last.filter((line) => line.text.startsWith(generatedOn));
     assert.equal(footer.length, 1, 'expected the footer on the last page');
@@ -71,16 +72,19 @@ test('the "generated on" date is the ISO date of the build, in the PDF and the D
   const issuedOn = html.match(new RegExp(`${issued}\\s*(?:<!-- -->)?\\s*(\\d{4}-\\d{2}-\\d{2})`))?.[1];
   assert.ok(issuedOn, 'expected the web page to print its ISO issue date');
 
+  // The label goes through fieldLabel like the other labels: "作成日：" plus
+  // a space printed a full-width colon and a space, a double gap.
   for (const file of pdfFiles) {
-    const generatedOn = content(pdfLanguage(file), 'pdf_meta').generatedOn;
-    const footer = pdf(file).pages.at(-1).lines.find((line) => line.text.startsWith(generatedOn));
-    assert.equal(footer?.text, `${generatedOn} ${issuedOn}`, `${file} footer`);
+    const generatedOn = fieldLabel(content(pdfLanguage(file), 'pdf_meta').generatedOn);
+    const footer = pdf(file).pages.at(-1).lines.find((line) => line.text.startsWith(generatedOn.trim()));
+    assert.equal(footer?.text, `${generatedOn}${issuedOn}`, `${file} footer`);
+    assert.doesNotMatch(footer.text, /：\s/, `${file}: full-width colon followed by a space`);
   }
   for (const language of languages) {
-    const generatedOn = content(language, 'pdf_meta').generatedOn;
+    const generatedOn = fieldLabel(content(language, 'pdf_meta').generatedOn);
     assert.ok(
-      docxText(docxXml(`resume-${language}.docx`)).includes(`${generatedOn} ${issuedOn}`),
-      `expected resume-${language}.docx to say "${generatedOn} ${issuedOn}"`
+      docxText(docxXml(`resume-${language}.docx`)).includes(`${generatedOn}${issuedOn}`),
+      `expected resume-${language}.docx to say "${generatedOn}${issuedOn}"`
     );
   }
 });
@@ -245,3 +249,17 @@ for (const file of pdfFiles) {
     }
   });
 }
+
+// The spoken-languages block wraps to two lines in Japanese; it must use the
+// line spacing of the paragraphs above it, not PDFKit's tighter default.
+test('resume-ja.pdf: the languages block has the paragraphs\' line spacing', () => {
+  const lines = pdf('resume-ja.pdf').pages[0].lines;
+  const label = fieldLabel(content('ja', 'about').languages).trim();
+  const at = lines.findIndex((line) => line.text.startsWith(label));
+  assert.ok(at > 2, 'expected the languages label after the About paragraphs');
+  const step = (i) => Math.round((lines[i].y - lines[i + 1].y) * 10) / 10;
+  // The label and its text are drawn as two runs on the first line.
+  const next = lines.findIndex((line, i) => i > at && line.y < lines[at].y);
+  assert.ok(next > at, 'expected the languages block to wrap in Japanese');
+  assert.equal(Math.round((lines[at].y - lines[next].y) * 10) / 10, step(at - 2), 'languages vs paragraph line step');
+});

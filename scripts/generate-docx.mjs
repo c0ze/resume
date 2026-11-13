@@ -246,7 +246,7 @@ async function generateDocx(language, flavor = null) {
   // ── Footer ──────────────────────────────────────────────────────
   children.push(new Paragraph({
     children: [new TextRun({
-      text: `${t.pdf.generatedOn} ${issueDate()}`,
+      text: `${fieldLabel(t.pdf.generatedOn)}${issueDate()}`, // as in the PDF
       size: 16,
       font: FONT.heading,
       color: COLOR.light,

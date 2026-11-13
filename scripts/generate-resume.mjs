@@ -376,11 +376,12 @@ function generateResume(language, flavor = null) {
     if (joined !== null && doc.widthOfString(joined) <= room) languageLines[last] = joined;
     else languageLines.push(entry);
   }
+  // The same line spacing as the paragraphs above (it wraps in Japanese).
   tag('P', () => {
     doc.font(fonts.bold).fillColor(COLOR.black);
-    doc.text(languagesLabel, { continued: true, width: contentWidth });
+    doc.text(languagesLabel, { continued: true, width: contentWidth, lineGap });
     doc.font(fonts.regular).fillColor(COLOR.dark);
-    doc.text(languageLines.join(languageSep.trimEnd() + '\n'), { width: contentWidth });
+    doc.text(languageLines.join(languageSep.trimEnd() + '\n'), { width: contentWidth, lineGap });
   });
   doc.moveDown(0.5);
 
@@ -516,7 +517,8 @@ function generateResume(language, flavor = null) {
   // The footer sits in the bottom margin of the last content page. PDFKit
   // starts a new page for any line that crosses the margin, so the margin is
   // lifted while the footer is written and put back afterwards.
-  const footerText = `${t.pdf.generatedOn} ${issueDate()}`;
+  // fieldLabel, like the other labels: "作成日：" plus a space was a double gap.
+  const footerText = `${fieldLabel(t.pdf.generatedOn)}${issueDate()}`;
   const bottomMargin = doc.page.margins.bottom;
   const footerY = doc.page.height - bottomMargin + 10;
   doc.font(headingRegular).fontSize(SIZE.footer).fillColor(COLOR.light);
