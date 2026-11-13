@@ -9,7 +9,8 @@
 // Landmarks: the grid lives on a plain wrapper, so the rail <aside> and the
 // colophon <footer> are top-level (complementary, contentinfo) rather than
 // nested in <main>, which holds the sections. <main> is an unstyled block
-// inside .cv__main, so the layout is unchanged.
+// inside .cv__main, so the layout is unchanged. The intro sits in its own grid
+// cell, outside <main>, so it is a region labelled by the h1 (Intro.res).
 
 @react.component
 let make = () =>

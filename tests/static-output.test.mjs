@@ -286,3 +286,20 @@ test("the rail and the colophon are top-level landmarks, outside <main>", () => 
   assert.match(html, /<footer class="colophon"/);
   assert.match(mains[0], /id="experience"/, "the sections stay in <main>");
 });
+
+// The name, the position and the summary are the first thing a recruiter
+// reads. Outside every landmark, "jump to main" and landmark navigation skip
+// past them. The grid keeps them out of <main>, so they are a region of
+// their own, named by the h1.
+test("the name (h1) sits inside <main> or a region labelled by it", () => {
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  const h1 = html.match(/<h1 [^>]*id="([^"]+)"/);
+  const main = html.match(/<main[\s>][\s\S]*?<\/main>/)?.[0] ?? "";
+  if (main.includes("<h1")) return;
+  assert.ok(h1, "expected the h1 to carry an id for its region to point at");
+  const region = html.match(new RegExp(`<section [^>]*aria-labelledby="${h1[1]}"[^>]*>([\\s\\S]*?)</section>`));
+  assert.ok(region, `expected a <section aria-labelledby="${h1[1]}"> around the h1`);
+  assert.match(region[1], /<h1 /, "the labelled region holds the h1");
+  assert.match(region[1], /class="intro__title"/, "and the position");
+  assert.match(region[1], /class="intro__summary"/, "and the summary");
+});

@@ -129,7 +129,8 @@ npm run test:static
 - Page structure: `pages/Home.res` = `StatusBar` + `Treeline` + (`Rail` | main
   column: `Intro`, the six sections, `Footer`) + `ChatWidget`. Only the six
   sections are in `<main>`; the rail `<aside>` and the colophon `<footer>`
-  stay outside it, so they are top-level landmarks. Sections are
+  stay outside it, so they are top-level landmarks. The intro has its own grid
+  cell, so it is a `<section>` region labelled by the h1 (`#intro-name`). Sections are
   built from `components/Section.res` (`Section` = mono label + rule,
   `Section.Row` = mono gutter + body; `Section.ids` is the nav order).
 - Canvas work goes through `OneBit.res` (`useCanvas`, `useRepaintOnTheme`);
