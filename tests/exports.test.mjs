@@ -214,3 +214,34 @@ for (const file of pdfFiles) {
     assert.equal(subtitle.length, 1, `the subtitle wraps: ${subtitle.join(' / ')}`);
   });
 }
+
+// A bullet or a description that breaks across pages must not leave one line
+// alone ("generated charts." opening page 2), and a short one (up to four
+// lines) must not break at all: the reader has to turn the page mid-sentence
+// for a line or two.
+for (const file of pdfFiles) {
+  test(`${file}: no short block, and no single line of a block, is split across pages`, () => {
+    const { pages } = pdf(file);
+    const same = (a, b) => a.font === b.font && a.size === b.size && a.x === b.x;
+    for (let p = 1; p < pages.length; p++) {
+      const before = pages[p - 1].lines;
+      const after = pages[p].lines;
+      const last = before.at(-1);
+      // A block continues when the new page opens with a line of the same
+      // font, size and indent as the last one, and not with a new bullet.
+      if (after[0].text === '•' || !same(after[0], last)) continue;
+      // Lines of the block on the page before: back to its bullet, or to a
+      // line in another font or indent (a project's technologies).
+      let tail = 0;
+      for (let i = before.length - 1; i >= 0 && same(before[i], last); i--) {
+        tail++;
+        if (before[i - 1]?.text === '•') break;
+      }
+      let head = 0;
+      while (head < after.length && after[head].text !== '•' && same(after[head], last)) head++;
+      const where = `${file} p${p}-p${p + 1}: "${last.text.slice(0, 30)}…" / "${after[0].text.slice(0, 30)}…"`;
+      assert.ok(tail + head > 4, `${where}: a ${tail + head}-line block breaks across pages`);
+      assert.ok(tail > 1 && head > 1, `${where}: ${tail} line(s) before the break, ${head} after`);
+    }
+  });
+}
