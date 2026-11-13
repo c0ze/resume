@@ -263,3 +263,26 @@ test('resume-ja.pdf: the languages block has the paragraphs\' line spacing', () 
   assert.ok(next > at, 'expected the languages block to wrap in Japanese');
   assert.equal(Math.round((lines[at].y - lines[next].y) * 10) / 10, step(at - 2), 'languages vs paragraph line step');
 });
+
+// Word moves a paragraph marked keepNext to the next page with the one after
+// it. Without it a project's title and technologies, or "Selected Papers:",
+// can end a page with their description or first paper on the next.
+test('each DOCX keeps project headings and "Selected Papers:" with what follows', () => {
+  for (const language of languages) {
+    const xml = docxXml(`resume-${language}.docx`);
+    const paragraphs = [...xml.matchAll(/<w:p>[\s\S]*?<\/w:p>/g)].map((m) => m[0]);
+    const unescape = (s) => s.replace(/&(apos|quot|lt|gt|amp);/g, (_, e) => ({ apos: "'", quot: '"', lt: '<', gt: '>', amp: '&' })[e]);
+    const keeps = (text) => {
+      const p = paragraphs.find((para) => unescape(docxText(para)) === text);
+      assert.ok(p, `${language}: expected a paragraph "${text}"`);
+      return /<w:keepNext\/>/.test(p);
+    };
+    for (const project of content(language, 'projects').entries) {
+      assert.ok(keeps(project.title), `${language}: "${project.title}" keeps with next`);
+      assert.ok(keeps(project.technologies), `${language}: technologies of "${project.title}" keep with next`);
+    }
+    for (const entry of content(language, 'education').entries) {
+      if (entry.additionalInfo?.title) assert.ok(keeps(entry.additionalInfo.title), `${language}: papers heading`);
+    }
+  }
+});

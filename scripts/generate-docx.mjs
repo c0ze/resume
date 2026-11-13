@@ -205,10 +205,12 @@ async function generateDocx(language, flavor = null) {
         new Paragraph({
           children: [new TextRun({ text: project.title, bold: true, size: 20, font: FONT.body, color: COLOR.black })],
           spacing: { before: 80, after: 10 },
+          keepNext: true,  // keep title with technologies
         }),
         new Paragraph({
           children: [new TextRun({ text: project.technologies, size: 18, italics: !isJa, font: FONT.body, color: COLOR.light })],
           spacing: { after: isJa ? 50 : 30 },
+          keepNext: true,  // keep technologies with the description
         }),
         new Paragraph({
           children: [new TextRun({ text: project.description, size: 19, font: FONT.body, color: COLOR.dark })],
@@ -233,6 +235,7 @@ async function generateDocx(language, flavor = null) {
         children.push(new Paragraph({
           children: [new TextRun({ text: edu.additionalInfo.title, bold: true, size: 19, font: FONT.body, color: COLOR.black })],
           spacing: { before: 30, after: 15 },
+          keepNext: true,  // keep "Selected Papers:" with the first paper
         }));
         if (Array.isArray(edu.additionalInfo.items)) {
           for (const item of edu.additionalInfo.items) {
