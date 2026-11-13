@@ -199,3 +199,13 @@ test('revealPrefix drops a bold or code opener that has nothing after it yet', (
   assert.equal(revealPrefix('はい、Ardaは**Go**の経験', 11), 'はい、Ardaは**G**');
   assert.equal(revealPrefix('run `make` now', 5), 'run ');
 });
+
+// The half-typed link is cut with the parser's own label rule: a label
+// cannot contain "[", so "[a " before a link stays text, as the finished
+// reply renders it, rather than being swallowed into the link's label.
+test('revealPrefix cuts a half-typed link by the same label rule as the parser', () => {
+  const raw = 'see [a [b](https://x.y) end';
+  assert.equal(revealPrefix(raw, 'see [a [b](https://x'.length), 'see [a b');
+  assert.equal(revealPrefix(raw, 'see [a [b'.length), 'see [a b');
+  assert.equal(revealPrefix('see [ab', 6), 'see a');
+});

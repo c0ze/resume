@@ -190,7 +190,7 @@ export function revealPrefix(text, n) {
   const last = s.charCodeAt(s.length - 1);
   if (last >= 0xd800 && last <= 0xdbff) s = s.slice(0, -1);
   if (s.endsWith("*") && s0.charAt(s.length) === "*") s = s.slice(0, -1); // half a ** marker
-  s = s.replace(/\[([^\]\n]*)(\]\([^)\n]*)?$/, "$1");
+  s = s.replace(/\[([^[\]\n]*)(\]\([^)\n]*)?$/, "$1"); // a label holds no [ or ], as in INLINE
   if ((s.match(/\*\*/g) || []).length % 2) s = s.endsWith("**") ? s.slice(0, -2) : s + "**";
   if ((s.match(/`/g) || []).length % 2) s = s.endsWith("`") ? s.slice(0, -1) : s + "`";
   return s;
