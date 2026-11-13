@@ -119,3 +119,18 @@ test("a nested ordered list keeps its start number", () => {
   const html = render("1. a\n   - note\n   3. x\n   4. y\n2. b");
   assert.match(html, /<li>a<ul[^>]*><li>note<\/li><\/ul><ol[^>]*start="3"[^>]*><li>x<\/li><li>y<\/li><\/ol><\/li><li>b<\/li>/);
 });
+
+// Japanese has no spaces between words, so a boundary rule that counts kana
+// and kanji as word characters makes `*` emphasis impossible in Japanese.
+// As in CommonMark, `*` only needs to avoid ASCII letters and digits, while
+// `_` keeps the Unicode rule (snake_case stays text in any script).
+test("single-asterisk emphasis works between Japanese characters", () => {
+  assert.match(render("これは*重要*です"), /これは<em[^>]*>重要<\/em>です/);
+  assert.match(render("「*注意*」してください"), /「<em[^>]*>注意<\/em>」/);
+  assert.match(render("Goと*Rust*で書く"), /Goと<em[^>]*>Rust<\/em>で書く/);
+  for (const text of ["rust_on_rails", "x*y*z", "2 * 3 * 4", "a*b* c", "これは_重要_です"]) {
+    const html = render(text);
+    assert.doesNotMatch(html, /<em/, text);
+    assert.ok(html.includes(text), `expected "${text}" verbatim`);
+  }
+});
