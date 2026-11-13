@@ -152,3 +152,19 @@ export function measureRuns(doc, runs, options) {
   doc.y = y;
   return height;
 }
+
+/**
+ * A planned block is drawn from its wrapped lines joined back together, so
+ * they must rebuild its text exactly. Hard line breaks do (PDFKit keeps the
+ * "\n" at the end of its line); a soft hyphen does not (it is printed as
+ * "-" at a break), and anything else that does not fails the build here
+ * rather than drawing different text.
+ *
+ * @param {string} text
+ * @param {string[]} lines  the lines PDFKit wrapped `text` into
+ * @param {string} label    where the block is, for the message
+ */
+export function checkWrapped(text, lines, label) {
+  if (lines.join('') === text) return;
+  throw new Error(`[${label}] the wrapped lines do not rebuild this block, so it cannot be placed across pages: ${JSON.stringify(text.slice(0, 60))}`);
+}

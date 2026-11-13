@@ -6,7 +6,7 @@ import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
-import { fitFontSize, linesThatFit, measureRuns, planList } from './pdf-layout.mjs';
+import { checkWrapped, fitFontSize, linesThatFit, measureRuns, planList } from './pdf-layout.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -227,13 +227,15 @@ function generateResume(language, flavor = null) {
   }
 
   // The lines PDFKit wraps `text` into in the current font and size: the dry
-  // run heightOfString makes, collecting each line. They rejoin to `text`.
+  // run heightOfString makes, collecting each line. drawSegments joins them
+  // back a page at a time, so they must rebuild `text` (checkWrapped).
   function wrapLines(text, options) {
     const { x, y } = doc;
     const lines = [];
     doc._text(text, x, y, { ...options, height: Infinity }, (line) => lines.push(line));
     doc.x = x;
     doc.y = y;
+    checkWrapped(text, lines, flavor ? `${flavor.name}/${language}` : language);
     return lines;
   }
 

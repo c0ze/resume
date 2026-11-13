@@ -166,3 +166,33 @@ test('measureRuns gives the height continued runs take when drawn', async () => 
   const single = probe.font('Helvetica').fontSize(10).heightOfString(title + company, { width: between });
   assert.ok(drawn(between) > single, 'the title wraps only in bold');
 });
+
+// A planned block is drawn from its wrapped lines joined back together, a
+// page's worth at a time. That is only right if the lines rebuild the text
+// and each run of them wraps to the same lines again. Hard line breaks do:
+// PDFKit keeps the "\n" at the end of its line. A soft hyphen does not (the
+// wrapper prints it as "-" at a break), so such a block fails the build.
+test('wrapped lines rebuild a block, line breaks included, or the build fails', async () => {
+  const { default: PDFDocument } = await import('pdfkit');
+  const { checkWrapped } = await import('../scripts/pdf-layout.mjs');
+  const doc = new PDFDocument({ autoFirstPage: true });
+  const wrap = (text) => {
+    const lines = [];
+    doc._text(text, doc.x, doc.y, { width: 150, height: Infinity }, (line) => lines.push(line));
+    return lines;
+  };
+  for (const text of [
+    'A paragraph long enough to wrap onto a second line in one hundred and fifty points.',
+    'First paragraph, long enough to wrap twice in this width.\nSecond paragraph, also wrapping.',
+    'a\n\nb',
+  ]) {
+    const lines = wrap(text);
+    assert.doesNotThrow(() => checkWrapped(text, lines, 'en: a bullet'));
+    for (let k = 1; k < lines.length; k++) {
+      assert.equal(wrap(lines.slice(0, k).join('')).length, k, `${JSON.stringify(text.slice(0, 12))}: first ${k}`);
+      assert.equal(wrap(lines.slice(k).join('')).length, lines.length - k, `${JSON.stringify(text.slice(0, 12))}: after ${k}`);
+    }
+  }
+  const hyphenated = 'Ex\u00ADtra\u00ADor\u00ADdi\u00ADna\u00ADri\u00ADly long words like in\u00ADcom\u00ADpre\u00ADhen\u00ADsi\u00ADbil\u00ADi\u00ADties';
+  assert.throws(() => checkWrapped(hyphenated, wrap(hyphenated), 'en: a bullet'), /en: a bullet.*do not rebuild/);
+});
