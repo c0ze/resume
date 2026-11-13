@@ -11,7 +11,8 @@ const end = source.search(/(?:var|let|const) scrollToBottom =/);
 assert.ok(start >= 0 && end > start, 'compiled chat transport boundaries must exist');
 const transport = source.slice(start, end) + '\nthis.postChat = postChat; this.postChatStream = postChatStream;';
 
-async function request(parts, { method = 'postChatStream', ok = true, timeout = false, extra, voice = false } = {}) {
+async function request(parts, { method = 'postChatStream', status = 200, timeout = false, offline = false, stallAfter = false, extra, voice = false } = {}) {
+  const ok = status >= 200 && status < 300;
   const events = [];
   let cancelled = 0;
   let deadline;
@@ -20,6 +21,8 @@ async function request(parts, { method = 'postChatStream', ok = true, timeout = 
   let body;
   const reader = {
     async read() {
+      // stallAfter: once the parts are read, the stream goes silent until the deadline fires.
+      if (!parts.length && stallAfter) { queueMicrotask(() => deadline()); return new Promise(() => {}); }
       return parts.length ? { done: false, value: new TextEncoder().encode(parts.shift()) } : { done: true };
     },
     async cancel() { cancelled++; },
@@ -31,17 +34,19 @@ async function request(parts, { method = 'postChatStream', ok = true, timeout = 
     fetch(_url, options) {
       signal = options.signal;
       body = JSON.parse(options.body);
+      if (offline) return Promise.reject(new TypeError('Failed to fetch'));
       if (timeout) return new Promise((_resolve, reject) => {
         signal.addEventListener('abort', () => reject(new Error('aborted')));
         queueMicrotask(() => deadline());
       });
-      return Promise.resolve({ ok, body: { getReader: () => reader }, json: async () => ({ reply: 'untrusted error body' }) });
+      return Promise.resolve({ ok, status, body: { getReader: () => reader }, json: async () => ({ reply: 'untrusted error body' }) });
     },
   });
   vm.runInContext(transport, context);
   await new Promise((resolve) => {
     const done = (text) => { events.push(['done', text]); resolve(); };
-    const error = () => { events.push(['error']); resolve(); };
+    // The stream says whether the widget may retry on /api/chat; the fallback's onError takes nothing.
+    const error = (retry) => { events.push(retry === undefined ? ['error'] : ['error', retry ? 'retry' : 'final']); resolve(); };
     if (method === 'postChat') context.postChat('hello', [], done, error);
     else if (voice) {
       // The widget's call: voice fields from Voice.requestFields, and every event to the speaker.
@@ -54,12 +59,13 @@ async function request(parts, { method = 'postChatStream', ok = true, timeout = 
 }
 
 test('empty stream reports failure instead of inserting an empty reply', async () => {
-  assert.deepEqual((await request([])).events, [['error']]);
+  // A connection that closes before a single byte is a network failure: the fallback may try.
+  assert.deepEqual((await request([])).events, [['error', 'retry']]);
 });
 
 test('interrupted reply reports failure after preserving its received text', async () => {
   assert.deepEqual((await request(['data: {"type":"chunk","text":"partial"}\n\n'])).events,
-    [['chunk', 'partial'], ['error']]);
+    [['chunk', 'partial'], ['error', 'final']]);
 });
 
 test('completion closes the reader and ignores following events', async () => {
@@ -70,7 +76,7 @@ test('completion closes the reader and ignores following events', async () => {
 
 test('server error closes the reader', async () => {
   const result = await request(['data: {"type":"error","message":"failed"}\n\n']);
-  assert.deepEqual(result.events, [['error']]);
+  assert.deepEqual(result.events, [['error', 'final']]);
   assert.equal(result.cancelled, 1);
 });
 
@@ -85,17 +91,17 @@ test('malformed payloads cannot prevent a later valid completion', async () => {
 });
 
 test('unterminated final event is not accepted as completion', async () => {
-  assert.deepEqual((await request(['data: {"type":"done","text":"incomplete frame"}'])).events, [['error']]);
+  assert.deepEqual((await request(['data: {"type":"done","text":"incomplete frame"}'])).events, [['error', 'final']]);
 });
 
 test('deadline aborts a stalled request and reports failure once', async () => {
   const result = await request([], { timeout: true });
-  assert.deepEqual(result.events, [['error']]);
+  assert.deepEqual(result.events, [['error', 'retry']]);
   assert.equal(result.signal.aborted, true);
 });
 
 test('non-streaming fallback rejects an HTTP error even if it contains reply text', async () => {
-  assert.deepEqual((await request([], { method: 'postChat', ok: false })).events, [['error']]);
+  assert.deepEqual((await request([], { method: 'postChat', status: 500 })).events, [['error']]);
 });
 
 test('voice fields are spread into the stream request; muted requests carry none', async () => {
@@ -130,4 +136,30 @@ test('the deadline is re-armed by every read, so held-back speech does not time 
   const reads = frames.length;
   const result = await request(frames, { voice: true, extra: {} });
   assert.equal(result.armed, 1 + reads);
+});
+
+// The non-streaming /api/chat is a second, paid request. It is only worth it
+// when the stream never reached the bot or the bot failed: not when the bot
+// answered with a refusal (a rate limit, a bad or blocked request), which
+// /api/chat would repeat, burning a second rate-limit slot.
+test('the fallback is allowed only for network errors, 413 and 5xx', async () => {
+  assert.deepEqual((await request([], { offline: true })).events, [['error', 'retry']]);
+  for (const status of [413, 500, 502, 503]) {
+    assert.deepEqual((await request([], { status })).events, [['error', 'retry']], `HTTP ${status}`);
+  }
+  for (const status of [400, 401, 403, 404, 415, 422, 429]) {
+    assert.deepEqual((await request([], { status })).events, [['error', 'final']], `HTTP ${status}`);
+  }
+});
+
+test('an SSE error event before any text is final', async () => {
+  const result = await request(['data: {"type":"thinking"}\n\n', 'data: {"type":"error","message":"blocked"}\n\n']);
+  assert.deepEqual(result.events, [['error', 'final']]);
+});
+
+test('a timeout after the first byte is final', async () => {
+  // The bot is answering; asking /api/chat as well would pay for the reply twice.
+  const source = ['data: {"type":"thinking"}\n\n'];
+  const result = await request(source, { stallAfter: true });
+  assert.deepEqual(result.events, [['error', 'final']]);
 });

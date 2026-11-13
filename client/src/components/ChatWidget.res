@@ -59,8 +59,16 @@ let postChat: (string, array<chatMsg>, string => unit, unit => unit) => unit = %
 
 // Streaming variant: POSTs to the SSE /api/chat/stream endpoint and calls
 // onChunk(fullTextSoFar) as tokens arrive, onDone(fullText) at the end, or
-// onError() if the stream fails (caller falls back only before any token).
+// onError(retryable) if the stream fails.
 // SSE shape: `data: {"type":"thinking"|"chunk"|"done","text"?}`.
+//
+// `retryable` says whether the non-streaming /api/chat is worth asking: a
+// second request costs the bot a second reply and the visitor a second
+// rate-limit slot, so only when the stream never got an answer from the bot:
+// a network error, a deadline or a closed connection before any byte, HTTP
+// 413 (the stream body was refused for its size) or a 5xx. Any other 4xx
+// (429 rate limit, 400/403/415 refusals) and an SSE `error` event are the
+// bot's answer, and so is any failure after the first byte.
 //
 // Voice: `extra` is spread into the body (Voice.requestFields: {voice, lang},
 // or {} when muted), and onEvent receives EVERY parsed event object, speech
@@ -72,7 +80,7 @@ let postChatStream: (
   array<chatMsg>,
   string => unit,
   string => unit,
-  unit => unit,
+  bool => unit,
   Voice.fields,
   Voice.event => unit,
 ) => unit = %raw(`
@@ -87,7 +95,8 @@ let postChatStream: (
       }
     }
     var controller = new AbortController();
-    function onDeadline() { controller.abort(); fail(); }
+    var gotBytes = false;
+    function onDeadline() { controller.abort(); fail(!gotBytes); }
     var timer = setTimeout(onDeadline, 45000);
     var settled = false;
     var reader;
@@ -96,12 +105,12 @@ let postChatStream: (
         try { Promise.resolve(reader.cancel()).catch(function () {}); } catch (e) {}
       }
     }
-    function fail() {
+    function fail(retryable) {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
       closeReader();
-      onError();
+      onError(retryable === true);
     }
     function finish(full) {
       if (settled) return;
@@ -117,7 +126,8 @@ let postChatStream: (
       signal: controller.signal,
     })
       .then(function (res) {
-        if (!res.ok || !res.body) { fail(); return; }
+        if (!res.ok) { fail(res.status === 413 || res.status >= 500); return; }
+        if (!res.body) { fail(true); return; }
         reader = res.body.getReader();
         if (settled) { closeReader(); return; }
         var decoder = new TextDecoder();
@@ -129,6 +139,7 @@ let postChatStream: (
             if (r.done) {
               buffer += decoder.decode(); // flush any trailing multi-byte char
             } else {
+              gotBytes = true;
               clearTimeout(timer);
               timer = setTimeout(onDeadline, 45000);
               buffer += decoder.decode(r.value, { stream: true });
@@ -158,18 +169,19 @@ let postChatStream: (
                 finish(full);
                 return;
               } else if (obj.type === "error") {
-                fail();
+                fail(false);
                 return;
               }
             }
-            // EOF without completion is a failed request, even after partial text.
-            if (r.done) { fail(); return; }
+            // EOF without completion is a failed request, even after partial
+            // text; a connection closed before any byte is a network failure.
+            if (r.done) { fail(!gotBytes); return; }
             return pump();
           });
         }
         return pump();
       })
-      .catch(function () { fail(); });
+      .catch(function () { fail(!gotBytes); });
   }
 `)
 
@@ -466,12 +478,20 @@ let make = () => {
           setStreaming(_ => false)
           setBusy(_ => false)
         },
-        () => {
+        retryable => {
           stopSpeech()
           if started.contents {
             let errorId = nextId()
             setMessages(prev =>
               Array.concat(prev, [{id: errorId, role: "model", content: c.error, isError: true}])
+            )
+            setStreaming(_ => false)
+            setBusy(_ => false)
+          } else if !retryable {
+            // The bot refused or failed the request itself (a rate limit, a
+            // blocked question): asking /api/chat would only repeat that.
+            setMessages(prev =>
+              Array.concat(prev, [{id: modelId, role: "model", content: c.error, isError: true}])
             )
             setStreaming(_ => false)
             setBusy(_ => false)
