@@ -14,6 +14,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { parsePeriod } from '../scripts/periods.mjs';
+
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(projectRoot, 'public');
 const files = fs.readdirSync(publicDir).filter((f) => /^resume-.*\.json$/.test(f)).sort();
@@ -144,5 +146,36 @@ test('a period with months keeps them as YYYY-MM, in every language', () => {
     const veltra = read(`resume-${language}.json`).work.find((entry) => entry.name === 'Veltra');
     assert.equal(veltra.startDate, '2024', language);
     assert.equal(veltra.endDate, undefined, `${language}: an ongoing role has no end date`);
+  }
+});
+
+// Periods are free text per language. Only the forms the content uses are
+// read; anything else fails the build instead of turning into a wrong date
+// ("Maybe 2021" is not May, 2021年13月 is not 2021).
+test('parsePeriod reads the supported forms and nothing else', () => {
+  assert.deepEqual(parsePeriod('2020 - 2023', 'en'), { startDate: '2020', endDate: '2023' });
+  assert.deepEqual(parsePeriod('2014', 'tr'), { startDate: '2014', endDate: '2014' });
+  assert.deepEqual(parsePeriod('2024 - Present', 'en'), { startDate: '2024' });
+  assert.deepEqual(parsePeriod('2024 - 現在', 'ja'), { startDate: '2024' });
+  assert.deepEqual(parsePeriod('2024 - Günümüz', 'tr'), { startDate: '2024' });
+  assert.deepEqual(parsePeriod('July 2021 - July 2022', 'en'), { startDate: '2021-07', endDate: '2022-07' });
+  assert.deepEqual(parsePeriod('APRIL 2021 - may 2022', 'en'), { startDate: '2021-04', endDate: '2022-05' });
+  assert.deepEqual(parsePeriod('Temmuz 2021 - Temmuz 2022', 'tr'), { startDate: '2021-07', endDate: '2022-07' });
+  // Turkish case folding: İ/I are not i/ı in Turkish.
+  assert.deepEqual(parsePeriod('NİSAN 2021 - ARALIK 2021', 'tr'), { startDate: '2021-04', endDate: '2021-12' });
+  assert.deepEqual(parsePeriod('2021年7月 - 2022年12月', 'ja'), { startDate: '2021-07', endDate: '2022-12' });
+  for (const [period, language] of [
+    ['Maybe 2021', 'en'], ['Mayıs 2021', 'en'], ['July 2021', 'tr'], ['2021年13月', 'ja'], ['2021年0月', 'ja'],
+    ['Halen', 'tr'], ['2021 - Soon', 'en'], ['circa 2010', 'en'], ['2010 - 2012 - 2014', 'en'],
+  ]) {
+    assert.throws(() => parsePeriod(period, language), /is not a date|more than two ends/, `${language}: "${period}"`);
+  }
+});
+
+test('every period in the content parses', () => {
+  for (const language of ['en', 'ja', 'tr']) {
+    for (const { period } of [...content(language, 'experience').jobs, ...content(language, 'education').entries]) {
+      assert.doesNotThrow(() => parsePeriod(period, language), `${language}: "${period}"`);
+    }
   }
 });

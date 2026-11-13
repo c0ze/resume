@@ -4,50 +4,13 @@ import { fileURLToPath } from 'url';
 import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { splitSpokenLanguages } from './labels.mjs';
+import { parsePeriod } from './periods.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 const SCHEMA_URL = 'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json';
-
-// Month names the content uses in periods ("July 2021", "Temmuz 2021"); the
-// Japanese content writes "2021年7月".
-const MONTHS = [
-  ['january', 'ocak'], ['february', 'şubat'], ['march', 'mart'], ['april', 'nisan'],
-  ['may', 'mayıs'], ['june', 'haziran'], ['july', 'temmuz'], ['august', 'ağustos'],
-  ['september', 'eylül'], ['october', 'ekim'], ['november', 'kasım'], ['december', 'aralık'],
-];
-
-// One end of a period as an iso8601 date: "2021", "July 2021",
-// "Temmuz 2021" or "2021年7月" → "2021" or "2021-07". A localized "present"
-// (Present, 現在, Günümüz) carries no year and gives nothing.
-function parseDate(text) {
-  const year = text?.match(/\d{4}/)?.[0];
-  if (!year) return undefined;
-  const lower = text.toLocaleLowerCase('tr');
-  const named = MONTHS.findIndex((names) => names.some((name) => lower.includes(name.toLocaleLowerCase('tr'))));
-  const ja = text.match(/\d{4}年(\d{1,2})月/)?.[1];
-  const month = ja ? Number(ja) : named + 1;
-  return month >= 1 && month <= 12 ? `${year}-${String(month).padStart(2, '0')}` : year;
-}
-
-// Extract JSON Resume iso8601 dates from a free-form period string.
-// "2024 - Present" → { startDate: "2024" }; "2020 - 2023" → both;
-// "2014" → { startDate: "2014", endDate: "2014" };
-// "July 2021 - July 2022" → { startDate: "2021-07", endDate: "2022-07" }.
-function parsePeriod(period) {
-  if (typeof period !== 'string' || period.trim() === '') return {};
-
-  const [start, end] = period.split(/\s*[-–]\s*/);
-  const startDate = parseDate(start);
-  const endDate = parseDate(end ?? start);
-
-  const dates = {};
-  if (startDate) dates.startDate = startDate;
-  if (endDate) dates.endDate = endDate;
-  return dates;
-}
 
 // The résumé's location is in Japan; the content names no country.
 const COUNTRY_CODE = 'JP';
@@ -138,7 +101,7 @@ function generateJsonResume(language, flavor = null) {
   const work = (t.experience.jobs ?? []).map((job) => ({
     ...splitPlace(job.company),
     position: job.title,
-    ...parsePeriod(job.period),
+    ...parsePeriod(job.period, language),
     highlights: job.responsibilities ?? [],
   }));
 
@@ -148,7 +111,7 @@ function generateJsonResume(language, flavor = null) {
   const education = (t.education.entries ?? []).map((entry) => ({
     institution: entry.institution,
     studyType: entry.degree,
-    ...parsePeriod(entry.period),
+    ...parsePeriod(entry.period, language),
   }));
 
   const publications = (t.education.entries ?? [])
