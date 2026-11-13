@@ -443,10 +443,15 @@ let make = () => {
 
   React.useEffect0(() => Some(listenForOpen(() => setIsOpen(_ => true))))
 
-  // A panel opens at the end of its log.
+  // A panel opens at the end of its log: reopened on a finished
+  // conversation, the newly mounted log would otherwise start at the top.
   React.useEffect1(() => {
     if isOpen {
       followRef.current = true
+      switch listRef.current->Nullable.toOption {
+      | Some(el) => scrollToBottom(el)
+      | None => ()
+      }
     }
     None
   }, [isOpen])
