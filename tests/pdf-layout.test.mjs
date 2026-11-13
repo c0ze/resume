@@ -120,3 +120,11 @@ test('a two-item list moves whole when its last item would start a page alone', 
   // the heading too.
   assert.deepEqual(planList([2, 3], 4, 51), [[0, 2], [3]]);
 });
+
+test('the item before the last moves with it only when the two fit on a fresh page together', () => {
+  // 48 + 4 lines do not fit 51: moving the 48-line item would leave this
+  // page short and the last item alone at the top of the page after.
+  assert.deepEqual(planList([48, 4], 50, 51), [[48], [0, 4]]);
+  // 47 + 4 fit together, so they move together.
+  assert.deepEqual(planList([47, 4], 49, 51), [[0, 47], [4]]);
+});

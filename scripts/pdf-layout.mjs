@@ -94,7 +94,8 @@ function after(plan, fit, capacity) {
  * planBlock for each item of a bulleted list, in order, plus one list rule:
  * the last item does not start a page on its own. When it would, the item
  * before it moves to the next page with it, if that item sat whole on this
- * page and this page is not already fresh at it.
+ * page, this page is not already fresh at it, and the two fit on a fresh
+ * page together (otherwise moving it would only leave this page short).
  *
  * @param {number[]} items   line count of each item
  * @param {number} fit
@@ -116,7 +117,7 @@ export function planList(items, fit, capacity, top = false) {
   }
 
   const n = items.length;
-  if (n >= 2 && plans[n - 1][0] === 0 && plans[n - 2].length === 1 && !states[n - 2].fresh && items[n - 2] <= capacity) {
+  if (n >= 2 && plans[n - 1][0] === 0 && plans[n - 2].length === 1 && !states[n - 2].fresh && items[n - 2] + items[n - 1] <= capacity) {
     plans[n - 2] = [0, items[n - 2]];
     plans[n - 1] = planBlock(items[n - 1], capacity - items[n - 2], capacity, false);
   }
