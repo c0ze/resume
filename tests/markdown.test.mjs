@@ -155,3 +155,39 @@ test("bold, italic and link labels may hold one level of inline marks", () => {
   // Deeper nesting stays literal rather than recursing without bound.
   assert.match(render("**_[a](https://x.y)_**"), /<strong><em>\[a\]\(https:\/\/x\.y\)<\/em><\/strong>/);
 });
+
+// Italic around a bold word, as the underscore form already allowed:
+// *outer **inner** tail* printed its outer asterisks literally.
+test("an italic span may hold a bold span, one level deep", async () => {
+  const { parse } = await import("../client/src/components/markdownParse.mjs");
+  assert.deepEqual(parse("*outer **inner** tail*")[0].inline, [
+    { t: "italic", v: "outer **inner** tail", c: [{ t: "text", v: "outer " }, { t: "bold", v: "inner" }, { t: "text", v: " tail" }] },
+  ]);
+  assert.match(render("*outer **inner** tail*"), /<p><em>outer <strong>inner<\/strong> tail<\/em><\/p>/);
+  assert.match(render("_outer **inner** tail_"), /<p><em>outer <strong>inner<\/strong> tail<\/em><\/p>/);
+  // The ASCII boundary rule still holds for the outer markers.
+  assert.doesNotMatch(render("x*outer **inner** tail*y"), /<em/);
+  assert.match(render("これは*とても**重要**な*点"), /これは<em>とても<strong>重要<\/strong>な<\/em>点/);
+  // Bold first still wins where both could start.
+  assert.match(render("**bold** and *it*"), /<strong>bold<\/strong> and <em>it<\/em>/);
+});
+
+// Unmatched brackets made the link pattern rescan to the end from every `[`:
+// 64,000 of them inside bold took about 0.8 s, and a reply is parsed again
+// for every streamed chunk.
+test("unmatched brackets and markers parse in linear time", async () => {
+  const { parse } = await import("../client/src/components/markdownParse.mjs");
+  for (const text of [
+    "[".repeat(64000),
+    "**" + "[".repeat(64000) + "**",
+    "*a **" + "[".repeat(64000),
+    "[a](" + "(".repeat(64000),
+    "*" + "a ".repeat(32000),
+    "**" + "*a".repeat(32000),
+  ]) {
+    const start = performance.now();
+    parse(text);
+    const ms = performance.now() - start;
+    assert.ok(ms < 250, `${JSON.stringify(text.slice(0, 8))}… (${text.length} chars) took ${Math.round(ms)} ms`);
+  }
+});

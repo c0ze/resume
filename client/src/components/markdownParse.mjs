@@ -25,8 +25,13 @@ const LIST = /^([ \t]*)(?:[-*+]|(\d+)\.)\s+(.*)$/;
 const FENCE = /^\s*```/;
 const HEADING = /^\s*#{1,6}\s+/;
 // Link URLs may hold one level of balanced parentheses: …/Go_(programming_language).
+// A link label cannot contain `[` or `]`, so an unmatched `[` is given up at
+// the next one instead of rescanning the rest of the reply (quadratic on a
+// run of brackets). A *single-asterisk* span may hold a **bold** one.
+// Italic (group 9): its edges and inside are plain characters or a whole
+// **bold** span, and its closing `*` is not the start of a `**`.
 const INLINE =
-  /(\*\*([\s\S]+?)\*\*)|(`([^`]+?)`)|(\[([^\]]+?)\]\(((?:[^()\s]|\([^()\s]*\))+)\))|(\*([^*\s](?:[^*\n]*?[^*\s])?)\*)|(_([^_\s](?:[^_\n]*?[^_\s])?)_)/;
+  /(\*\*([\s\S]+?)\*\*)|(`([^`]+?)`)|(\[([^\[\]]+?)\]\(((?:[^()\s]|\([^()\s]*\))+)\))|(\*((?:[^*\s]|\*\*[^*\s](?:[^*\n]*?[^*\s])?\*\*)(?:(?:[^*\n]|\*\*[^*\s](?:[^*\n]*?[^*\s])?\*\*)*?(?:[^*\s]|\*\*[^*\s](?:[^*\n]*?[^*\s])?\*\*))?)\*(?!\*))|(_([^_\s](?:[^_\n]*?[^_\s])?)_)/;
 const WORD = /[\p{L}\p{N}_]/u; // around `_`
 const ASCII_WORD = /[A-Za-z0-9]/; // around `*`
 
