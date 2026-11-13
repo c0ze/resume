@@ -200,3 +200,17 @@ test('the JSON Resume lists the papers as publications and no thesis repo as a s
     }
   }
 });
+
+// The subtitle is the role the recruiter files the résumé under. A centred
+// subtitle that wraps breaks mid-word in Japanese ("…AIプラット" / "フォーム")
+// and reads as two lines of unrelated text.
+for (const file of pdfFiles) {
+  test(`${file}: the subtitle is one line`, () => {
+    const lines = pdf(file).pages[0].lines;
+    const email = content(pdfLanguage(file), 'header').contactViaEmail;
+    const contact = lines.findIndex((line) => line.text.includes(email));
+    assert.ok(contact > 1, 'expected the name, the subtitle, then the contact line');
+    const subtitle = lines.slice(1, contact).map((line) => line.text);
+    assert.equal(subtitle.length, 1, `the subtitle wraps: ${subtitle.join(' / ')}`);
+  });
+}

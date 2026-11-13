@@ -28,6 +28,7 @@ const COLOR = {
 const SIZE = {
   name: 22,
   subtitle: 11,
+  subtitleMin: 9.5,
   contact: 9,
   sectionTitle: 11,
   jobTitle: 10.5,
@@ -256,8 +257,14 @@ function generateResume(language, flavor = null) {
   tag('H1', () => textCenter(t.header.title));
   doc.moveDown(0.2);
 
-  // Subtitle
+  // Subtitle: one line. A long one (the japan-bridge flavour in Japanese is
+  // 475pt at 11pt against 451pt) steps down in size until it fits rather than
+  // wrapping, which in Japanese breaks mid-word; 9.5pt is the floor.
   doc.font(fonts.italic || fonts.regular).fontSize(SIZE.subtitle).fillColor(COLOR.mid);
+  for (let size = SIZE.subtitle; size > SIZE.subtitleMin && doc.widthOfString(t.header.subtitle) > contentWidth; ) {
+    size = Math.max(SIZE.subtitleMin, size - 0.25);
+    doc.fontSize(size);
+  }
   tag('P', () => textCenter(t.header.subtitle));
   doc.moveDown(0.4);
 
