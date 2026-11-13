@@ -53,8 +53,8 @@ current work on AI platform architecture.
 
 ## Capabilities and Constraints
 
-- **Stack:** ReScript 11 → React 18, Vite 8, Tailwind 3. ~2,200 LOC across 30
-  `.res` files, plus the shared 1-bit canvas engine `client/src/lib/onebit.js`
+- **Stack:** ReScript 11 → React 18, Vite 8, Tailwind 3. The UI is ReScript
+  (`.res` files under `client/src/`), plus the shared 1-bit canvas engine `client/src/lib/onebit.js`
   (a verbatim copy of `design-previews/onebit/onebit.js`). `npm run check` is `rescript build`; there is **no lint and no
   `verify` script**. `npm run test:static` runs `node --test tests/*.test.mjs`
   and requires a prior build.
@@ -75,7 +75,8 @@ current work on AI platform architecture.
   its `themePalettes` object. Never hand-edit it. New tokens are a two-file
   change: the generator plus `config/tailwind.config.cjs`.
 - **Two literal strings are asserted in `tests/static-output.test.mjs`** and
-  must survive into the prerendered HTML: `"Backend Systems Architect"` and
+  must survive into the prerendered HTML: `"Backend Systems Architect"` (in
+  the intro's position line, not just the template's `<head>`) and
   `"Get In Touch"`. `artifact-status.json` is deep-equality asserted.
 - **`header.contactViaEmail` must never appear in the rendered HTML** — it is
   both a repo rule and a test assertion. It does go into the downloads.
