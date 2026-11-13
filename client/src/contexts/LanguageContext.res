@@ -38,10 +38,16 @@ let storedLanguage: unit => option<string> = %raw(`
 // <html lang> must track the selected language: without this, screen readers
 // announce Japanese and Turkish content in an English voice. This was a live
 // defect — the attribute was hardcoded `en` and never updated.
-let applyLanguageToDOM: string => unit = %raw(`
-  function (lang) {
+//
+// The tab title follows too ("name — position", the shape of the <title> in
+// client/index.html): in Japanese or Turkish, or with a ?flavor= position,
+// the prerendered English default would name the wrong role. Client-side
+// only; the prerendered <title> stays the base English one.
+let applyLanguageToDOM: (string, string) => unit = %raw(`
+  function (lang, title) {
     if (typeof document === "undefined") return;
     document.documentElement.lang = lang;
+    if (title) document.title = title;
     try { localStorage.setItem("resume-lang", lang); } catch (e) {}
   }
 `)
@@ -60,8 +66,10 @@ let make = (~initialLanguage=Translations.En, ~children) => {
   let translations = Translations.getTranslations(~flavor=?flavor, language)
   let base = Translations.getTranslations(language)
 
+  let pageTitle = `${translations.header.title} — ${translations.header.subtitle}`
+
   React.useEffect(() => {
-    applyLanguageToDOM(Translations.languageToString(language))
+    applyLanguageToDOM(Translations.languageToString(language), pageTitle)
     None
   }, [language])
 
