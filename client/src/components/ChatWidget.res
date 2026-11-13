@@ -188,9 +188,12 @@ let postChatStream: (
 let scrollToBottom: Dom.element => unit = %raw(`function (el) { if (el) el.scrollTop = el.scrollHeight; }`)
 let focusEl: Dom.element => unit = %raw(`function (el) { if (el) el.focus(); }`)
 
+// An Escape something else already handled (the certificate dialog over the
+// chat calls preventDefault in its capture listener) is not the chat's: one
+// key press closes one layer, and the dialog returns focus to its opener.
 let onEscape: (unit => unit) => (unit => unit) = %raw(`
   function (close) {
-    function onKey(e) { if (e.key === "Escape") close(); }
+    function onKey(e) { if (e.key === "Escape" && !e.defaultPrevented) close(); }
     document.addEventListener("keydown", onKey);
     return function () { document.removeEventListener("keydown", onKey); };
   }
