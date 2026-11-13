@@ -512,7 +512,10 @@
   }
   .chat__form input:focus-visible { outline: none; }
   .chat__form input::placeholder { color: var(--fg-2); }
-  .chat__form input:read-only { opacity: .6; }
+  /* While a reply is on its way only the prompt glyph mutes: the input is
+     empty then, and its placeholder (its only visible label) keeps full
+     --fg-2 contrast. */
+  .chat__form--busy .chat__prompt { color: var(--fg-2); }
   .chat__send { color: var(--fg-2); font-size: 12px; transition: color .15s; }
   .chat__send:not(:disabled):hover { color: var(--signal); }
   .chat__send:disabled { opacity: .45; cursor: default; }

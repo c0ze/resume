@@ -622,8 +622,12 @@ let make = () => {
             onSubmit={e => {
               ReactEvent.Form.preventDefault(e)
               submit(input)
+              // The send button is disabled the moment the input clears; if
+              // it had focus (a click, or Tab then Enter), focus would drop to
+              // <body>. Keep the keyboard in the input, as Enter does.
+              focusInput()
             }}
-            className="chat__form">
+            className={busy ? "chat__form chat__form--busy" : "chat__form"}>
             <span className="chat__prompt" ariaHidden=true> {React.string(`▸`)} </span>
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
