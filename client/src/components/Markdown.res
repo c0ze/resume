@@ -20,6 +20,8 @@ let iSubs: item => array<block> = %raw(`function (it) { return it.subs || []; }`
 let tKind: inlineTok => string = %raw(`function (t) { return t.t; }`)
 let tVal: inlineTok => string = %raw(`function (t) { return t.v || ""; }`)
 let tHref: inlineTok => string = %raw(`function (t) { return t.href || ""; }`)
+// The tokens inside a bold, italic or link token (one level; see markdownParse.mjs).
+let tChildren: inlineTok => option<array<inlineTok>> = %raw(`function (t) { return Array.isArray(t.c) ? t.c : undefined; }`)
 
 // Only allow link schemes that can't execute script (drop javascript:, data:, …).
 let safeHref = href =>
@@ -27,21 +29,24 @@ let safeHref = href =>
   Js.String2.startsWith(href, "http://") ||
   Js.String2.startsWith(href, "mailto:")
 
-let renderInline = toks =>
+// A mark's content: its inner tokens when it has them, else its text.
+let rec renderInline = toks =>
   toks
   ->Array.mapWithIndex((tok, i) => {
     let key = Int.toString(i)
+    let inner = switch tChildren(tok) {
+    | Some(children) => renderInline(children)
+    | None => React.string(tVal(tok))
+    }
     switch tKind(tok) {
-    | "bold" => <strong key> {React.string(tVal(tok))} </strong>
-    | "italic" => <em key> {React.string(tVal(tok))} </em>
+    | "bold" => <strong key> {inner} </strong>
+    | "italic" => <em key> {inner} </em>
     | "code" =>
       <code key className="md-code"> {React.string(tVal(tok))} </code>
     | "link" =>
       tHref(tok)->safeHref
-        ? <a key href={tHref(tok)} target="_blank" rel="noopener noreferrer">
-            {React.string(tVal(tok))}
-          </a>
-        : <React.Fragment key> {React.string(tVal(tok))} </React.Fragment>
+        ? <a key href={tHref(tok)} target="_blank" rel="noopener noreferrer"> {inner} </a>
+        : <React.Fragment key> {inner} </React.Fragment>
     | _ => <React.Fragment key> {React.string(tVal(tok))} </React.Fragment>
     }
   })

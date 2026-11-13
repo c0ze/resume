@@ -4,7 +4,8 @@
 // inside a ReScript %raw template) to keep the regex escapes intact.
 //
 // Supported subset (what the ai.arda.tr bot actually emits):
-//   **bold**, *italic* / _italic_, `code`, [text](url),
+//   **bold**, *italic* / _italic_, `code`, [text](url), one level of
+//   marks inside bold, italic and link text,
 //   "-" / "*" / "+" bullet lists, "1." ordered lists, ``` fenced code, paragraphs.
 //
 // Lists: a list runs on across blank lines while the next item is of the same
@@ -29,7 +30,11 @@ const INLINE =
 const WORD = /[\p{L}\p{N}_]/u; // around `_`
 const ASCII_WORD = /[A-Za-z0-9]/; // around `*`
 
-function tokenizeInline(input) {
+// Bold, italic and link tokens carry `c`, the tokens of their inner text,
+// one level deep: **[golem](url)** is a bold link, [**label**](url) a link
+// with a bold label. A mark inside that level has no `c`: its text is shown
+// as it is.
+function tokenizeInline(input, depth = 0) {
   const s = String(input == null ? "" : input);
   const tokens = [];
   let rest = s;
@@ -65,11 +70,13 @@ function tokenizeInline(input) {
       }
     }
     if (m.index > 0) pushText(rest.slice(0, m.index));
-    if (m[1] != null) tokens.push({ t: "bold", v: m[2] });
+    const mark = (t, v, extra) =>
+      tokens.push(depth === 0 ? { t, v, ...extra, c: tokenizeInline(v, 1) } : { t, v, ...extra });
+    if (m[1] != null) mark("bold", m[2]);
     else if (m[3] != null) tokens.push({ t: "code", v: m[4] });
-    else if (m[5] != null) tokens.push({ t: "link", v: m[6], href: m[7] });
-    else if (m[8] != null) tokens.push({ t: "italic", v: m[9] });
-    else if (m[10] != null) tokens.push({ t: "italic", v: m[11] });
+    else if (m[5] != null) mark("link", m[6], { href: m[7] });
+    else if (m[8] != null) mark("italic", m[9]);
+    else if (m[10] != null) mark("italic", m[11]);
     prev = m[0].charAt(m[0].length - 1);
     rest = rest.slice(m.index + m[0].length);
   }

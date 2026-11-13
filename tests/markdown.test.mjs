@@ -134,3 +134,24 @@ test("single-asterisk emphasis works between Japanese characters", () => {
     assert.ok(html.includes(text), `expected "${text}" verbatim`);
   }
 });
+
+// The bot bolds a link to a project, or bolds a link's label. Both used to
+// print their inner markers literally. One level of nesting is parsed; the
+// inner marks go through the same element-only renderer and link allow-list.
+test("bold, italic and link labels may hold one level of inline marks", () => {
+  assert.match(
+    render("see **[golem](https://x.y)** now"),
+    /see <strong><a [^>]*href="https:\/\/x\.y"[^>]*>golem<\/a><\/strong> now/
+  );
+  assert.match(render("[**label**](https://x.y)"), /<a [^>]*href="https:\/\/x\.y"[^>]*><strong>label<\/strong><\/a>/);
+  assert.match(render("**bold and _it_ and `code`**"), /<strong>bold and <em>it<\/em> and <code[^>]*>code<\/code><\/strong>/);
+  assert.match(render("_see [x](https://x.y)_"), /<em>see <a [^>]*>x<\/a><\/em>/);
+  // Inner marks never smuggle in an unsafe link or raw HTML.
+  const unsafe = render("**[x](javascript:alert(1))** and **<img src=x>**");
+  assert.doesNotMatch(unsafe, /<a |javascript:|<img/);
+  assert.match(unsafe, /<strong>x<\/strong>/);
+  // An unsafe link keeps its label, marks included, as text.
+  assert.match(render("[**y**](javascript:alert(1))"), /<strong>y<\/strong>/);
+  // Deeper nesting stays literal rather than recursing without bound.
+  assert.match(render("**_[a](https://x.y)_**"), /<strong><em>\[a\]\(https:\/\/x\.y\)<\/em><\/strong>/);
+});
