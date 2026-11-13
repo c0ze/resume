@@ -94,7 +94,7 @@ function parseToUnicode(cmap) {
  * Read a PDF written by PDFKit.
  *
  * @returns {{
- *   pages: Array<{ lines: Array<{ x: number, y: number, font: string, size: number, text: string, notdef: number }>,
+ *   pages: Array<{ lines: Array<{ x: number, y: number, font: string, size: number, text: string, notdef: number, colour: string }>,
  *                  text: string, links: string[] }>,
  *   structureTypes: string[],
  *   tagged: boolean,
@@ -124,6 +124,13 @@ export function readPdf(file) {
     const content = objects.get(ref(page, 'Contents')).stream.toString('latin1');
 
     const lines = [];
+    // The fill colour in effect at each line: the last `r g b scn` (or `rg`) before it
+    // (PDFKit sets colours outside BT … ET; a new page starts black).
+    const colours = [...content.matchAll(/([\d.]+) ([\d.]+) ([\d.]+) (?:rg|scn)\n/g)];
+    const colourAt = (index) => {
+      const set = colours.filter((m) => m.index < index).at(-1);
+      return set ? set.slice(1, 4).map((v) => Math.round(Number(v) * 255)).join(',') : '0,0,0';
+    };
     for (const block of content.matchAll(/\nBT\n([\s\S]*?)\nET\n/g)) {
       const body = block[1];
       const tm = body.match(/1 0 0 1 ([\d.-]+) ([\d.-]+) Tm/);
@@ -138,7 +145,7 @@ export function readPdf(file) {
           text += map.get(code) ?? '\uFFFD';
         }
       }
-      lines.push({ x: Number(tm[1]), y: Number(tm[2]), font: tf[1], size: Number(tf[2]), text, notdef });
+      lines.push({ x: Number(tm[1]), y: Number(tm[2]), font: tf[1], size: Number(tf[2]), text, notdef, colour: colourAt(block.index) });
     }
 
     const annots = page.match(/\/Annots \[([^\]]*)\]/);

@@ -314,3 +314,13 @@ for (const file of pdfFiles) {
     }
   });
 }
+
+// Every bullet is drawn in the body colour, on whichever page it lands: a
+// page started by hand begins in black unless the colour is set again.
+for (const file of pdfFiles) {
+  test(`${file}: bullets keep their colour across page breaks`, () => {
+    const lines = pdf(file).pages.flatMap((p) => p.lines);
+    const bullets = lines.filter((line) => line.text === '•');
+    assert.deepEqual([...new Set(bullets.map((line) => line.colour))], ['45,45,45'], 'every bullet in #2d2d2d');
+  });
+}
