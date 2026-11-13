@@ -41,10 +41,18 @@ let followSection: (array<string>, string => unit) => (unit => unit) = %raw(`
   }
 `)
 
-// Escape and outside clicks close the phone menu.
+// Escape and outside clicks close the phone menu. Escape first puts focus on
+// the menu's button when it was in the menu (or had fallen to <body>), or the
+// link that had it unmounts and focus drops to <body>.
 let dismissOn: (Dom.element, unit => unit) => (unit => unit) = %raw(`
   function (root, close) {
-    function onKey(e) { if (e.key === "Escape") close(); }
+    function onKey(e) {
+      if (e.key !== "Escape") return;
+      var active = document.activeElement;
+      var trigger = root.querySelector(".bar__here");
+      if (trigger && (!active || active === document.body || root.contains(active))) trigger.focus();
+      close();
+    }
     function onDown(e) { if (!root.contains(e.target)) close(); }
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onDown);
@@ -94,23 +102,25 @@ let make = () => {
 
     <nav className="bar__nav" ariaLabel={t.record.sections}> {links()} </nav>
 
-    <div className="bar__menu" ref={ReactDOM.Ref.domRef(menuRef)}>
+    // Below 1080px this is the section nav (the inline one is hidden then),
+    // so the landmark is there whether or not the list is open.
+    <nav className="bar__menu" ariaLabel={t.record.sections} ref={ReactDOM.Ref.domRef(menuRef)}>
       <button
         type_="button"
         className="bar__here"
         ariaExpanded=menuOpen
-        ariaControls="bar-menu"
+        ariaControls=?{menuOpen ? Some("bar-menu") : None}
         onClick={_ => setMenuOpen(o => !o)}>
         <span className="bar__sect" ariaHidden=true> {React.string(`§`)} </span>
         {React.string(hereLabel)}
         <span ariaHidden=true> {React.string(menuOpen ? ` ▴` : ` ▾`)} </span>
       </button>
       {menuOpen
-        ? <nav id="bar-menu" className="bar__drop" ariaLabel={t.record.sections}>
+        ? <div id="bar-menu" className="bar__drop">
             {links(~onPick=() => setMenuOpen(_ => false), ())}
-          </nav>
+          </div>
         : React.null}
-    </div>
+    </nav>
 
     <span className="bar__sp" />
 
