@@ -186,6 +186,10 @@ let postChatStream: (
 `)
 
 let scrollToBottom: Dom.element => unit = %raw(`function (el) { if (el) el.scrollTop = el.scrollHeight; }`)
+// Whether the log is scrolled to (within 40px of) its end.
+let nearBottom: Dom.element => bool = %raw(`
+  function (el) { return !el || el.scrollHeight - el.scrollTop - el.clientHeight <= 40; }
+`)
 let focusEl: Dom.element => unit = %raw(`function (el) { if (el) el.focus(); }`)
 
 // An Escape something else already handled (the certificate dialog over the
@@ -298,6 +302,9 @@ let make = () => {
   let inputRef = React.useRef(Nullable.null)
   let launcherRef = React.useRef(Nullable.null)
   let returnRef = React.useRef(Nullable.null)
+  // Whether new text should keep the log pinned to its end: true while the
+  // reader is at the end, false once they scroll up to read.
+  let followRef = React.useRef(true)
   let orbRef = React.useRef(None)
   // The reply being spoken: Some((messageId, revealed)) while its voice gates
   // the text. `speakerRef` holds the live speaker with a token, so callbacks
@@ -375,7 +382,9 @@ let make = () => {
     None
   }, [language])
 
-  // Keep the transcript pinned to the latest message / thinking indicator.
+  // Keep the transcript pinned to the latest message / thinking indicator,
+  // but only while the reader is at the end (or has just asked): a streamed
+  // chunk must not pull someone reading an earlier answer back down.
   let lastLen = switch messages->Array.get(Array.length(messages) - 1) {
   | Some(m) => String.length(m.content)
   | None => 0
@@ -386,8 +395,8 @@ let make = () => {
   }
   React.useEffect1(() => {
     switch listRef.current->Nullable.toOption {
-    | Some(el) => scrollToBottom(el)
-    | None => ()
+    | Some(el) if followRef.current => scrollToBottom(el)
+    | _ => ()
     }
     None
   }, [
@@ -434,6 +443,14 @@ let make = () => {
 
   React.useEffect0(() => Some(listenForOpen(() => setIsOpen(_ => true))))
 
+  // A panel opens at the end of its log.
+  React.useEffect1(() => {
+    if isOpen {
+      followRef.current = true
+    }
+    None
+  }, [isOpen])
+
   let submit = text => {
     let trimmed = String.trim(text)
     if trimmed !== "" && !busy {
@@ -456,6 +473,8 @@ let make = () => {
         Array.concat(prev, [{id: userId, role: "user", content: trimmed, isError: false}])
       )
       setInput(_ => "")
+      // The visitor's own question brings the log back to its end.
+      followRef.current = true
       setBusy(_ => true)
       setStreaming(_ => false)
       sizzle(0.4)
@@ -569,7 +588,12 @@ let make = () => {
             </button>
           </div>
 
-          <div ref={ReactDOM.Ref.domRef(listRef)} role="log" ariaLive=#polite className="chat__log">
+          <div
+            ref={ReactDOM.Ref.domRef(listRef)}
+            role="log"
+            ariaLive=#polite
+            className="chat__log"
+            onScroll={e => followRef.current = nearBottom(ReactEvent.UI.currentTarget(e)->Obj.magic)}>
             <div className="msg msg--ai">
               <p className="msg__who"> {React.string(r.assistant ++ ` ▸`)} </p>
               <div className="msg__txt"> <p> {React.string(c.greeting)} </p> </div>
