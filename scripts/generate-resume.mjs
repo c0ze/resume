@@ -6,7 +6,7 @@ import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
-import { fitFontSize, linesThatFit, planList } from './pdf-layout.mjs';
+import { fitFontSize, linesThatFit, measureRuns, planList } from './pdf-layout.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -303,10 +303,13 @@ function generateResume(language, flavor = null) {
     heightOf(headingFont, SIZE.sectionTitle, title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 }) +
     0.3 * lineHeightOf(headingFont, SIZE.sectionTitle) + 6;
 
-  // "Title  —  by" (a line steps by the company font that ends it), the
-  // period, then `gap` line heights of the period font.
+  // The bold title continued by "  —  by" in regular, measured as drawn
+  // (measureRuns), the period, then `gap` line heights of the period font.
   const entryHeadHeight = (title, by, period, gap) =>
-    heightOf(fonts.regular, SIZE.company, `${title}  —  ${by}`) +
+    measureRuns(doc, [
+      { font: fonts.bold, size: SIZE.jobTitle, text: title },
+      { font: fonts.regular, size: SIZE.company, text: `  —  ${by}` },
+    ], { width: contentWidth }) +
     heightOf(periodFont, SIZE.period, period) + gap * lineHeightOf(periodFont, SIZE.period);
 
   // A bulleted item with a hanging indent: the bullet sits 10pt in, and every

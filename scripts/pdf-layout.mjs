@@ -123,3 +123,32 @@ export function planList(items, fit, capacity, top = false) {
   }
   return plans;
 }
+
+/**
+ * The height `runs` take when drawn the way PDFKit draws continued text
+ * (each run in its own font and size, all but the last with
+ * `continued: true`), measured without drawing: the wrapper's dry run, with
+ * the cursor stepped as PDFKit's own line callback steps it. The cursor is
+ * left where it was; the font is left at the last run's.
+ *
+ * @param {PDFKit.PDFDocument} doc
+ * @param {{ font: string, size: number, text: string }[]} runs
+ * @param {object} options  text options (width, lineGap)
+ * @returns {number}
+ */
+export function measureRuns(doc, runs, options) {
+  const { x, y } = doc;
+  const step = (line, lineOptions = {}, wrapper) => {
+    if (!wrapper) doc.x += doc.widthOfString(line, lineOptions);
+    else doc.y += doc.currentLineHeight(true) + (lineOptions.lineGap || doc._lineGap || 0);
+  };
+  runs.forEach((run, i) => {
+    doc.font(run.font).fontSize(run.size);
+    // The same internal entry point doc.text and doc.heightOfString use.
+    doc._text(run.text, { ...options, height: Infinity, continued: i < runs.length - 1 }, undefined, undefined, step);
+  });
+  const height = doc.y - y;
+  doc.x = x;
+  doc.y = y;
+  return height;
+}

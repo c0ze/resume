@@ -128,3 +128,41 @@ test('the item before the last moves with it only when the two fit on a fresh pa
   // 47 + 4 fit together, so they move together.
   assert.deepEqual(planList([47, 4], 49, 51), [[0, 47], [4]]);
 });
+
+// ── Measuring a heading drawn as continued runs ──────────────────────
+// "Title  —  Company" is drawn as a bold title continued by the company in
+// regular: measured in one font, a title that wraps only in bold was
+// planned a line short.
+test('measureRuns gives the height continued runs take when drawn', async () => {
+  const { default: PDFDocument } = await import('pdfkit');
+  const { measureRuns } = await import('../scripts/pdf-layout.mjs');
+  const title = 'Senior Platform and Developer Experience Engineer';
+  const company = '  —  Example Corporation (Tokyo, Remote)';
+  const runs = [
+    { font: 'Helvetica-Bold', size: 10.5, text: title },
+    { font: 'Helvetica', size: 10, text: company },
+  ];
+  const probe = new PDFDocument({ autoFirstPage: true });
+  const widthOf = (font, size, text) => probe.font(font).fontSize(size).widthOfString(text);
+  const regular = widthOf('Helvetica', 10, title + company);
+  const asDrawn = widthOf('Helvetica-Bold', 10.5, title) + widthOf('Helvetica', 10, company);
+  assert.ok(asDrawn > regular, 'the bold title is wider');
+
+  const drawn = (width) => {
+    const doc = new PDFDocument({ autoFirstPage: true });
+    const y = doc.y;
+    doc.font('Helvetica-Bold').fontSize(10.5).text(title, { continued: true, width });
+    doc.font('Helvetica').fontSize(10).text(company, { width });
+    return doc.y - y;
+  };
+  for (const width of [asDrawn + 20, (regular + asDrawn) / 2, regular * 0.45, regular * 0.3]) {
+    const doc = new PDFDocument({ autoFirstPage: true });
+    const before = { x: doc.x, y: doc.y };
+    assert.equal(measureRuns(doc, runs, { width }), drawn(width), `width ${width.toFixed(1)}`);
+    assert.deepEqual({ x: doc.x, y: doc.y }, before, 'measuring moves nothing');
+  }
+  // Between the two widths the old single-font measure was one line short.
+  const between = (regular + asDrawn) / 2;
+  const single = probe.font('Helvetica').fontSize(10).heightOfString(title + company, { width: between });
+  assert.ok(drawn(between) > single, 'the title wraps only in bold');
+});
