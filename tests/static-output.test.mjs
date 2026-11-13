@@ -14,13 +14,19 @@ test("static output contains real resume content instead of loading placeholders
   assert.ok(fs.existsSync(staticHtmlPath), `Expected built HTML at ${staticHtmlPath}`);
 
   const html = fs.readFileSync(staticHtmlPath, "utf8");
+  // Only what React prerendered counts: the template's <head> (title, meta,
+  // JSON-LD) repeats the subtitle, so a check on the whole file would pass
+  // with an empty #root.
+  const root = html.slice(html.indexOf('<div id="root">'));
+  assert.ok(html.includes('<div id="root">'), "expected the prerender root");
 
-  assert.ok(
-    html.includes("Backend Systems Architect"),
-    "expected the static output to include the translated header subtitle"
+  assert.match(
+    root,
+    /<p class="intro__title">[^<]*Backend Systems Architect[^<]*<\/p>/,
+    "expected the prerendered intro to include the translated header subtitle"
   );
   assert.ok(
-    html.includes("Get In Touch"),
+    root.includes("Get In Touch"),
     "expected the static output to include contact content"
   );
   assert.ok(
