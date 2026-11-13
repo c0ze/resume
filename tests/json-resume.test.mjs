@@ -2,11 +2,9 @@
 // importers), so they must follow JSON Resume schema v1.0.0 and have the same
 // shape in every language. Run after `npm run build`.
 //
-// The validator below is the part of the v1.0.0 schema these files use
-// (https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json):
-// the top level allows only the listed sections; every other object allows
-// extra properties; dates match the schema's iso8601 pattern. Written out here
-// so the test needs no JSON Schema dependency.
+// The schema is vendored unchanged in tests/fixtures/ (licence beside it) and
+// checked with a small draft-04 validator for the keywords it uses
+// (tests/helpers/json-schema.mjs), so the test needs no dependency.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +12,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { validate } from './helpers/json-schema.mjs';
 import { parsePeriod } from '../scripts/periods.mjs';
+import { splitPlace } from '../scripts/labels.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const publicDir = path.join(projectRoot, 'public');
@@ -22,70 +22,20 @@ const files = fs.readdirSync(publicDir).filter((f) => /^resume-.*\.json$/.test(f
 const read = (file) => JSON.parse(fs.readFileSync(path.join(publicDir, file), 'utf8'));
 const content = (language, section) =>
   JSON.parse(fs.readFileSync(path.join(projectRoot, 'content', language, `${section}.json`), 'utf8'));
+const SCHEMA = JSON.parse(fs.readFileSync(path.join(projectRoot, 'tests/fixtures/json-resume-schema-v1.0.0.json'), 'utf8'));
 
-const ISO8601 = /^([1-2][0-9]{3}-[0-1][0-9]-[0-3][0-9]|[1-2][0-9]{3}-[0-1][0-9]|[1-2][0-9]{3})$/;
-const string = { type: 'string' };
-const strings = { type: 'array', items: string };
-const uri = { type: 'string', format: 'uri' };
-const date = { type: 'string', pattern: ISO8601 };
-const object = (properties) => ({ type: 'object', properties });
-const list = (properties) => ({ type: 'array', items: object(properties) });
-
-const SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  properties: {
-    $schema: uri,
-    basics: object({
-      name: string, label: string, image: string, email: { type: 'string', format: 'email' }, phone: string,
-      url: uri, summary: string,
-      location: object({ address: string, postalCode: string, city: string, countryCode: string, region: string }),
-      profiles: list({ network: string, username: string, url: uri }),
-    }),
-    work: list({ name: string, location: string, description: string, position: string, url: uri,
-      startDate: date, endDate: date, summary: string, highlights: strings }),
-    volunteer: { type: 'array' },
-    education: list({ institution: string, url: uri, area: string, studyType: string,
-      startDate: date, endDate: date, score: string, courses: strings }),
-    awards: { type: 'array' },
-    certificates: { type: 'array' },
-    publications: list({ name: string, publisher: string, releaseDate: date, url: uri, summary: string }),
-    skills: list({ name: string, level: string, keywords: strings }),
-    languages: list({ language: string, fluency: string }),
-    interests: { type: 'array' },
-    references: { type: 'array' },
-    projects: list({ name: string, description: string, highlights: strings, keywords: strings,
-      startDate: date, endDate: date, url: uri, roles: strings, entity: string, type: string }),
-    meta: { type: 'object' },
-  },
-};
-
-function validate(value, schema, at = '$') {
-  const errors = [];
-  const kind = Array.isArray(value) ? 'array' : value === null ? 'null' : typeof value;
-  if (schema.type && kind !== schema.type) return [`${at}: expected ${schema.type}, got ${kind}`];
-  if (schema.pattern && !schema.pattern.test(value)) errors.push(`${at}: "${value}" does not match ${schema.pattern}`);
-  if (schema.format === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) errors.push(`${at}: not an email`);
-  if (schema.format === 'uri') {
-    try { new URL(value); } catch { errors.push(`${at}: "${value}" is not a URI`); }
-  }
-  if (schema.items) value.forEach((item, i) => errors.push(...validate(item, schema.items, `${at}[${i}]`)));
-  if (schema.properties) {
-    for (const [key, child] of Object.entries(value)) {
-      if (schema.properties[key]) errors.push(...validate(child, schema.properties[key], `${at}.${key}`));
-      else if (schema.additionalProperties === false) errors.push(`${at}: unexpected property "${key}"`);
-    }
-  }
-  return errors;
-}
-
-test('the validator rejects what the schema rejects', () => {
+test('the vendored schema is JSON Resume v1.0.0, and the validator rejects what it rejects', () => {
+  assert.equal(SCHEMA.$schema, 'http://json-schema.org/draft-04/schema#');
+  assert.equal(SCHEMA.additionalProperties, false);
   assert.deepEqual(validate({ basics: { name: 'x' } }, SCHEMA), []);
   assert.equal(validate({ work: [{ startDate: '2021-7' }] }, SCHEMA).length, 1);
   assert.equal(validate({ work: [{ startDate: 'July 2021' }] }, SCHEMA).length, 1);
   assert.equal(validate({ basics: { location: 'Tokyo' } }, SCHEMA).length, 1);
   assert.equal(validate({ extra: 1 }, SCHEMA).length, 1);
   assert.equal(validate({ basics: { url: 'arda.tr' } }, SCHEMA).length, 1);
+  assert.equal(validate({ basics: { email: 'not an email' } }, SCHEMA).length, 1);
+  assert.equal(validate({ work: [{ highlights: [1] }] }, SCHEMA).length, 1);
+  assert.throws(() => validate(1, { minimum: 0 }), /unsupported keyword "minimum"/);
 });
 
 test('there is a JSON Resume for every language and flavour', () => {
@@ -127,12 +77,23 @@ test('work entries carry the company as the name and the place as the location',
     const jobs = content(language, 'experience').jobs;
     assert.equal(work.length, jobs.length);
     for (const [i, entry] of work.entries()) {
-      assert.doesNotMatch(entry.name, /[()（）]/, `${language}: ${entry.name}`);
       assert.ok(entry.location, `${language}: ${entry.name} has a location`);
-      assert.ok(jobs[i].company.startsWith(entry.name), `${language}: ${entry.name}`);
-      assert.ok(jobs[i].company.includes(entry.location), `${language}: ${entry.location}`);
+      assert.ok(
+        [`${entry.name} (${entry.location})`, `${entry.name}（${entry.location}）`].includes(jobs[i].company),
+        `${language}: "${jobs[i].company}" splits into "${entry.name}" and "${entry.location}"`,
+      );
     }
   }
+});
+
+// Only the last bracketed group is the place: a company whose name has
+// brackets of its own keeps them.
+test('splitPlace takes the place from the last bracketed group only', () => {
+  assert.deepEqual(splitPlace('Veltra (Tokyo, Remote)'), { name: 'Veltra', location: 'Tokyo, Remote' });
+  assert.deepEqual(splitPlace('Veltra（東京・リモート）'), { name: 'Veltra', location: '東京・リモート' });
+  assert.deepEqual(splitPlace('Acme (Japan) KK (Tokyo, Onsite)'), { name: 'Acme (Japan) KK', location: 'Tokyo, Onsite' });
+  assert.deepEqual(splitPlace('株式会社エー（日本）（東京・出社）'), { name: '株式会社エー（日本）', location: '東京・出社' });
+  assert.deepEqual(splitPlace('Iron.io'), { name: 'Iron.io' });
 });
 
 // The content gives a month for the Ryde contract ("July 2021 - July 2022",

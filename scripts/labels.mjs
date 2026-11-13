@@ -61,3 +61,21 @@ export function splitSpokenLanguages(content) {
     .map((entry) => entry.trim())
     .filter(Boolean);
 }
+
+/**
+ * Split a company entry into the company and its place: the last bracketed
+ * group is the place, with the regex the page uses
+ * (client/src/components/Section.res, splitPlace). Earlier brackets stay in
+ * the name.
+ *
+ *   splitPlace('Veltra (Tokyo, Remote)')  -> { name: 'Veltra', location: 'Tokyo, Remote' }
+ *   splitPlace('Veltra（東京・リモート）')   -> { name: 'Veltra', location: '東京・リモート' }
+ *   splitPlace('Iron.io')                 -> { name: 'Iron.io' }
+ *
+ * @param {string} company
+ * @returns {{ name: string, location?: string }}
+ */
+export function splitPlace(company) {
+  const match = String(company ?? '').match(/^(.*?)\s*[（(]([^()（）]*)[)）]\s*$/);
+  return match ? { name: match[1], location: match[2] } : { name: String(company ?? '') };
+}

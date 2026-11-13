@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
-import { splitSpokenLanguages } from './labels.mjs';
+import { splitPlace, splitSpokenLanguages } from './labels.mjs';
 import { parsePeriod } from './periods.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,14 +25,6 @@ function parseLocation(location) {
   const parts = location.split(/[,、]/).map((part) => part.trim()).filter(Boolean);
   if (parts.length === 2) return { city: parts[0], region: parts[1], countryCode: COUNTRY_CODE };
   return { address: location, countryCode: COUNTRY_CODE };
-}
-
-// "Veltra (Tokyo, Remote)" / "Veltra（東京・リモート）" → the company and the
-// place, with the regex the page uses (client/src/components/Section.res,
-// splitPlace).
-function splitPlace(company) {
-  const match = String(company ?? '').match(/^(.*?)\s*[（(]([^()（）]*)[)）]\s*$/);
-  return match ? { name: match[1], location: match[2] } : { name: String(company ?? '') };
 }
 
 // Parse "Turkish (Native), English (Near Native; TOEFL 263, 2004)" into
