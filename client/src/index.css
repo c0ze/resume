@@ -107,10 +107,27 @@
     white-space: nowrap;
   }
 
-  .bar__site { display: flex; align-items: center; gap: 8px; color: var(--fg); }
+  /* Hit areas: the mark, the nav links, the menu button and EN · JA · TR
+     fill the bar's height, and padding cancelled by an equal negative margin
+     widens them without moving anything: the bar looks the same, but a
+     finger no longer has to find an 8x14 block or a 12px-tall word. Their
+     focus ring is drawn inside the box so it stays within the bar. */
+  .bar__site,
+  .bar__nav,
+  .bar__nav a,
+  .bar__menu,
+  .bar__lang,
+  .bar__lang button { align-self: stretch; }
+  .bar__site:focus-visible,
+  .bar__nav a:focus-visible,
+  .bar__here:focus-visible,
+  .bar__lang button:focus-visible { outline-offset: -2px; }
+
+  .bar__site { display: flex; align-items: center; gap: 8px; padding: 0 8px; margin: 0 -8px; color: var(--fg); }
   .bar__site i { display: inline-block; width: 8px; height: 14px; background: var(--signal); }
 
   .bar__nav { display: flex; gap: 16px; }
+  .bar__nav a { display: flex; align-items: center; padding: 0 8px; margin: 0 -8px; }
   .bar__nav a,
   .bar__drop a { text-transform: lowercase; transition: color .15s; }
   .bar__nav a:hover,
@@ -119,6 +136,7 @@
   .bar__menu { position: relative; display: none; min-width: 0; }
   .bar__here {
     display: block;
+    height: 100%;
     max-width: 44vw;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -128,7 +146,8 @@
   .bar__sect { color: var(--signal); margin-right: 6px; }
   .bar__drop {
     position: absolute;
-    top: calc(100% + 10px);
+    /* Just under the bar: the menu box is the bar's full height now. */
+    top: calc(100% - .5px);
     left: 0;
     display: grid;
     min-width: 13rem;
@@ -143,7 +162,7 @@
   .bar__sp { flex: 1; }
 
   .bar__lang { display: flex; align-items: center; gap: 6px; }
-  .bar__lang button { color: var(--fg-2); padding: 4px 0; transition: color .15s; }
+  .bar__lang button { color: var(--fg-2); padding: 0 6px; margin: 0 -6px; transition: color .15s; }
   .bar__lang button:hover { color: var(--fg); }
   .bar__lang button[aria-pressed="true"] {
     color: var(--fg);
@@ -152,7 +171,9 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
   }
-  .bar__dot { color: var(--fg-2); }
+  /* Below 600px the gap is 4px, so a button's padding runs under the dot;
+     the dot lets the click through to it. */
+  .bar__dot { color: var(--fg-2); pointer-events: none; }
 
   .bar__clock { font-variant-numeric: tabular-nums; }
 

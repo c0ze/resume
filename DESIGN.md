@@ -192,6 +192,9 @@ fork it: change the shared file first, then copy it to every site.
   - The language switch is `EN · JA · TR`; the active language is `--fg` with a
     signal underline.
   - The rendition button has a 1px border.
+  - The mark, the nav links, the menu button and the language buttons fill
+    the bar's height, widened by padding that an equal negative margin
+    cancels, so the hit areas grow (24×33 or more) and nothing moves.
 - **Treeline** (`Treeline.res`): decorative, `aria-hidden`.
 - **Rail** (`Rail.res`): a `<dl>` of labelled groups.
   - Downloads are 1px `--fg` boxes that invert on hover.
