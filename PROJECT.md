@@ -60,7 +60,7 @@ before changing anything visual.
 - Theme contract check (v3: id set, roles and required tokens vs arda.tr's `config/themes.json`; soft-passes on older contracts): `scripts/check-theme-contract.mjs` (run by `.github/workflows/theme-contract.yml`)
 - Static build pipeline: `scripts/build-static.mjs`
 - Chat Markdown renderer: `client/src/components/markdownParse.mjs` (+ `Markdown.res`; also `revealPrefix`, the part of a spoken reply that is safe to render)
-- Tests (static output, the PDF/DOCX files themselves, Markdown, labels, flavours, browser storage, the compiled chat transport, and the voice's gated reveal): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build; `tests/helpers/` reads PDFKit's PDFs and the DOCX zips without extra dependencies)
+- Tests (static output, the PDF/DOCX files themselves, the JSON Resume files against schema v1.0.0, Markdown, labels, flavours, browser storage, the compiled chat transport, and the voice's gated reveal): `tests/*.test.mjs` (run by `npm run test:static`, and by the deploy workflow after the build; `tests/helpers/` reads PDFKit's PDFs and the DOCX zips without extra dependencies)
 
 ## Important Directories
 

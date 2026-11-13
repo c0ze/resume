@@ -36,7 +36,7 @@ function generateVCard() {
     // The email is allowed in downloadable artifacts (like the PDF/DOCX) but
     // must never be rendered into the site HTML.
     `EMAIL;TYPE=INTERNET:${escapeVCardValue(header.contactViaEmail)}`,
-    `URL:${siteUrl}`,
+    `URL:${siteUrl}`, // deliberately the résumé site, not header.website (arda.tr)
     'END:VCARD',
   ];
 
