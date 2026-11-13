@@ -583,10 +583,13 @@ function generateResume(language, flavor = null) {
 
     const papers = papersOf(edu);
     if (papers.length) {
-      const gap = 0.15 * doc.currentLineHeight(true);
+      // The gap above the title is measured and drawn in the font the entry
+      // ended in: the description's, or the period's without one.
+      const [gapFont, gapSize] = edu.description ? [fonts.regular, SIZE.bullet] : [periodFont, SIZE.period];
+      const gap = 0.15 * lineHeightOf(gapFont, gapSize);
       const blocks = bulletBlocks(papers);
       keepWithNext(gap + heightOf(fonts.bold, SIZE.bullet, edu.additionalInfo.title), blocks);
-      if (!atTop()) doc.moveDown(0.15);
+      if (!atTop()) doc.font(gapFont).fontSize(gapSize).moveDown(0.15);
       doc.x = PAGE.margin.left;
       doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
       tag('P', () => doc.text(edu.additionalInfo.title, { width: contentWidth }));

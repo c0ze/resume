@@ -324,3 +324,28 @@ for (const file of pdfFiles) {
     assert.deepEqual([...new Set(bullets.map((line) => line.colour))], ['45,45,45'], 'every bullet in #2d2d2d');
   });
 }
+
+// The gap above "Selected Papers:" is a fraction (0.15) of the line height of
+// the description it follows, measured and drawn in that font. (It used to
+// be drawn in the bold title font after being measured in the regular one;
+// Noto Serif's regular and bold share their line height, so the PDFs did not
+// show it, but the fallback fonts would.)
+test('resume-en.pdf: the gap above "Selected Papers:" is 0.15 of the description line height', async () => {
+  const { default: PDFDocument } = await import('pdfkit');
+  const probe = new PDFDocument({ autoFirstPage: true });
+  const metrics = (file) => {
+    probe.font(path.join(publicDir, 'fonts', file)).fontSize(9.5);
+    return { lineHeight: probe.currentLineHeight(true), ascender: (probe._font.ascender / 1000) * 9.5 };
+  };
+  const regular = metrics('NotoSerif-Regular.ttf');
+  const bold = metrics('NotoSerif-Bold.ttf');
+
+  const lines = pdf('resume-en.pdf').pages.flatMap((p) => p.lines);
+  const papers = content('en', 'education').entries.find((e) => e.additionalInfo).additionalInfo.title;
+  const at = lines.findIndex((line) => line.text === papers);
+  const [before, last, title] = [lines[at - 2], lines[at - 1], lines[at]];
+  const step = before.y - last.y; // the description's line step
+  // PDF y runs upwards and marks the baseline-ish origin: undo the ascender difference.
+  const gap = last.y - title.y - (bold.ascender - regular.ascender) - step;
+  assert.ok(Math.abs(gap - 0.15 * regular.lineHeight) < 0.01, `gap ${gap.toFixed(3)} vs ${(0.15 * regular.lineHeight).toFixed(3)}`);
+});
