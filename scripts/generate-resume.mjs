@@ -6,7 +6,7 @@ import { loadContent } from './content.mjs';
 import { applyFlavor, artifactBase, flavorTargets } from './flavors.mjs';
 import { issueDate, missingGlyphs, sanitizeContent, withGlyphFallbacks } from './export-text.mjs';
 import { fieldLabel, splitSpokenLanguages } from './labels.mjs';
-import { fitFontSize } from './pdf-layout.mjs';
+import { fitFontSize, linesThatFit, planList } from './pdf-layout.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -209,62 +209,105 @@ function generateResume(language, flavor = null) {
     doc.y = y + 6;
   }
 
-  function sectionHeader(title) {
-    // Reserve enough for the header + rule + first entry (title, subtitle, period, ~2 lines).
-    // This prevents the section header from rendering at the bottom of a page
-    // with the first entry breaking onto the next page.
-    ensureSpace(200);
-    doc.font(headingFont).fontSize(SIZE.sectionTitle).fillColor(COLOR.black);
-    doc.x = PAGE.margin.left;
-    tag('H2', () => doc.text(title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 }));
-    doc.moveDown(0.15);
-    drawRule();
-    doc.moveDown(0.15);
+  // ── Pagination ──────────────────────────────────────────────────
+  // Every page break is decided here rather than left to PDFKit, which breaks
+  // a block wherever the page ends. scripts/pdf-layout.mjs makes the
+  // decisions (tested in tests/pdf-layout.test.mjs): a block of up to four
+  // lines is never broken, a longer one keeps two lines on each side of a
+  // break, the last item of a list does not start a page alone, and a
+  // heading moves to the next page when the block under it would.
+  const pageBottom = () => doc.page.height - PAGE.margin.bottom;
+  const atTop = () => doc.y <= PAGE.margin.top + 0.01;
+
+  // A new page that carries any open marked content (a tagged element drawn
+  // across the break) and the fill colour over, as PDFKit's own breaks do.
+  function newPage() {
+    doc.continueOnNewPage();
+    if (doc._fillColor) doc.fillColor(...doc._fillColor);
   }
 
-  function ensureSpace(needed) {
-    if (doc.y + needed > doc.page.height - PAGE.margin.bottom) {
-      doc.addPage();
-    }
+  // The lines PDFKit wraps `text` into in the current font and size: the dry
+  // run heightOfString makes, collecting each line. They rejoin to `text`.
+  function wrapLines(text, options) {
+    const { x, y } = doc;
+    const lines = [];
+    doc._text(text, x, y, { ...options, height: Infinity }, (line) => lines.push(line));
+    doc.x = x;
+    doc.y = y;
+    return lines;
   }
 
-  // ── Keeping blocks together ─────────────────────────────────────
-  // PDFKit breaks a text block wherever the page ends, so a bullet or a
-  // description could leave one line ("generated charts.") at the top of the
-  // next page. A block of up to four lines is kept whole; a longer one may
-  // break, but with at least two lines on each page. Measured in the current
-  // font and size; PDFKit places a line while its top plus one line height
-  // is above the bottom margin, and steps a line height plus lineGap.
-  const KEEP_LINES = 4;
-
-  function blockLines(text, options) {
-    const lh = doc.currentLineHeight(true);
-    const step = lh + (options.lineGap ?? 0);
-    const lines = Math.max(1, Math.round(doc.heightOfString(text, options) / step));
-    return { lh, step, lines };
+  // A block of text in the current font: its lines and line metrics.
+  function textBlock(text, options) {
+    const lineHeight = doc.currentLineHeight(true);
+    return { options, lines: wrapLines(text, options), lineHeight, step: lineHeight + (options.lineGap ?? 0) };
   }
 
-  // The height that must be free below the cursor before the block starts:
-  // all of a short block, two lines of a long one.
-  function blockNeed(text, options) {
-    const { lh, step, lines } = blockLines(text, options);
-    return (Math.min(lines, lines <= KEEP_LINES ? lines : 2) - 1) * step + lh;
+  // Plans for a run of blocks in one font (a list, or one paragraph) that
+  // starts `lead` points below the cursor; see planList.
+  function planRun(blocks, lead = 0) {
+    const { lineHeight, step } = blocks[0];
+    const fit = linesThatFit(pageBottom() - doc.y - lead, lineHeight, step);
+    const capacity = linesThatFit(pageBottom() - PAGE.margin.top, lineHeight, step);
+    return planList(blocks.map((b) => b.lines.length), fit, capacity, atTop());
   }
 
-  // Start a new page when the block would break badly here.
-  function keepBlock(text, options) {
-    const { lh, step, lines } = blockLines(text, options);
-    const room = doc.page.height - PAGE.margin.bottom - doc.y;
-    const fit = room < lh ? 0 : Math.floor((room - lh) / step) + 1;
-    if (fit < lines && (lines <= KEEP_LINES || fit < 2 || lines - fit < 2)) doc.addPage();
+  // Before a heading `lead` points tall: a new page when the blocks under it
+  // would not start on this one (or, with nothing under it, when it does
+  // not fit).
+  function keepWithNext(lead, blocks) {
+    if (atTop()) return;
+    if (blocks.length === 0 ? doc.y + lead > pageBottom() : planRun(blocks, lead)[0][0] === 0) newPage();
   }
 
-  // Height of `text` in a given font and size (the font is left set; every
-  // drawing step sets its own).
-  function measure(font, size, text, options = { width: contentWidth }) {
+  // Start a planned block: a leading 0 is a new page. Returns the rest.
+  function startPlanned(plan) {
+    if (plan[0] !== 0) return plan;
+    newPage();
+    return plan.slice(1);
+  }
+
+  // Draw a block's lines page by page, `segments` lines at a time, at x from y.
+  function drawSegments(block, x, y, segments) {
+    let from = 0;
+    segments.forEach((count, i) => {
+      if (i > 0) newPage();
+      doc.text(block.lines.slice(from, from + count).join(''), x, i === 0 ? y : doc.y, block.options);
+      from += count;
+    });
+  }
+
+  // A paragraph drawn as planned, at the left margin.
+  function paragraph(block) {
+    const segments = startPlanned(planRun([block])[0]);
+    const y = doc.y;
+    tag('P', () => drawSegments(block, PAGE.margin.left, y, segments));
+  }
+
+  // ── Measuring headings ──────────────────────────────────────────
+  // Heights of what the drawing code below puts above a block, step by step
+  // (moveDown adds a fraction of the current font's line height). Each sets
+  // the font it measures in; every drawing step sets its own.
+  function lineHeightOf(font, size) {
+    doc.font(font).fontSize(size);
+    return doc.currentLineHeight(true);
+  }
+  function heightOf(font, size, text, options = { width: contentWidth }) {
     doc.font(font).fontSize(size);
     return doc.heightOfString(text, options);
   }
+  const periodFont = fonts.italic || fonts.regular;
+
+  // H2 and its rule, as sectionHeader draws them.
+  const sectionHeadHeight = (title) =>
+    heightOf(headingFont, SIZE.sectionTitle, title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 }) +
+    0.3 * lineHeightOf(headingFont, SIZE.sectionTitle) + 6;
+
+  // "Title  —  by" (a line steps by the company font that ends it), the
+  // period, then `gap` line heights of the period font.
+  const entryHeadHeight = (title, by, period, gap) =>
+    heightOf(fonts.regular, SIZE.company, `${title}  —  ${by}`) +
+    heightOf(periodFont, SIZE.period, period) + gap * lineHeightOf(periodFont, SIZE.period);
 
   // A bulleted item with a hanging indent: the bullet sits 10pt in, and every
   // line of the text, wrapped ones included, starts where the first line's
@@ -273,29 +316,43 @@ function generateResume(language, flavor = null) {
   const bulletRight = PAGE.margin.left + contentWidth - 10;
   const bulletOptions = () => ({ width: bulletRight - bulletX - doc.widthOfString('•  '), lineGap: bulletGap });
 
-  function bulletItem(text, list) {
-    keepBlock(text, bulletOptions());
+  // Lists and descriptions are both set in the bullet font.
+  function bulletBlocks(items) {
+    doc.font(fonts.regular).fontSize(SIZE.bullet);
+    return items.map((text) => textBlock(text, bulletOptions()));
+  }
+  function descriptionBlock(text) {
+    doc.font(fonts.regular).fontSize(SIZE.bullet);
+    return textBlock(text, { width: contentWidth, lineGap: bulletGap });
+  }
+
+  // `first`: the lead (headings) and blocks of the section's first entry,
+  // which the section heading stays with.
+  function sectionHeader(title, first) {
+    keepWithNext(sectionHeadHeight(title) + first.lead, first.blocks);
+    doc.font(headingFont).fontSize(SIZE.sectionTitle).fillColor(COLOR.black);
+    doc.x = PAGE.margin.left;
+    tag('H2', () => doc.text(title.toLocaleUpperCase(language), { width: contentWidth, characterSpacing: 1.5 }));
+    doc.moveDown(0.15);
+    drawRule();
+    doc.moveDown(0.15);
+  }
+
+  function bulletItem(block, plan, list) {
+    const segments = startPlanned(plan);
     const y = doc.y;
     const textX = bulletX + doc.widthOfString('•  ');
     group('LI', (item) => {
       tag('Lbl', () => doc.text('•', bulletX, y, { lineBreak: false }), item);
-      tag('LBody', () => doc.text(text, textX, y, { width: bulletRight - textX, lineGap: bulletGap }), item);
+      tag('LBody', () => drawSegments(block, textX, y, segments), item);
     }, list);
     doc.x = PAGE.margin.left;
   }
 
-  // What must fit below an entry's heading for it not to be left alone at
-  // the foot of a page: its first bullet (or description), kept as above.
-  function firstBlockNeed(text, options) {
-    if (!text) return 0;
-    doc.font(fonts.regular).fontSize(SIZE.bullet);
-    return blockNeed(text, options ?? bulletOptions());
-  }
-
-  function bulletList(items) {
-    group('L', (list) => {
-      for (const item of items) bulletItem(item, list);
-    });
+  // The items are planned together, so the list rule sees the last item.
+  function bulletList(blocks) {
+    const plans = planRun(blocks);
+    group('L', (list) => blocks.forEach((block, i) => bulletItem(block, plans[i], list)));
   }
 
   // ── Header ──────────────────────────────────────────────────────
@@ -349,17 +406,20 @@ function generateResume(language, flavor = null) {
   doc.moveDown(0.3);
 
   // ── About ───────────────────────────────────────────────────────
-  sectionHeader(t.about.title);
+  doc.font(fonts.regular).fontSize(SIZE.body);
+  const aboutOptions = { width: contentWidth, lineGap };
+  const aboutFirst = t.about.paragraph1 ? [textBlock(t.about.paragraph1, aboutOptions)] : [];
+  sectionHeader(t.about.title, { lead: 0, blocks: aboutFirst });
 
   doc.font(fonts.regular).fontSize(SIZE.body).fillColor(COLOR.dark);
   doc.x = PAGE.margin.left;
   if (t.about.paragraph1) {
-    tag('P', () => doc.text(t.about.paragraph1, { width: contentWidth, lineGap }));
+    tag('P', () => doc.text(t.about.paragraph1, aboutOptions));
     doc.moveDown(0.3);
   }
   if (t.about.paragraph2) {
     doc.x = PAGE.margin.left;
-    tag('P', () => doc.text(t.about.paragraph2, { width: contentWidth, lineGap }));
+    tag('P', () => doc.text(t.about.paragraph2, aboutOptions));
     doc.moveDown(0.3);
   }
 
@@ -390,132 +450,147 @@ function generateResume(language, flavor = null) {
   doc.moveDown(0.5);
 
   // ── Experience ──────────────────────────────────────────────────
-  sectionHeader(t.experience.title);
+  // A job's heading (title — company, period) stays with its bullets.
+  const jobs = Array.isArray(t.experience.jobs) ? t.experience.jobs : [];
+  const jobFirst = (job) => ({
+    blocks: bulletBlocks(job.responsibilities ?? []),
+    lead: entryHeadHeight(job.title, job.company, job.period, 0.15),
+  });
+  sectionHeader(t.experience.title, jobs.length ? jobFirst(jobs[0]) : { lead: 0, blocks: [] });
 
-  if (Array.isArray(t.experience.jobs)) {
-    t.experience.jobs.forEach((job, i) => {
-      const heading =
-        measure(fonts.bold, SIZE.jobTitle, `${job.title}  —  ${job.company}`) +
-        measure(fonts.italic || fonts.regular, SIZE.period, job.period) +
-        doc.currentLineHeight(true) * 0.15;
-      ensureSpace(Math.max(60, heading + firstBlockNeed(job.responsibilities?.[0])));
+  jobs.forEach((job, i) => {
+    const { blocks, lead } = jobFirst(job);
+    keepWithNext(lead, blocks);
 
-      // Job title — Company | Period (on same line)
-      doc.x = PAGE.margin.left;
-      tag('H3', () => {
-        doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-        doc.text(job.title, { continued: true, width: contentWidth });
+    // Job title — Company | Period (on same line)
+    doc.x = PAGE.margin.left;
+    tag('H3', () => {
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(job.title, { continued: true, width: contentWidth });
 
-        doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
-        doc.text(`  —  ${job.company}`, { width: contentWidth });
-      });
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      tag('P', () => doc.text(job.period, { width: contentWidth }));
-      doc.moveDown(0.15);
-
-      // Responsibilities
-      if (Array.isArray(job.responsibilities)) {
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        bulletList(job.responsibilities);
-      }
-
-      if (i < t.experience.jobs.length - 1) doc.moveDown(0.4);
+      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+      doc.text(`  —  ${job.company}`, { width: contentWidth });
     });
-  }
+
+    doc.x = PAGE.margin.left;
+    doc.font(periodFont).fontSize(SIZE.period).fillColor(COLOR.light);
+    tag('P', () => doc.text(job.period, { width: contentWidth }));
+    doc.moveDown(0.15);
+
+    // Responsibilities
+    if (blocks.length) {
+      doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+      bulletList(blocks);
+    }
+
+    if (i < jobs.length - 1) doc.moveDown(0.4);
+  });
   doc.moveDown(0.3);
 
   // ── Skills ──────────────────────────────────────────────────────
-  sectionHeader(t.skills.title);
+  const skills = bulletBlocks(Array.isArray(t.skills.technicalSkills) ? t.skills.technicalSkills : []);
+  sectionHeader(t.skills.title, { lead: 0, blocks: skills });
 
-  if (Array.isArray(t.skills.technicalSkills)) {
+  if (skills.length) {
     doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-    bulletList(t.skills.technicalSkills);
+    bulletList(skills);
   }
   doc.moveDown(0.3);
 
   // ── Projects ────────────────────────────────────────────────────
-  sectionHeader(t.projects.title);
+  // A project's title and technologies stay with its description.
+  const projects = Array.isArray(t.projects.entries) ? t.projects.entries : [];
+  const projectFirst = (project) => ({
+    blocks: project.description ? [descriptionBlock(project.description)] : [],
+    lead:
+      heightOf(fonts.bold, SIZE.jobTitle, project.title) +
+      heightOf(periodFont, SIZE.period, project.technologies) +
+      0.1 * lineHeightOf(periodFont, SIZE.period),
+  });
+  sectionHeader(t.projects.title, projects.length ? projectFirst(projects[0]) : { lead: 0, blocks: [] });
 
-  if (Array.isArray(t.projects.entries)) {
-    t.projects.entries.forEach((project, i) => {
-      const heading =
-        measure(fonts.bold, SIZE.jobTitle, project.title) +
-        measure(fonts.italic || fonts.regular, SIZE.period, project.technologies) +
-        doc.currentLineHeight(true) * 0.1;
-      const descriptionOptions = { width: contentWidth, lineGap: bulletGap };
-      ensureSpace(Math.max(40, heading + firstBlockNeed(project.description, descriptionOptions)));
+  projects.forEach((project, i) => {
+    const { blocks, lead } = projectFirst(project);
+    keepWithNext(lead, blocks);
 
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-      tag('H3', () => doc.text(project.title, { width: contentWidth }));
+    doc.x = PAGE.margin.left;
+    doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+    tag('H3', () => doc.text(project.title, { width: contentWidth }));
 
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      tag('P', () => doc.text(project.technologies, { width: contentWidth }));
-      doc.moveDown(0.1);
+    doc.x = PAGE.margin.left;
+    doc.font(periodFont).fontSize(SIZE.period).fillColor(COLOR.light);
+    tag('P', () => doc.text(project.technologies, { width: contentWidth }));
+    doc.moveDown(0.1);
 
-      if (project.description) {
-        doc.x = PAGE.margin.left;
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        keepBlock(project.description, descriptionOptions);
-        tag('P', () => doc.text(project.description, descriptionOptions));
-      }
+    if (blocks.length) {
+      doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+      paragraph(blocks[0]);
+    }
 
-      if (i < t.projects.entries.length - 1) doc.moveDown(0.3);
-    });
-  }
+    if (i < projects.length - 1) doc.moveDown(0.3);
+  });
   doc.moveDown(0.3);
 
   // ── Education ───────────────────────────────────────────────────
-  sectionHeader(t.education.title);
+  // A degree's heading stays with its description (or, without one, with
+  // its papers), and "Selected Papers:" with its first paper.
+  const schools = Array.isArray(t.education.entries) ? t.education.entries : [];
+  const papersOf = (edu) => (Array.isArray(edu.additionalInfo?.items) ? edu.additionalInfo.items : []);
+  const schoolFirst = (edu) => {
+    if (edu.description) {
+      return {
+        blocks: [descriptionBlock(edu.description)],
+        lead: entryHeadHeight(edu.degree, edu.institution, edu.period, 0.1),
+      };
+    }
+    const papers = papersOf(edu);
+    return {
+      blocks: bulletBlocks(papers),
+      lead:
+        entryHeadHeight(edu.degree, edu.institution, edu.period, papers.length ? 0.15 : 0) +
+        (papers.length ? heightOf(fonts.bold, SIZE.bullet, edu.additionalInfo.title) : 0),
+    };
+  };
+  sectionHeader(t.education.title, schools.length ? schoolFirst(schools[0]) : { lead: 0, blocks: [] });
 
-  if (Array.isArray(t.education.entries)) {
-    t.education.entries.forEach((edu, i) => {
-      const descriptionOptions = { width: contentWidth, lineGap: bulletGap };
-      const heading =
-        measure(fonts.bold, SIZE.jobTitle, `${edu.degree}  —  ${edu.institution}`) +
-        measure(fonts.italic || fonts.regular, SIZE.period, edu.period) +
-        (edu.description ? doc.currentLineHeight(true) * 0.1 : 0);
-      ensureSpace(Math.max(50, heading + firstBlockNeed(edu.description, descriptionOptions)));
+  schools.forEach((edu, i) => {
+    const first = schoolFirst(edu);
+    keepWithNext(first.lead, first.blocks);
 
-      doc.x = PAGE.margin.left;
-      tag('H3', () => {
-        doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
-        doc.text(edu.degree, { continued: true, width: contentWidth });
+    doc.x = PAGE.margin.left;
+    tag('H3', () => {
+      doc.font(fonts.bold).fontSize(SIZE.jobTitle).fillColor(COLOR.black);
+      doc.text(edu.degree, { continued: true, width: contentWidth });
 
-        doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
-        doc.text(`  —  ${edu.institution}`, { width: contentWidth });
-      });
-
-      doc.x = PAGE.margin.left;
-      doc.font(fonts.italic || fonts.regular).fontSize(SIZE.period).fillColor(COLOR.light);
-      tag('P', () => doc.text(edu.period, { width: contentWidth }));
-
-      if (edu.description) {
-        doc.moveDown(0.1);
-        doc.x = PAGE.margin.left;
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        keepBlock(edu.description, descriptionOptions);
-        tag('P', () => doc.text(edu.description, descriptionOptions));
-      }
-
-      if (edu.additionalInfo && Array.isArray(edu.additionalInfo.items)) {
-        doc.moveDown(0.15);
-        // Keep "Selected Papers:" with its first paper.
-        const title = measure(fonts.bold, SIZE.bullet, edu.additionalInfo.title);
-        ensureSpace(title + firstBlockNeed(edu.additionalInfo.items[0]));
-        doc.x = PAGE.margin.left;
-        doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
-        tag('P', () => doc.text(edu.additionalInfo.title, { width: contentWidth }));
-        doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
-        bulletList(edu.additionalInfo.items);
-      }
-
-      if (i < t.education.entries.length - 1) doc.moveDown(0.4);
+      doc.font(fonts.regular).fontSize(SIZE.company).fillColor(COLOR.mid);
+      doc.text(`  —  ${edu.institution}`, { width: contentWidth });
     });
-  }
+
+    doc.x = PAGE.margin.left;
+    doc.font(periodFont).fontSize(SIZE.period).fillColor(COLOR.light);
+    tag('P', () => doc.text(edu.period, { width: contentWidth }));
+
+    if (edu.description) {
+      doc.moveDown(0.1);
+      doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+      paragraph(first.blocks[0]);
+    }
+
+    const papers = papersOf(edu);
+    if (papers.length) {
+      const gap = 0.15 * doc.currentLineHeight(true);
+      const blocks = bulletBlocks(papers);
+      keepWithNext(gap + heightOf(fonts.bold, SIZE.bullet, edu.additionalInfo.title), blocks);
+      if (!atTop()) doc.moveDown(0.15);
+      doc.x = PAGE.margin.left;
+      doc.font(fonts.bold).fontSize(SIZE.bullet).fillColor(COLOR.black);
+      tag('P', () => doc.text(edu.additionalInfo.title, { width: contentWidth }));
+      doc.font(fonts.regular).fontSize(SIZE.bullet).fillColor(COLOR.dark);
+      bulletList(blocks);
+    }
+
+    if (i < schools.length - 1) doc.moveDown(0.4);
+  });
 
   // ── Footer ──────────────────────────────────────────────────────
   // The footer sits in the bottom margin of the last content page. PDFKit

@@ -286,3 +286,31 @@ test('each DOCX keeps project headings and "Selected Papers:" with what follows'
     }
   }
 });
+
+// The bottom of a page must not be a heading (a section, a job, a project, a
+// degree or "Selected Papers:") whose content starts on the next page, and
+// the top of a page must not be the last item of a list on its own, cut off
+// from the rest of its list. Bullets and paragraphs are in the bullet font
+// (the font of the "•" lines) or the About body text; anything else at the
+// foot of a page is a heading.
+for (const file of pdfFiles) {
+  test(`${file}: no heading ends a page, and no list's last item starts one alone`, () => {
+    const { pages } = pdf(file);
+    const bullet = pages.flatMap((p) => p.lines).find((line) => line.text === '•');
+    const body = (line) => line.font === bullet.font && (line.size === bullet.size || line.size === 10) && !line.text.startsWith('  —  ');
+    for (let p = 0; p < pages.length - 1; p++) {
+      const last = pages[p].lines.at(-1);
+      assert.ok(body(last), `page ${p + 1} ends with a heading: "${last.text.slice(0, 40)}"`);
+    }
+    for (let p = 1; p < pages.length; p++) {
+      const lines = pages[p].lines;
+      if (lines[0].text !== '•') continue;
+      // The first item's lines, then whatever follows it on the page.
+      let next = 1;
+      while (next < lines.length && lines[next].text !== '•' && lines[next].font === lines[1].font && lines[next].x === lines[1].x) next++;
+      const listGoesOn = next < lines.length && lines[next].text === '•';
+      const continued = pages[p - 1].lines.at(-1).x === lines[1].x;
+      assert.ok(listGoesOn || !continued, `page ${p + 1} opens with the last item of a list alone: "${lines[1].text.slice(0, 40)}"`);
+    }
+  });
+}
