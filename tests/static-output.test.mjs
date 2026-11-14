@@ -280,6 +280,9 @@ test("the JSON-LD Person is the arda.tr person, links every profile and names th
     "@type": "ProfilePage",
     "@id": "https://resume.arda.tr/#webpage",
     url: "https://resume.arda.tr/",
+    // Google reads ProfilePage from the page object's own mainEntity; it
+    // does not infer it from the inverse property above.
+    mainEntity: { "@id": "https://arda.tr/#person" },
   });
   for (const site of ["https://arda.tr", "https://blog.arda.tr"]) {
     assert.ok(
