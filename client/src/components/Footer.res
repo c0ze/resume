@@ -40,6 +40,18 @@ let make = () => {
         </button>
       </span>
     </p>
+    // The arda.tr family, web-only: hidden in print, and not in
+    // contact.socialLinks (that array feeds the JSON Resume profiles).
+    <p className="no-print">
+      {React.string(`${r.fields.links} `)}
+      <a href="https://arda.tr" rel="me"> {React.string("arda.tr")} </a>
+      <span ariaHidden=true> {React.string(` · `)} </span>
+      <a href="https://blog.arda.tr" rel="me"> {React.string("blog.arda.tr")} </a>
+      <span ariaHidden=true> {React.string(` · `)} </span>
+      <a href="https://ai.arda.tr"> {React.string("ai.arda.tr")} </a>
+      <span ariaHidden=true> {React.string(` · `)} </span>
+      <a href="https://lind.arda.tr"> {React.string("lind.arda.tr")} </a>
+    </p>
     <Certificate isOpen=certOpen onClose={() => setCertOpen(_ => false)} />
   </footer>
 }

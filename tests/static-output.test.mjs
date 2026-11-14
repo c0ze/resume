@@ -303,3 +303,36 @@ test("the name (h1) sits inside <main> or a region labelled by it", () => {
   assert.match(region[1], /class="intro__title"/, "and the position");
   assert.match(region[1], /class="intro__summary"/, "and the summary");
 });
+
+// The arda.tr family links to itself through each site's own chrome. Here it
+// is one web-only line in the colophon: in the prerendered HTML so crawlers
+// and readers without JS get it, hidden in print (it says nothing about Arda
+// the candidate), and never in contact.socialLinks, which feeds the JSON
+// Resume profiles. rel="me" only on the two sites that are Arda's own voice.
+test("the colophon links the arda.tr family in a web-only line", () => {
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  const footer = html.match(/<footer class="colophon">([\s\S]*?)<\/footer>/)?.[1] ?? "";
+  const record = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/record.json"), "utf8"));
+  const line = footer.match(/<p class="no-print">([\s\S]*?)<\/p>/)?.[1];
+  assert.ok(line, "expected a no-print paragraph in the colophon");
+  assert.ok(line.startsWith(`${record.fields.links} `), "the line is labelled with the rail's Links label");
+  const links = [...line.matchAll(/<a ([^>]*)>([^<]*)<\/a>/g)].map(([, attrs, text]) => ({
+    href: attrs.match(/href="([^"]+)"/)?.[1],
+    me: /\brel="me"/.test(attrs),
+    text,
+  }));
+  assert.deepEqual(links, [
+    { href: "https://arda.tr", me: true, text: "arda.tr" },
+    { href: "https://blog.arda.tr", me: true, text: "blog.arda.tr" },
+    { href: "https://ai.arda.tr", me: false, text: "ai.arda.tr" },
+    { href: "https://lind.arda.tr", me: false, text: "lind.arda.tr" },
+  ]);
+  assert.doesNotMatch(html, /coze\.org/, "the résumé links nowhere on coze.org");
+  const contact = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/contact.json"), "utf8"));
+  for (const { href } of links) {
+    assert.ok(
+      !contact.socialLinks.some(({ url }) => url.includes(new URL(href).host)),
+      `${href} must stay out of contact.socialLinks (the JSON Resume profiles)`
+    );
+  }
+});
