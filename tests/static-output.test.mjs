@@ -351,6 +351,10 @@ test("the colophon links the arda.tr family in a web-only line", () => {
     { href: "https://ai.arda.tr", me: false, text: "ai.arda.tr" },
     { href: "https://lind.arda.tr", me: false, text: "lind.arda.tr" },
   ]);
+  // Between the links: only the decorative ` · `, hidden from screen readers
+  // so the line is read as four links, not "middle dot" three times.
+  const separators = line.replace(/<a [^>]*>[^<]*<\/a>/g, "\0").split("\0").slice(1, -1);
+  assert.deepEqual(separators, Array(3).fill('<span aria-hidden="true"> · </span>'));
   assert.doesNotMatch(html, /coze\.org/, "the résumé links nowhere on coze.org");
   const contact = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/contact.json"), "utf8"));
   for (const { href } of links) {
