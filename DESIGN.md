@@ -207,6 +207,10 @@ fork it: change the shared file first, then copy it to every site.
   - No email anywhere in the HTML; a test asserts this.
 - **Colophon** (`Footer.res`): copyright, how the page is built, source, commit,
   issue time, certificate.
+  - Then a web-only family line (`no-print`), labelled with the rail's Links
+    label: arda.tr and blog.arda.tr (`rel="me"`), ai.arda.tr, lind.arda.tr.
+    It is not in `contact.socialLinks` (the JSON Resume profiles), and the
+    résumé links nowhere on coze.org.
 - **Certificate of issue** (`Certificate.res`, `Artifacts.res`, `Modal.res`):
   the commit, the build time, the source, the `?flavor=` in effect, and each
   artifact against the script that generates it.
@@ -235,7 +239,8 @@ fork it: change the shared file first, then copy it to every site.
 ## Print
 
 - Black on white whatever the rendition: the print block overrides the tokens.
-- The bar, treeline, chat, launcher, switches, downloads and dialogs are hidden.
+- The bar, treeline, chat, launcher, switches, downloads, dialogs and the
+  colophon's family line are hidden.
 - The rail prints as a compact header row.
 - Rows do not break across pages.
 - External links print their URL, unless their text already is the URL

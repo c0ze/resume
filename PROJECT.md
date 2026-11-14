@@ -94,7 +94,7 @@ npm run res:clean     # Clean ReScript build artifacts
 - **Blocked storage** — `localStorage` can throw (blocked site data, some private modes). The bootstrap in `client/index.html`, `ThemeContext.getStoredTheme` and `LanguageContext` all catch it and fall back to `xerox` / English; `tests/theme-storage.test.mjs` covers the theme side.
 - **Web-only `abstract`** — each experience carries an `abstract`, rendered as the lead line of its row in the Experience section, above the responsibilities. `scripts/generate-resume.mjs`, `scripts/generate-docx.mjs`, and `scripts/generate-json-resume.mjs` deliberately ignore it; keep it out of the PDF/DOCX/JSON downloads.
 - **Contact = chat** — the email is not rendered in the page (spam-hardening); it stays only in the downloads: PDF/DOCX/JSON Resume/vCard (`header.contactViaEmail`, do not remove that field). The smoke test asserts the email is absent from the HTML.
-- **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`.
+- **Analytics + SEO** — a cookieless Cloudflare Web Analytics beacon, Open Graph/Twitter meta, and JSON-LD `Person` all live in `client/index.html`. The Person is the family's one identity (`"@id": "https://arda.tr/#person"`, `url` arda.tr); this page is its `mainEntityOfPage` (a `ProfilePage` at `https://resume.arda.tr/`), while the canonical link, og:url and the sitemap name the page.
 
 ## Build Expectations
 
