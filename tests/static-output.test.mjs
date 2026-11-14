@@ -284,6 +284,9 @@ test("the JSON-LD Person is the arda.tr person, links every profile and names th
     // does not infer it from the inverse property above.
     mainEntity: { "@id": "https://arda.tr/#person" },
   });
+  // og-image.png is the social title card, not a picture of Arda; it stays
+  // og:image / twitter:image but must not stand for the Person.
+  assert.ok(!("image" in person), "the JSON-LD Person has no image");
   for (const site of ["https://arda.tr", "https://blog.arda.tr"]) {
     assert.ok(
       person.sameAs.some((url) => url.replace(/\/$/, "") === site),
