@@ -259,7 +259,7 @@ for (const file of ["record.json", "chat.json"]) test(`the page chrome (${file})
 
 // The JSON-LD Person in client/index.html is hand-written; it must not drift
 // from the content it describes.
-test("the JSON-LD Person links every profile and names the degree as the content does", () => {
+test("the JSON-LD Person is the arda.tr person, links every profile and names the degree as the content does", () => {
   const template = fs.readFileSync(path.resolve(process.cwd(), "client/index.html"), "utf8");
   const person = JSON.parse(template.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const contact = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/contact.json"), "utf8"));
@@ -271,6 +271,24 @@ test("the JSON-LD Person links every profile and names the degree as the content
   for (const credential of person.hasCredential) {
     assert.ok(degrees.includes(credential.name), `"${credential.name}" is not a degree in content/en/education.json`);
   }
+  // One identity across the arda.tr family: the Person is the one arda.tr
+  // describes, and this page is a profile page about it. The canonical link
+  // and og:url keep naming the page itself.
+  assert.equal(person["@id"], "https://arda.tr/#person");
+  assert.equal(person.url, "https://arda.tr/");
+  assert.deepEqual(person.mainEntityOfPage, {
+    "@type": "ProfilePage",
+    "@id": "https://resume.arda.tr/#webpage",
+    url: "https://resume.arda.tr/",
+  });
+  for (const site of ["https://arda.tr", "https://blog.arda.tr"]) {
+    assert.ok(
+      person.sameAs.some((url) => url.replace(/\/$/, "") === site),
+      `expected sameAs to include ${site}`
+    );
+  }
+  assert.match(template, /<link rel="canonical" href="https:\/\/resume\.arda\.tr\/" \/>/);
+  assert.match(template, /<meta property="og:url" content="https:\/\/resume\.arda\.tr\/" \/>/);
 });
 
 // An <aside> or <footer> inside <main> is not exposed as a top-level
