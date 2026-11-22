@@ -1,6 +1,6 @@
 // Contact. No address is printed on this page: the email lives only in the
 // downloads (repo rule and test assertion). Reaching Arda is the chat, the
-// public profiles and the four files in the rail.
+// public profiles and the four files under the name.
 
 let normalizeUrl = url => String.startsWith(url, "http") ? url : "https://" ++ url
 let bare = url => url->String.replace("https://", "")->String.replace("www.", "")
@@ -11,31 +11,33 @@ let make = () => {
   let socials = t.contact.socialLinks->Option.getOr([])
 
   <Section id="contact" title={t.contact.title}>
-    <div className="contact">
-      <h3 className="contact__title"> {React.string(t.contact.getInTouch)} </h3>
-      <button type_="button" className="btn no-print" onClick={_ => ChatWidget.openChat()}>
-        {React.string(t.chat.launcher)}
-        <span ariaHidden=true> {React.string(` ▸`)} </span>
-      </button>
-      <div className="contact__links">
-        <p className="contact__label"> {React.string(t.contact.findMeOn)} </p>
-        <ul>
-          {socials
-          ->Array.map(link =>
-            <li key={link.name}>
-              <a className="url-text" href={link.url} target="_blank" rel="me noopener noreferrer">
-                {React.string(bare(link.url)->String.replaceRegExp(%re("/\/$/"), ""))}
-              </a>
-            </li>
-          )
-          ->React.array}
-          <li>
-            <a className="url-text" href={normalizeUrl(t.header.website)} rel="me">
-              {React.string(bare(t.header.website))}
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div className="no-print">
+      <Section.Entry label={t.contact.getInTouch}>
+        <Astryx.Button label={t.chat.launcher} onClick={_ => ChatWidget.openChat()} />
+      </Section.Entry>
     </div>
+    <Section.Entry label={t.contact.findMeOn}>
+      <ul className="plain contact__links">
+        {socials
+        ->Array.map(link =>
+          <li key={link.name}>
+            <Section.External href={link.url} rel="me" className="url-text">
+              {React.string(bare(link.url)->String.replaceRegExp(%re("/\/$/"), ""))}
+            </Section.External>
+          </li>
+        )
+        ->React.array}
+        <li>
+          <Astryx.Link
+            href={normalizeUrl(t.header.website)}
+            rel="me"
+            hasUnderline=true
+            type_=#inherit
+            className="url-text">
+            {React.string(bare(t.header.website))}
+          </Astryx.Link>
+        </li>
+      </ul>
+    </Section.Entry>
   </Section>
 }

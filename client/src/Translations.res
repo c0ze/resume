@@ -131,7 +131,8 @@ type chatContent = {
   close: string,
   thinking: string,
   error: string,
-  // The ♪ mute toggle: its constant accessible name, and the state words.
+  // The "read replies aloud" switch: its label. The state words are no
+  // longer shown (a switch shows its state); the keys are kept.
   voice: string,
   voiceOn: string,
   voiceOff: string,
@@ -146,7 +147,7 @@ type pdfMetaContent = {
   generatedOn: string,
 }
 
-// The page's own vocabulary — rail labels, the certificate of issue, chat
+// The page's own vocabulary — table labels, the build details, chat
 // labels. Kept out of the résumé sections proper because none of it is a claim
 // about Arda; it is the apparatus of the document. Translated in full for all
 // three languages: Japanese and Turkish are not fallbacks. (The file name and

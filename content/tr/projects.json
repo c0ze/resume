@@ -58,7 +58,7 @@
     },
     {
       "title": "Bu Özgeçmiş Sitesi",
-      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "technologies": "ReScript, React, Vite, Astryx, PDFKit, docx",
       "description": "HTML olarak önceden render edilen İngilizce, Japonca ve Türkçe statik özgeçmiş sitesi. Tek bir içerik kaynağı, derleme sırasında sayfayı ve PDF, DOCX, JSON Resume ve vCard dosyalarını üretir; GitHub Pages üzerinde yayında.",
       "repo": "https://github.com/c0ze/resume"
     }

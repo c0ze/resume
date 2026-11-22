@@ -1,63 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-astryx-theme="arda" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="icon" type="image/svg+xml" href="/R-favicon.svg" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href="https://resume.arda.tr/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <!-- The active rendition's --bg; the bootstrap below and ThemeContext set it. -->
-    <meta name="theme-color" content="#efede6" />
+    <!-- Bone paper: the light --color-background-body of client/src/brand/arda.css
+         (tests/light-only.test.mjs keeps the two in step). -->
+    <meta name="theme-color" content="#E8E0CE" />
 
     <!--
-      Rendition + language bootstrap. Blocking on purpose: without it a reader
-      who chose a dark rendition gets a full flash of paper before React
-      mounts, and screen readers announce Japanese and Turkish content as
-      English until the first render.
-
-      Stored ids from earlier designs migrate by role (light → xerox,
-      HC light → xerox-hc, dark → night, HC dark → night-hc) and the migrated
-      id is written back. Keep in sync with ThemeContext.res.
-
-      theme-color follows the rendition, not the OS colour scheme. The page's
-      CSS has not loaded yet, so the --bg values are repeated here (from
-      scripts/generate-theme.mjs; tests/theme-storage.test.mjs checks them).
+      Language bootstrap. Blocking on purpose: without it screen readers
+      announce Japanese and Turkish content as English until the first render.
+      The scheme needs no script: the page is light only (data-theme="light"
+      on <html>, see DESIGN.md).
     -->
     <script>
       (function () {
-        var root = document.documentElement;
-        var RENDITIONS = { xerox: 0, "xerox-hc": 0, night: 1, "night-hc": 1 };
-        var BG = { xerox: "#efede6", "xerox-hc": "#ffffff", night: "#060708", "night-hc": "#000000" };
-        var LEGACY = {
-          ruled: "xerox", alucard: "xerox", light: "xerox",
-          "ruled-hc": "xerox-hc", paper: "xerox-hc", "light-hc": "xerox-hc",
-          "carbon-copy": "night", "van-helsing": "night", dracula: "night", dark: "night",
-          "carbon-copy-hc": "night-hc", carbon: "night-hc", "dark-hc": "night-hc"
-        };
-        // Storage can throw (blocked site data, some private modes). Theme and
-        // language are read separately so one failure cannot cost the other,
-        // and a failed read still paints the default rendition.
-        var own = function (o, k) { return !!k && Object.prototype.hasOwnProperty.call(o, k); };
-        var t = null;
-        try {
-          t = localStorage.getItem("resume-theme");
-          if (own(LEGACY, t)) {
-            t = LEGACY[t];
-            try { localStorage.setItem("resume-theme", t); } catch (e) {}
-          }
-        } catch (e) {
-          t = null;
-        }
-        if (!own(RENDITIONS, t)) t = "xerox";
-        root.classList.add(t);
-        if (RENDITIONS[t]) root.classList.add("dark");
-        root.style.colorScheme = RENDITIONS[t] ? "dark" : "light";
-        var themeColor = document.querySelector('meta[name="theme-color"]');
-        if (themeColor) themeColor.content = BG[t];
+        // Storage can throw (blocked site data, some private modes).
         try {
           var l = localStorage.getItem("resume-lang");
-          if (l === "en" || l === "ja" || l === "tr") root.lang = l;
+          if (l === "en" || l === "ja" || l === "tr") document.documentElement.lang = l;
         } catch (e) {}
       })();
     </script>
@@ -65,13 +30,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
-      One Bit Forest type: Big Shoulders Display for the name, IBM Plex Sans for
-      body, IBM Plex Mono for labels, dates and chrome, IBM Plex Sans JP for
-      Japanese (Google serves it in unicode-range slices, so Latin readers do
-      not download it). The PDF/DOCX exports embed their own fonts.
+      Kara Duman type: Grenze Gotisch 800 for the name and nothing else,
+      Spectral for everything else, JetBrains Mono for dates, Zen Antique for
+      Japanese (text under lang="ja"; Google serves it in unicode-range slices,
+      so Latin readers do not download it). The PDF/DOCX exports embed their
+      own fonts.
     -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800&family=JetBrains+Mono:wght@400&family=Spectral:ital,wght@0,400;0,600;1,400&family=Zen+Antique&display=swap"
       rel="stylesheet"
     />
 

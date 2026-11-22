@@ -6,9 +6,11 @@ import path from "node:path";
 const staticHtmlPath = path.resolve(process.cwd(), "dist/client/index.html");
 const sitemapPath = path.resolve(process.cwd(), "dist/client/sitemap.xml");
 const artifactStatusPath = path.resolve(process.cwd(), "dist/client/artifact-status.json");
-const themeCssPath = path.resolve(process.cwd(), "client/src/theme.css");
 const clientDistDir = path.resolve(process.cwd(), "dist/client");
 const languages = ["en", "ja", "tr"];
+
+// Text as React writes it into HTML.
+const escapeHtml = (text) => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
 test("static output contains real resume content instead of loading placeholders", () => {
   assert.ok(fs.existsSync(staticHtmlPath), `Expected built HTML at ${staticHtmlPath}`);
@@ -20,17 +22,19 @@ test("static output contains real resume content instead of loading placeholders
   const root = html.slice(html.indexOf('<div id="root">'));
   assert.ok(html.includes('<div id="root">'), "expected the prerender root");
 
-  assert.match(
-    root,
-    /<p class="intro__title">[^<]*Backend Systems Architect[^<]*<\/p>/,
-    "expected the prerendered intro to include the translated header subtitle"
-  );
+  const read = (file) => JSON.parse(fs.readFileSync(path.resolve(process.cwd(), `content/en/${file}`), "utf8"));
+  const header = read("header.json");
+  const contact = read("contact.json");
+
   assert.ok(
-    root.includes("Get In Touch"),
-    "expected the static output to include contact content"
+    root.includes(`<p class="head__title">${escapeHtml(header.subtitle)}</p>`),
+    "expected the prerendered head to include the position (header.subtitle)"
   );
+  for (const label of [contact.getInTouch, contact.findMeOn]) {
+    assert.ok(root.includes(escapeHtml(label)), `expected the static output to include contact content ("${label}")`);
+  }
   assert.ok(
-    !html.includes("akaraduman@gmail.com"),
+    !html.includes(header.contactViaEmail),
     "expected the email to be hidden from the web page (kept only in the downloadable PDF/DOCX)"
   );
   assert.ok(
@@ -152,7 +156,7 @@ test("static build emits JSON Resume exports with basics but without the web-onl
 test("each language lists three spoken languages with the TOEFL and JLPT certificates", () => {
   // The certificates sit inside the brackets with a comma of their own
   // ("TOEFL 263, 2004"). If a parser splits on every comma, the JSON Resume
-  // gains a bogus "2004)" language and the rail prints a stray line.
+  // gains a bogus "2004)" language and the head of the page prints a stray line.
   for (const lang of languages) {
     const resume = JSON.parse(fs.readFileSync(path.join(clientDistDir, `resume-${lang}.json`), "utf8"));
     assert.equal(resume.languages.length, 3, `expected three languages in resume-${lang}.json`);
@@ -162,8 +166,8 @@ test("each language lists three spoken languages with the TOEFL and JLPT certifi
   }
 
   const html = fs.readFileSync(staticHtmlPath, "utf8");
-  assert.ok(html.includes("TOEFL 263 on the old CBT scale, 2004"), "expected the rail to show the TOEFL certificate");
-  assert.ok(html.includes("JLPT Level 2, 2006"), "expected the rail to show the JLPT certificate");
+  assert.ok(html.includes("TOEFL 263 on the old CBT scale, 2004"), "expected the page to show the TOEFL certificate");
+  assert.ok(html.includes("JLPT Level 2, 2006"), "expected the page to show the JLPT certificate");
 });
 
 test("static build emits a vCard with the contact details", () => {
@@ -175,47 +179,6 @@ test("static build emits a vCard with the contact details", () => {
   assert.ok(vcard.startsWith("BEGIN:VCARD"), "expected the vCard to start with BEGIN:VCARD");
   assert.ok(vcard.includes("EMAIL"), "expected the vCard to include an EMAIL property");
   assert.ok(vcard.includes("\r\n"), "expected the vCard to use CRLF line endings per spec");
-});
-
-test("generated theme CSS contains all four renditions", () => {
-  assert.ok(fs.existsSync(themeCssPath), `Expected generated theme CSS at ${themeCssPath}`);
-
-  const themeCss = fs.readFileSync(themeCssPath, "utf8");
-
-  // The four One Bit Forest renditions shared by the arda.tr family (see DESIGN.md).
-  for (const selector of [".xerox", ".xerox-hc", ".night", ".night-hc"]) {
-    assert.ok(
-      themeCss.includes(`${selector} {`) || themeCss.includes(`${selector},`),
-      `expected the generated theme CSS to include the ${selector} selector`
-    );
-  }
-
-  // One bit plus one signal: every rendition ships the same tokens, including
-  // the three the 1-bit canvases read.
-  for (const token of [
-    "--bg:",
-    "--surface:",
-    "--fg:",
-    "--fg-2:",
-    "--rule:",
-    "--signal:",
-    "--ob-ink:",
-    "--ob-ground:",
-    "--ob-signal:",
-  ]) {
-    assert.equal(
-      themeCss.split(token).length - 1,
-      4,
-      `expected every rendition to define ${token}`
-    );
-  }
-
-  assert.equal(
-    themeCss.split("--radius: 0rem;").length - 1,
-    themeCss.split("--radius:").length - 1,
-    "radius is 0 everywhere"
-  );
-  assert.equal(themeCss.split("--radius:").length - 1, 4, "expected every rendition to define --radius");
 });
 
 // record.json is the page chrome; chat.json the chat widget's labels (incl. the ♪ voice toggle).
@@ -297,35 +260,35 @@ test("the JSON-LD Person is the arda.tr person, links every profile and names th
   assert.match(template, /<meta property="og:url" content="https:\/\/resume\.arda\.tr\/" \/>/);
 });
 
-// An <aside> or <footer> inside <main> is not exposed as a top-level
-// complementary / contentinfo landmark, so screen-reader landmark navigation
-// misses the rail and the colophon.
-test("the rail and the colophon are top-level landmarks, outside <main>", () => {
+// A <header> or <footer> inside <main> is not exposed as a top-level banner /
+// contentinfo landmark, so screen-reader landmark navigation would miss the
+// top line and the colophon. Everything that is the résumé sits in the one <main>.
+test("the top line and the colophon are top-level landmarks, outside <main>", () => {
   const html = fs.readFileSync(staticHtmlPath, "utf8");
   const mains = html.match(/<main[\s>][\s\S]*?<\/main>/g) ?? [];
   assert.equal(mains.length, 1, "expected exactly one <main>");
-  assert.doesNotMatch(mains[0], /<aside[\s>]/, "the rail must not sit inside <main>");
+  assert.doesNotMatch(mains[0], /<header class="top"/, "the top line must not sit inside <main>");
   assert.doesNotMatch(mains[0], /<footer[\s>]/, "the colophon must not sit inside <main>");
-  assert.match(html, /<aside [^>]*class="rail"/);
-  assert.match(html, /<footer class="colophon"/);
-  assert.match(mains[0], /id="experience"/, "the sections stay in <main>");
+  assert.match(html, /<header class="top"/);
+  assert.match(html, /<footer class="[^"]*\bcolophon\b[^"]*"/);
+  for (const id of ["about", "experience", "skills", "projects", "education", "contact"]) {
+    assert.match(mains[0], new RegExp(`<section [^>]*id="${id}"`), `the ${id} section stays in <main>`);
+  }
 });
 
-// The name, the position and the summary are the first thing a recruiter
-// reads. Outside every landmark, "jump to main" and landmark navigation skip
-// past them. The grid keeps them out of <main>, so they are a region of
-// their own, named by the h1.
-test("the name (h1) sits inside <main> or a region labelled by it", () => {
+// The name, the position and the files under them are the first thing a
+// recruiter reads. Outside every landmark,
+// "jump to main" and landmark navigation would skip past them.
+test("the name (h1), the position and the downloads sit inside <main>", () => {
   const html = fs.readFileSync(staticHtmlPath, "utf8");
-  const h1 = html.match(/<h1 [^>]*id="([^"]+)"/);
   const main = html.match(/<main[\s>][\s\S]*?<\/main>/)?.[0] ?? "";
-  if (main.includes("<h1")) return;
-  assert.ok(h1, "expected the h1 to carry an id for its region to point at");
-  const region = html.match(new RegExp(`<section [^>]*aria-labelledby="${h1[1]}"[^>]*>([\\s\\S]*?)</section>`));
-  assert.ok(region, `expected a <section aria-labelledby="${h1[1]}"> around the h1`);
-  assert.match(region[1], /<h1 /, "the labelled region holds the h1");
-  assert.match(region[1], /class="intro__title"/, "and the position");
-  assert.match(region[1], /class="intro__summary"/, "and the summary");
+  const head = main.slice(0, main.indexOf("<section "));
+  assert.match(head, /<h1 /, "the h1 comes before the first section");
+  assert.match(head, /class="head__title"/, "and the position");
+  assert.match(head, /href="\/resume-en\.pdf"/, "and the downloads");
+  for (const id of ["about", "experience", "skills", "projects", "education", "contact"]) {
+    assert.match(head, new RegExp(`<a href="#${id}">`), `and the way to the ${id} section`);
+  }
 });
 
 // The arda.tr family links to itself through each site's own chrome. Here it
@@ -335,11 +298,11 @@ test("the name (h1) sits inside <main> or a region labelled by it", () => {
 // Resume profiles. rel="me" only on the two sites that are Arda's own voice.
 test("the colophon links the arda.tr family in a web-only line", () => {
   const html = fs.readFileSync(staticHtmlPath, "utf8");
-  const footer = html.match(/<footer class="colophon">([\s\S]*?)<\/footer>/)?.[1] ?? "";
+  const footer = html.match(/<footer class="[^"]*\bcolophon\b[^"]*">([\s\S]*?)<\/footer>/)?.[1] ?? "";
   const record = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/record.json"), "utf8"));
   const line = footer.match(/<p class="no-print">([\s\S]*?)<\/p>/)?.[1];
   assert.ok(line, "expected a no-print paragraph in the colophon");
-  assert.ok(line.startsWith(`${record.fields.links} `), "the line is labelled with the rail's Links label");
+  assert.ok(line.startsWith(`${record.fields.links} `), "the line is labelled with the head's Links label");
   const links = [...line.matchAll(/<a ([^>]*)>([^<]*)<\/a>/g)].map(([, attrs, text]) => ({
     href: attrs.match(/href="([^"]+)"/)?.[1],
     me: /\brel="me"/.test(attrs),

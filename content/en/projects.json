@@ -58,7 +58,7 @@
     },
     {
       "title": "This Résumé Site",
-      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "technologies": "ReScript, React, Vite, Astryx, PDFKit, docx",
       "description": "Static résumé site in English, Japanese and Turkish, prerendered to HTML. One content source produces the page and the PDF, DOCX, JSON Resume and vCard files at build time; hosted on GitHub Pages.",
       "repo": "https://github.com/c0ze/resume"
     }

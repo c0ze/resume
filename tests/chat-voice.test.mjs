@@ -124,14 +124,14 @@ test('a spoken reply is revealed only as far as the voice has got', async () => 
   const mid = state.revealed;
   at(1.6);
   assert.ok(state.revealed > mid && state.revealed < RAW.length, 'clip 1 reveals progressively');
-  assert.ok(state.levels.some((l) => l > 0), 'the orb gets a loudness while speaking');
+  assert.ok(state.levels.some((l) => l > 0), 'the mark gets a loudness while speaking');
   assert.equal(state.ended, 0);
   // Both clips played and speech_end came: everything shows, including done's contact notice.
   at(2.2);
   assert.equal(state.revealed, Infinity);
   assert.equal(state.visible(), FINAL);
   assert.equal(state.ended, 1);
-  assert.equal(state.levels.at(-1), 0, 'the orb calms down at the end');
+  assert.equal(state.levels.at(-1), 0, 'the mark calms down at the end');
 });
 
 test('muting mid-reply silences the voice and shows everything at once', async () => {

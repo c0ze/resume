@@ -1,6 +1,7 @@
-// Education. The early end of the span is the unusual part of this résumé, so
-// the papers are set as citations — year in mono, title after it — rather than
-// buried in a paragraph.
+// Education. The degree in Spectral 600 with the period in mono at the far
+// right, the school in italics under it. The early end of the span is the
+// unusual part of this résumé, so the papers are set as citations (year in
+// mono, title after it) rather than buried in a paragraph.
 
 // Paper items are stored as "2011: Title (Venue)" in every language.
 let splitCitation = (item: string) =>
@@ -20,25 +21,26 @@ let make = () => {
     {t.education.entries
     ->Array.mapWithIndex((edu, i) => {
       let links = edu.links->Option.getOr([])
-      <Section.Row key={Int.toString(i)} gutter={React.string(Section.period(edu.period))}>
-        <h3 className="row__title">
-          {React.string(edu.degree)}
-          <span className="row__org"> {React.string(` · ${edu.institution}`)} </span>
-        </h3>
+      <Section.Entry
+        key={Int.toString(i)}
+        title={edu.degree}
+        meta={Section.period(edu.period)}
+        note={edu.institution}>
         {switch edu.description->Nullable.toOption {
-        | Some(desc) if desc !== "" => <p className="row__lead"> {React.string(desc)} </p>
+        | Some(desc) if desc !== "" =>
+          <p className="entry__lead ix-small"> {React.string(desc)} </p>
         | _ => React.null
         }}
         {switch edu.additionalInfo->Nullable.toOption {
         | Some(info) =>
           <div className="papers">
-            <p className="papers__head"> {React.string(info.title)} </p>
-            <ul>
+            <h4 className="ix-label"> {React.string(info.title)} </h4>
+            <ul className="plain ix-small">
               {info.items
               ->Array.mapWithIndex((item, j) => {
                 let (year, citation) = splitCitation(item)
                 <li key={Int.toString(j)}>
-                  <span className="papers__yr"> {React.string(year)} </span>
+                  <span className="ix-mono"> {React.string(year)} </span>
                   <span> {React.string(citation)} </span>
                 </li>
               })
@@ -49,20 +51,18 @@ let make = () => {
         }}
         {Array.length(links) === 0
           ? React.null
-          : <p className="row__meta">
-              {links
-              ->Array.mapWithIndex((link, j) =>
-                <React.Fragment key={link.url}>
-                  {j === 0 ? React.null : <span ariaHidden=true> {React.string(` · `)} </span>}
-                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+          : <div className="entry__links ix-small">
+              <Astryx.HStack gap=4. wrap=#wrap>
+                {links
+                ->Array.map(link =>
+                  <Section.External key={link.url} href={link.url}>
                     {React.string(link.label)}
-                    <span className="ext" ariaHidden=true> {React.string(` ↗`)} </span>
-                  </a>
-                </React.Fragment>
-              )
-              ->React.array}
-            </p>}
-      </Section.Row>
+                  </Section.External>
+                )
+                ->React.array}
+              </Astryx.HStack>
+            </div>}
+      </Section.Entry>
     })
     ->React.array}
   </Section>

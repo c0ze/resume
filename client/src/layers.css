@@ -1,0 +1,5 @@
+/* The cascade-layer order, declared before any other stylesheet loads
+   (Main.res imports this file first). Astryx's reset and components sit
+   lowest, the built `arda` theme above them, the family patterns above that;
+   the page's own unlayered rules in index.css win over all of them. */
+@layer reset, astryx-base, astryx-theme, brand;

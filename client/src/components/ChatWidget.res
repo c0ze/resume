@@ -1,18 +1,21 @@
-// "Ask about Arda" — a floating chat panel that POSTs to the ai.arda.tr bot's
+// "Ask about Arda": a floating chat panel that POSTs to the ai.arda.tr bot's
 // SSE /api/chat/stream (falling back to the non-streaming /api/chat) and renders
-// Markdown via Markdown.res (React elements only — never raw HTML). The bot
+// Markdown via Markdown.res (React elements only, never raw HTML). The bot
 // holds the API key, so this static site ships no secrets. Other parts of the
 // page open it via the `arda:open-chat` window event.
 //
-// Styled like ai.arda.tr: the construct orb revolves in the header and
-// sizzles on every streamed chunk, and a crackling 1-bit block cursor trails
-// the reply while it streams (OneBit.res / lib/onebit.js).
+// Styled with the family's patterns (brand.css): the assistant is the ember
+// (`.ix-mark`, drawn from `--ix-ember-art`, set in index.css), which glows
+// while a reply is on its way; its replies sit left beside it with no bubble,
+// the visitor's questions right on the surface colour (`.ix-thread`,
+// `.ix-msg`). The suggested questions are chips (`.ix-chip`).
 //
-// Voice, as on ai.arda.tr (Voice.res / lib/voice.js): unless muted with the
-// ♪ toggle in the header, a request asks for speech in the page's language,
-// the reply is read aloud through the robot filter, its text is revealed only
-// as far as the voice has got, and the orb sizzles with the loudness. A new
-// question, closing the panel, a language switch or muting stops it.
+// Voice, as on ai.arda.tr (Voice.res / lib/voice.js): unless the "read replies
+// aloud" switch is off, a request asks for speech in the page's language, the
+// reply is read aloud through the robot filter, its text is revealed only as
+// far as the voice has got, and the reply's ember glows with the loudness
+// (`--ix-level`). A new question, closing the panel, a language switch or
+// muting stops it.
 type chatMsg = {
   id: int,
   role: string, // "user" | "model"
@@ -195,7 +198,7 @@ let focusEl: Dom.element => unit = %raw(`function (el) { if (el) el.focus(); }`)
 // An Escape something else already handled (the certificate dialog over the
 // chat calls preventDefault in its capture listener) is not the chat's: one
 // key press closes one layer, and the dialog returns focus to its opener.
-let onEscape: (unit => unit) => (unit => unit) = %raw(`
+let onEscape: (unit => unit) => unit => unit = %raw(`
   function (close) {
     function onKey(e) { if (e.key === "Escape" && !e.defaultPrevented) close(); }
     document.addEventListener("keydown", onKey);
@@ -212,16 +215,13 @@ let openChat: unit => unit = %raw(`
   }
 `)
 
-let listenForOpen: (unit => unit) => (unit => unit) = %raw(`
+let listenForOpen: (unit => unit) => unit => unit = %raw(`
   function (cb) {
     function handler() { cb(); }
     window.addEventListener("arda:open-chat", handler);
     return function () { window.removeEventListener("arda:open-chat", handler); };
   }
 `)
-
-
-let now: unit => float = %raw(`function () { return Date.now(); }`)
 
 let activeElement: unit => Nullable.t<Dom.element> = %raw(`
   function () {
@@ -230,61 +230,42 @@ let activeElement: unit => Nullable.t<Dom.element> = %raw(`
   }
 `)
 
-// The construct: a small revolving 1-bit planet. Its handle is handed back
-// through `into` so the widget can sizzle it per chunk.
-module Orb = {
-  @react.component
-  let make = (~into: React.ref<option<OneBit.handle>>) => {
-    let canvasRef = React.useRef(Nullable.null)
-    OneBit.useCanvas(canvasRef, c => OneBit.orb(c, {size: 40, speed: 0.55, seed: 7}), into)
-    OneBit.useRepaintOnTheme(into)
-    <canvas className="px chat__orb" ariaHidden=true ref={ReactDOM.Ref.domRef(canvasRef)} />
+// The assistant's mark: the ember. `busy` makes it glow while a reply is on
+// its way; `ref` lets the voice drive `--ix-level` on the reply being spoken.
+let mark = (~busy=false, ~ref=?, ()) =>
+  React.cloneElement(
+    <span className="ix-mark" ariaHidden=true ?ref />,
+    {"data-busy": busy ? "true" : "false"},
+  )
+
+// The loudness (0..1) of the voice, written straight to the mark: it changes
+// every frame, so it does not go through React state.
+let setLevel: (Nullable.t<Dom.element>, float) => unit = %raw(`
+  function (el, level) {
+    if (!el) return;
+    if (level > 0) el.style.setProperty("--ix-level", String(level));
+    else el.style.removeProperty("--ix-level");
   }
-}
+`)
 
-// The crackling block cursor at the end of a streaming reply.
-module Cursor = {
-  @react.component
-  let make = () => {
-    let canvasRef = React.useRef(Nullable.null)
-    let handle = React.useRef(None)
-    OneBit.useCanvas(canvasRef, c => OneBit.crackle(c, {w: 5, h: 9}), handle)
-    <canvas className="px chat__cursor" ariaHidden=true ref={ReactDOM.Ref.domRef(canvasRef)} />
-  }
-}
-
-let message = (~who, ~msg: chatMsg, ~live) => {
-  let isModel = msg.role != "user" && !msg.isError
-  let cls =
-    "msg" ++ (msg.role == "user" ? " msg--you" : msg.isError ? " msg--err" : " msg--ai")
-  <div key={Int.toString(msg.id)} className=cls>
-    <p className="msg__who"> {React.string(who ++ ` ▸`)} </p>
-    <div className="msg__txt">
-      {isModel
-        ? <Markdown text={msg.content} after=?{live ? Some(<Cursor />) : None} />
-        : <p className="whitespace-pre-wrap"> {React.string(msg.content)} </p>}
-    </div>
-  </div>
-}
-
-// Mute / unmute the construct's voice. The label is constant for screen
-// readers; `aria-pressed` carries the state. Below 600px the state word is
-// dropped and the struck-through ♪ alone shows "muted".
-module VoiceToggle = {
-  @react.component
-  let make = (~on: bool, ~c: Translations.chatContent) =>
-    <button
-      type_="button"
-      onClick={_ => Voice.setVoiceEnabled(!on)}
-      ariaPressed={on ? #"true" : #"false"}
-      ariaLabel={c.voice}
-      title={c.voice}
-      className="chat__voice">
-      <span className="chat__voice-glyph" ariaHidden=true> {React.string(`♪`)} </span>
-      <span className="chat__voice-word" ariaHidden=true>
-        {React.string(" " ++ (on ? c.voiceOn : c.voiceOff))}
-      </span>
-    </button>
+// `who` names the speaker for screen readers; on screen the ember and the
+// surface-coloured box tell the two apart.
+let message = (~who, ~msg: chatMsg, ~markRef=?, ()) => {
+  let speaker = <span className="ix-sr"> {React.string(`${who}: `)} </span>
+  msg.role == "user"
+    ? <div key={Int.toString(msg.id)} className="ix-msg ix-msg--you">
+        {speaker}
+        <p className="chat__plain"> {React.string(msg.content)} </p>
+      </div>
+    : <div key={Int.toString(msg.id)} className={msg.isError ? "ix-msg chat__err" : "ix-msg"}>
+        {mark(~ref=?markRef, ())}
+        <div className="ix-msg__body">
+          {speaker}
+          {msg.isError
+            ? <p className="chat__plain"> {React.string(msg.content)} </p>
+            : <Markdown text={msg.content} />}
+        </div>
+      </div>
 }
 
 @react.component
@@ -305,7 +286,8 @@ let make = () => {
   // Whether new text should keep the log pinned to its end: true while the
   // reader is at the end, false once they scroll up to read.
   let followRef = React.useRef(true)
-  let orbRef = React.useRef(None)
+  // The mark of the reply being spoken, for the voice's loudness.
+  let liveMarkRef = React.useRef(Nullable.null)
   // The reply being spoken: Some((messageId, revealed)) while its voice gates
   // the text. `speakerRef` holds the live speaker with a token, so callbacks
   // from a speaker that has since been replaced or stopped are dropped.
@@ -313,7 +295,6 @@ let make = () => {
   let (voiceOn, setVoiceOn) = React.useState(() => true)
   let speakerRef = React.useRef(None)
   let speakerToken = React.useRef(0)
-  let lastLevelAt = React.useRef(0.0)
 
   let nextId = () => {
     let id = idRef.current
@@ -321,17 +302,12 @@ let make = () => {
     id
   }
 
-  let sizzle = amount =>
-    switch orbRef.current {
-    | Some(h) => OneBit.sizzle(h, amount)
-    | None => ()
-    }
-
   // Silence the current reply and show all of it.
   let stopSpeech = () => {
     speakerToken.current = speakerToken.current + 1
     let current = speakerRef.current
     speakerRef.current = None
+    setLevel(liveMarkRef.current, 0.)
     setSpeech(_ => None)
     switch current {
     | Some(s) => Voice.stop(s)
@@ -351,17 +327,14 @@ let make = () => {
         if live() {
           setSpeech(_ => n == Float.Constants.positiveInfinity ? None : Some((modelId, n)))
         },
-      onLevel: level => {
-        // Sizzle at ~9 Hz scaled by loudness: the orb's heat tracks the voice.
-        let t = now()
-        if live() && level >= 0.03 && t -. lastLevelAt.current >= 110.0 {
-          lastLevelAt.current = t
-          sizzle(level *. 0.6)
-        }
-      },
+      onLevel: level =>
+        if live() {
+          setLevel(liveMarkRef.current, level)
+        },
       onEnd: () =>
         if live() {
           speakerRef.current = None
+          setLevel(liveMarkRef.current, 0.)
           setSpeech(_ => None)
         },
     })
@@ -410,9 +383,9 @@ let make = () => {
 
   // On open: remember what had focus, focus the input and wire
   // Escape-to-close. On close, the cleanup returns focus to where the reader
-  // was (the rail's "Ask", the contact button) or to the launcher, so keyboard
-  // users aren't stranded. The panel is non-modal — the page stays usable
-  // behind it — so focus is restored rather than trapped.
+  // was (the contact button) or to the launcher, so keyboard users aren't
+  // stranded. The panel is non-modal (the page stays usable behind it), so
+  // focus is restored rather than trapped.
   React.useEffect1(() => {
     if isOpen {
       returnRef.current = activeElement()
@@ -478,11 +451,12 @@ let make = () => {
         Array.concat(prev, [{id: userId, role: "user", content: trimmed, isError: false}])
       )
       setInput(_ => "")
+
       // The visitor's own question brings the log back to its end.
       followRef.current = true
       setBusy(_ => true)
       setStreaming(_ => false)
-      sizzle(0.4)
+
       // Inside the send gesture (Enter, the send button, a quick prompt), or
       // the browser keeps the audio muted. A new question interrupts the
       // previous reply's voice.
@@ -498,7 +472,6 @@ let make = () => {
             setStreaming(_ => true)
           }
           addOrUpdate(full)
-          sizzle(0.5 +. Math.random() *. 0.5)
         },
         full => {
           addOrUpdate(full)
@@ -530,12 +503,14 @@ let make = () => {
                 setMessages(prev =>
                   Array.concat(prev, [{id: modelId, role: "model", content: reply, isError: false}])
                 )
-                sizzle(1.0)
                 setBusy(_ => false)
               },
               () => {
                 setMessages(prev =>
-                  Array.concat(prev, [{id: modelId, role: "model", content: c.error, isError: true}])
+                  Array.concat(
+                    prev,
+                    [{id: modelId, role: "model", content: c.error, isError: true}],
+                  )
                 )
                 setBusy(_ => false)
               },
@@ -555,58 +530,54 @@ let make = () => {
     }
 
   let canSend = String.trim(input) !== "" && !busy
-  let lastId = switch messages->Array.get(Array.length(messages) - 1) {
-  | Some(m) => m.id
-  | None => -1
-  }
 
-  // Below 900px the launcher shows only its `?` mark; the label stays its name.
   <>
     {isOpen
       ? React.null
-      : <button
+      : <Astryx.Button
           ref={ReactDOM.Ref.domRef(launcherRef)}
-          type_="button"
+          label={c.launcher}
+          icon={<span className="ix-mark ix-mark--sm" ariaHidden=true />}
           onClick={_ => setIsOpen(_ => true)}
-          ariaHaspopup=#dialog
-          className="chat-launcher no-print">
-          <span className="chat-launcher__mark" ariaHidden=true> {React.string("?")} </span>
-          <span className="chat-launcher__label"> {React.string(c.launcher)} </span>
-          <span className="chat-launcher__arrow" ariaHidden=true> {React.string(` ▸`)} </span>
-        </button>}
+          ariaHaspopup="dialog"
+          className="chat-launcher no-print"
+        />}
     {isOpen
       ? <div role="dialog" ariaLabelledby="chat-title" className="chat no-print">
           <div className="chat__head">
-            <Orb into=orbRef />
             <div className="chat__id">
-              <h2 id="chat-title" className="chat__title"> {React.string(c.title)} </h2>
-              <p className="chat__sub"> {React.string("ai.arda.tr")} </p>
+              <Astryx.Text as_=#h2 weight=#semibold id="chat-title">
+                {React.string(c.title)}
+              </Astryx.Text>
+              // A host name: lang="en" keeps its capitals plain under lang="tr".
+              <p className="ix-label" lang="en"> {React.string("ai.arda.tr")} </p>
             </div>
-            <VoiceToggle on=voiceOn c />
-            <button
-              type_="button"
+            <Astryx.IconButton
+              label={c.close}
+              icon={<Astryx.Icon icon=#close />}
+              variant=#ghost
+              size=#sm
               onClick={_ => setIsOpen(_ => false)}
-              ariaLabel={c.close}
-              title={c.close}
-              className="x">
-              {React.string(`×`)}
-            </button>
+            />
           </div>
-
           <div
             ref={ReactDOM.Ref.domRef(listRef)}
             role="log"
             ariaLive=#polite
-            className="chat__log"
-            onScroll={e => followRef.current = nearBottom(ReactEvent.UI.currentTarget(e)->Obj.magic)}>
-            <div className="msg msg--ai">
-              <p className="msg__who"> {React.string(r.assistant ++ ` ▸`)} </p>
-              <div className="msg__txt"> <p> {React.string(c.greeting)} </p> </div>
+            className="chat__log ix-thread"
+            onScroll={e =>
+              followRef.current = nearBottom(ReactEvent.UI.currentTarget(e)->Obj.magic)}>
+            <div className="ix-msg">
+              {mark()}
+              <div className="ix-msg__body">
+                <span className="ix-sr"> {React.string(`${r.assistant}: `)} </span>
+                <p> {React.string(c.greeting)} </p>
+              </div>
             </div>
             {messages
             ->Array.map(m => {
               // While spoken, a reply shows only as far as the voice has got,
-              // and keeps its cursor until the voice is done.
+              // and its mark follows the voice's loudness.
               let spoken = switch speech {
               | Some((id, n)) if id == m.id => Some(n)
               | _ => None
@@ -617,39 +588,40 @@ let make = () => {
                 | Some(n) => {...m, content: Markdown.revealPrefix(m.content, n)}
                 | None => m
                 },
-                ~live=(streaming && m.id == lastId) || spoken != None,
+                ~markRef=?{spoken == None ? None : Some(ReactDOM.Ref.domRef(liveMarkRef))},
+                (),
               )
             })
             ->React.array}
             {busy && !streaming
-              ? <div className="msg msg--ai msg--wait">
-                  <p className="msg__who"> {React.string(r.assistant ++ ` ▸`)} </p>
-                  <p className="msg__txt"> {React.string(c.thinking)} <Cursor /> </p>
+              ? <div className="ix-msg">
+                  {mark(~busy=true, ())}
+                  <div className="ix-msg__body">
+                    <p className="ix-muted"> {React.string(c.thinking)} </p>
+                  </div>
                 </div>
               : React.null}
           </div>
-
           {Array.length(messages) == 0
-            ? <div className="chat__prompts">
+            ? <div className="ix-chips chat__prompts">
                 {c.suggestions
                 ->Array.mapWithIndex((s, i) =>
                   <button
                     key={Int.toString(i)}
                     type_="button"
+                    className="ix-chip"
                     onClick={_ => {
                       submit(s)
                       // The prompts unmount once a message exists; keep the
                       // keyboard in the input rather than dropping it on <body>.
                       focusInput()
                     }}>
-                    <em ariaHidden=true> {React.string(Int.toString(i + 1))} </em>
                     {React.string(s)}
                   </button>
                 )
                 ->React.array}
               </div>
             : React.null}
-
           <form
             onSubmit={e => {
               ReactEvent.Form.preventDefault(e)
@@ -659,12 +631,12 @@ let make = () => {
               // <body>. Keep the keyboard in the input, as Enter does.
               focusInput()
             }}
-            className={busy ? "chat__form chat__form--busy" : "chat__form"}>
-            <span className="chat__prompt" ariaHidden=true> {React.string(`▸`)} </span>
+            className="chat__form">
             <input
               ref={ReactDOM.Ref.domRef(inputRef)}
               type_="text"
               maxLength=20000
+              className="ix-input"
               value={input}
               onChange={e => {
                 let value = ReactEvent.Form.target(e)["value"]
@@ -678,11 +650,13 @@ let make = () => {
               // blocked by `busy` in submit() and by the send button.
               readOnly={busy}
             />
-            <button type_="submit" ariaLabel={c.send} disabled={!canSend} className="chat__send">
-              {React.string(c.send)}
-              <span ariaHidden=true> {React.string(` ↵`)} </span>
-            </button>
+            <Astryx.Button label={c.send} variant=#primary type_=#submit isDisabled={!canSend} />
           </form>
+          <div className="chat__foot">
+            <Astryx.Switch
+              label={c.voice} value=voiceOn size=#sm onChange={on => Voice.setVoiceEnabled(on)}
+            />
+          </div>
         </div>
       : React.null}
   </>

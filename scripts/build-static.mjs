@@ -112,11 +112,7 @@ async function build() {
     console.log('Cleaning dist directory...');
     await fs.emptyDir(path.resolve(projectRoot, 'dist'));
 
-    // 2. Generate theme CSS so production builds use the latest theme config.
-    console.log('Generating theme CSS...');
-    execSync('node scripts/generate-theme.mjs', { stdio: 'inherit', cwd: projectRoot });
-
-    // 2b. Compile ReScript sources
+    // 2. Compile ReScript sources
     console.log('Compiling ReScript...');
     execSync('npx rescript build', { stdio: 'inherit', cwd: projectRoot });
 
@@ -211,7 +207,7 @@ async function build() {
         }
         // public/fonts/ holds the Noto TTFs that scripts/generate-resume.mjs
         // embeds into the PDFs. They are *build inputs*, not site assets — the
-        // page loads IBM Plex / Big Shoulders from Google Fonts and has never
+        // page loads its fonts from Google Fonts and has never
         // referenced /fonts/. Copying them shipped 86 MB to GitHub Pages for
         // nothing.
         if (src === fontsPath || src.startsWith(fontsPath + path.sep)) {

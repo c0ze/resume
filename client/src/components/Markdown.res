@@ -70,23 +70,9 @@ let rec renderList = (b, key) => {
     : <ul key className="md-list"> {items} </ul>
 }
 
-// `after` is appended inside the last block when it is a paragraph (so the
-// streaming cursor sits at the end of the line, not under it); otherwise after
-// the last block.
 @react.component
-let make = (~text, ~after=?) => {
+let make = (~text) => {
   let blocks = parse(text)
-  let last = Array.length(blocks) - 1
-  let tail = i =>
-    switch after {
-    | Some(el) if i == last => el
-    | _ => React.null
-    }
-  let trailing = switch (after, blocks->Array.get(last)) {
-  | (Some(el), Some(b)) if bType(b) == "ul" || bType(b) == "ol" || bType(b) == "code" => el
-  | (Some(el), None) => el
-  | _ => React.null
-  }
   <div className="md">
     {blocks
     ->Array.mapWithIndex((b, i) => {
@@ -95,10 +81,9 @@ let make = (~text, ~after=?) => {
       | "ul" | "ol" => renderList(b, key)
       | "code" =>
         <pre key className="md-pre"> <code> {React.string(bText(b))} </code> </pre>
-      | _ => <p key> {renderInline(bInline(b))} {tail(i)} </p>
+      | _ => <p key> {renderInline(bInline(b))} </p>
       }
     })
     ->React.array}
-    {trailing}
   </div>
 }

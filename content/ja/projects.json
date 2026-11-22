@@ -58,7 +58,7 @@
     },
     {
       "title": "本サイト（職務経歴書サイト）",
-      "technologies": "ReScript, React, Vite, Tailwind CSS, PDFKit, docx",
+      "technologies": "ReScript, React, Vite, Astryx, PDFKit, docx",
       "description": "英語・日本語・トルコ語の静的な職務経歴書サイト。単一のコンテンツソースから、ページとPDF・DOCX・JSON Resume・vCardの各ファイルをビルド時に生成。GitHub Pagesで公開。",
       "repo": "https://github.com/c0ze/resume"
     }

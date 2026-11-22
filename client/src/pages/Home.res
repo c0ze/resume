@@ -1,36 +1,31 @@
-// The one route. The status bar, the treeline, then two columns: the meta rail
-// and the main column (name, position, summary, then every section). The chat
-// floats over it all. See DESIGN.md.
+// The one route: the top line (the emblem, the language switch, the family),
+// then the résumé on bone paper in one tight column, the colophon under it,
+// and the chat floating over it all. See DESIGN.md.
 //
-// The intro comes first in the source so that, where the columns stack (≤900px),
-// a phone shows the name, the position and the summary before the rail. On a
-// wide screen the grid puts the rail back in the left column beside both.
+// Landmarks: the top line is the page's <header>, the résumé is <main> (the
+// name, the downloads and every section), the colophon its <footer>.
 //
-// Landmarks: the grid lives on a plain wrapper, so the rail <aside> and the
-// colophon <footer> are top-level (complementary, contentinfo) rather than
-// nested in <main>, which holds the sections. <main> is an unstyled block
-// inside .cv__main, so the layout is unchanged. The intro sits in its own grid
-// cell, outside <main>, so it is a region labelled by the h1 (Intro.res).
+// The build details are one dialog, opened from under the name and from
+// the colophon; a native modal returns focus to whichever opened it.
 
 @react.component
-let make = () =>
+let make = () => {
+  let (detailsOpen, setDetailsOpen) = React.useState(() => false)
+  let openDetails = () => setDetailsOpen(_ => true)
+
   <div id="top" className="page">
-    <StatusBar />
-    <Treeline />
-    <div className="cv">
-      <Intro />
-      <Rail />
-      <div className="cv__main">
-        <main>
-          <AboutSection />
-          <ExperienceSection />
-          <SkillsSection />
-          <ProjectsSection />
-          <EducationSection />
-          <ContactSection />
-        </main>
-        <Footer />
-      </div>
-    </div>
+    <Bar />
+    <main className="ix-wrap">
+      <Head onOpenDetails=openDetails />
+      <AboutSection />
+      <ExperienceSection />
+      <SkillsSection />
+      <ProjectsSection />
+      <EducationSection />
+      <ContactSection />
+    </main>
+    <Footer onOpenDetails=openDetails />
+    <Certificate isOpen=detailsOpen onClose={() => setDetailsOpen(_ => false)} />
     <ChatWidget />
   </div>
+}

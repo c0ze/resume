@@ -6,7 +6,6 @@ const projectRoot = path.resolve(import.meta.dirname, "..");
 const clientRoot = path.resolve(projectRoot, "client");
 const clientSrcRoot = path.resolve(clientRoot, "src");
 const distRoot = path.resolve(projectRoot, "dist");
-const postcssConfigPath = path.resolve(import.meta.dirname, "postcss.config.cjs");
 
 /**
  * Machine provenance for the countersign block.
@@ -54,9 +53,6 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       __BUILD_TIME__: JSON.stringify(
         process.env.RESUME_BUILD_TIME ?? new Date().toISOString()
       ),
-    },
-    css: {
-      postcss: postcssConfigPath,
     },
     resolve: {
       alias: {
