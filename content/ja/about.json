@@ -1,7 +1,7 @@
 {
   "title": "職務要約",
-  "paragraph1": "バックエンドサービスと、それを動かすクラウドインフラを構築しています。Veltraでは、AWS上のPython・Go・Nodeの各サービスを横断的に担当し、Model Context Protocol（MCP）連携や社内向けAIツールも手がけています。",
-  "paragraph2": "それ以前は、物流・フィンテック・医療IT・ゲームの各分野で、Go／Ruby／Pythonのシステムを開発・運用してきました。2004年から東京を拠点にしています。英語と日本語で、海外チームと日本チームの橋渡し役を担っています。",
+  "paragraph1": "バックエンドサービスとクラウドインフラを開発しています。VeltraではAWS上のPython・Go・Nodeサービスを担当し、Model Context Protocol（MCP）連携や社内向けAIツールも手がけています。",
+  "paragraph2": "以前は物流・フィンテック・医療IT・ゲーム分野でGo、Ruby、Pythonのシステムを構築・運用してきました。2004年から東京在住です。英語と日本語で、海外チームと日本チームの間をつないでいます。",
   "languages": "語学",
   "languagesContent": "トルコ語（母語）、英語（準ネイティブ／TOEFL 263点〔旧CBT方式〕・2004年）、日本語（ビジネス／JLPT 2級・2006年）"
 }

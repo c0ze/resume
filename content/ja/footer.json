@@ -1,6 +1,6 @@
 {
   "copyright": "© {year} Arda Karaduman 無断転載を禁じます。",
-  "backToTop": "ページの先頭へ",
-  "colophon": "ReScript + Reactで構築し、静的にプリレンダリング · PDF/DOCX/JSON/vCardを出力 · MCP連携の「Ardaについて質問する」チャット",
+  "backToTop": "先頭へ戻る",
+  "colophon": "ReScriptとReactで構築し静的に出力 · PDF／DOCX／JSON／vCard書き出し · MCP連携の「Ardaについて質問する」チャット",
   "source": "ソース"
 }

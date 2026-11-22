@@ -1,6 +1,6 @@
 {
   "copyright": "© {year} Arda Karaduman. All rights reserved.",
   "backToTop": "Back to top",
-  "colophon": "Built with ReScript + React, prerendered static · PDF/DOCX/JSON/vCard exports · MCP-backed “Ask about Arda” chat",
-  "source": "source"
+  "colophon": "Built with ReScript and React, statically prerendered · PDF, DOCX, JSON, and vCard exports · MCP-backed Ask about Arda chat",
+  "source": "Source"
 }

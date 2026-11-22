@@ -1,7 +1,7 @@
 {
   "title": "Hakkımda",
-  "paragraph1": "Backend servislerini ve bunların çalıştığı bulut altyapısını geliştiriyorum. Veltra'da AWS üzerindeki Python, Go ve Node servisleri genelinde çalışıyorum; Model Context Protocol (MCP) entegrasyonları ve şirket içi yapay zekâ araçları da bu işin parçası.",
-  "paragraph2": "Öncesinde lojistik, fintek, sağlık bilişimi ve oyun sektörlerinde Go, Ruby ve Python sistemleri geliştirip işlettim; 2004'ten beri Tokyo'dayım. Yurt dışındaki ekiplerle Japonya'daki ekipler arasında İngilizce ve Japonca köprü görevi görüyorum.",
+  "paragraph1": "Backend servisleri ve bulut altyapısı geliştiriyorum. Veltra'da AWS üzerindeki Python, Go ve Node servisleriyle birlikte Model Context Protocol (MCP) entegrasyonları ve şirket içi yapay zekâ araçları üzerinde çalışıyorum.",
+  "paragraph2": "Daha önce lojistik, fintek, sağlık bilişimi ve oyun sektörlerinde Go, Ruby ve Python sistemleri kurup işlettim. 2004'ten beri Tokyo'dayım; yurt dışı ve Japonya ekipleri arasında İngilizce ve Japonca köprü kuruyorum.",
   "languages": "Diller:",
   "languagesContent": "Türkçe (Anadil), İngilizce (Anadile yakın; TOEFL 263, eski CBT ölçeği, 2004), Japonca (İş düzeyinde; JLPT 2. seviye, 2006)"
 }
