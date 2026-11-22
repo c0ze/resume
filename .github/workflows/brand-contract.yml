@@ -1,0 +1,33 @@
+name: Brand contract check
+
+# Verifies this site's copies of the family's brand files (client/src/brand/:
+# arda.css, arda.js, brand.css, scheme.js) against the sha256 hashes the
+# arda.tr repo publishes in config/themes.json (contract v4). Passes with a
+# note while arda.tr main still publishes an older contract. Runs as a separate
+# workflow so it never blocks deploys.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Run JavaScript actions on Node 24 (matches deploy.yml).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check the brand copies against the published hashes
+        run: node scripts/check-brand-contract.mjs
