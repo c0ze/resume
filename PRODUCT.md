@@ -53,9 +53,10 @@ current work on AI platform architecture.
 
 ## Capabilities and Constraints
 
-- **Stack:** ReScript 11 → React 18, Vite 8, Tailwind 3. The UI is ReScript
-  (`.res` files under `client/src/`), plus the shared 1-bit canvas engine `client/src/lib/onebit.js`
-  (a verbatim copy of `design-previews/onebit/onebit.js`). `npm run check` is `rescript build`; there is **no lint and no
+- **Stack:** ReScript 11 → React 19, Vite 8, Astryx 0.7 (components for
+  controls and layout). The UI is ReScript (`.res` files under `client/src/`);
+  the theme and the family patterns are verbatim copies of arda.tr's `brand/`
+  in `client/src/brand/`. `npm run check` is `rescript build`; there is **no lint and no
   `verify` script**. `npm run test:static` runs `node --test tests/*.test.mjs`
   and requires a prior build.
 - **The exports are independent of the web layout.** `generate-resume.mjs`
@@ -66,36 +67,38 @@ current work on AI platform architecture.
   aligned, fully duplicated per language. `Translations.res` loads them through
   `Obj.magic` with **no runtime validation** — a renamed field is an
   `undefined` at runtime, not a compile error. `record.json` is the page's own
-  chrome vocabulary (rail labels, certificate, chat labels) and is read by the
+  chrome vocabulary (table labels, build details, chat labels) and is read by the
   web layer only.
 - **Flavours** (`content/flavors/*.json`) override only `header.subtitle` and
   the two About paragraphs, selected by `?flavor=` in the browser. SSR always
   renders the base résumé.
-- **`client/src/theme.css` is generated** by `scripts/generate-theme.mjs` from
-  its `themePalettes` object. Never hand-edit it. New tokens are a two-file
-  change: the generator plus `config/tailwind.config.cjs`.
-- **Two literal strings are asserted in `tests/static-output.test.mjs`** and
-  must survive into the prerendered HTML: `"Backend Systems Architect"` (in
-  the intro's position line, not just the template's `<head>`) and
-  `"Get In Touch"`. `artifact-status.json` is deep-equality asserted.
+- **`client/src/brand/` is not this repo's to edit.** Its files are verbatim
+  copies of arda.tr's `brand/`; `scripts/check-brand-contract.mjs` compares
+  them with the hashes arda.tr publishes. The page's own stylesheet
+  (`client/src/index.css`) uses the theme's tokens only.
+- **`tests/static-output.test.mjs` asserts that content survives into the
+  prerendered HTML**: the position (`header.subtitle`, under the name, not
+  just the template's `<head>`) and the contact labels
+  (`contact.getInTouch`, `contact.findMeOn`), read from `content/en`.
+  `artifact-status.json` is deep-equality asserted.
 - **`header.contactViaEmail` must never appear in the rendered HTML** — it is
   both a repo rule and a test assertion. It does go into the downloads.
 - **`abstract` is web-only** and must stay out of every export.
-- Type: Big Shoulders Display for the name, IBM Plex Sans / Plex Mono for
-  body and labels, IBM Plex Sans JP for Japanese (also the fallback in the sans
-  and mono stacks, so kana and kanji never drop to a system face). `<html lang>`
+- Type: Grenze Gotisch for the name only, Spectral for everything else,
+  JetBrains Mono for dates, Zen Antique for Japanese (under `lang="ja"`). `<html lang>`
   tracks the selected language; a blocking bootstrap in `client/index.html`
-  applies the stored rendition (migrating legacy ids by role) and language
-  before first paint.
+  applies the stored language before first paint. The scheme is fixed: light only.
 - **Still open:** `createRoot` discards the SSR markup rather than hydrating, so
   the prerendered HTML is thrown away on first paint. It costs a re-render, not
   correctness, and it is why the SSR pass always renders the base English
   résumé without a flavour overlay.
-- The visual system is **"One Bit Forest"**, the arda.tr family system
+- The visual system is **"Kara Duman"**, the arda.tr family system
   (`../DESIGN-SYSTEM.md`; `DESIGN.md` is this repo's binding spec), adopted
-  2026-09-23. It replaced "The Bound Notebook" (2026-07-27). The four
-  renditions are Xerox (default), Xerox HC, Night, Night HC; the two HC
-  renditions target WCAG AAA.
+  2026-11-23. It replaced "The Index" (2026-11-22, rejected the next day),
+  "One Bit Forest" (2026-09-23) and "The Bound Notebook" (2026-07-27). The
+  résumé is its most restrained site: bone paper, light only, the name in
+  blackletter once, the emblem once, no artwork, black in print; high contrast
+  comes from `prefers-contrast: more`.
 - `docs/superpowers/specs/*` are historical; the 2026-07-03 revamp spec states
   "no visual redesign" and is superseded (the file carries the notice).
 - The OAuth line was removed from the résumé on 2026-09-23 and must not return.
@@ -147,14 +150,15 @@ exists in the content.
 
 ## Accessibility & Inclusion
 
-- WCAG-conscious contrast in every rendition, with one AAA-targeted
-  high-contrast light rendition and one AAA-targeted high-contrast dark
-  rendition (Xerox HC and Night HC).
-- `prefers-reduced-motion` fully respected (the treeline, the chat orb and
-  cursor draw one still frame); content readable without JS. Every
+- Every text colour passes WCAG AA on its background (the theme's table, see
+  `../DESIGN-SYSTEM.md`); under `prefers-contrast: more` hairlines and muted
+  text gain contrast. One light scheme, for everyone.
+- `prefers-reduced-motion` fully respected (the chat's mark neither blinks nor
+  swells); content readable without JS. Every
   responsibility, competency and work is in the prerendered HTML — nothing is
   behind an interaction.
-- The modal is genuinely accessible (focus trap, `inert`, Escape, focus
-  restore) — that standard must be preserved, not regressed.
+- The build-details dialog is a native modal `<dialog>` (Astryx `Dialog`:
+  inert page, Escape, focus to the title and back to the opener) — that
+  standard must be preserved, not regressed.
 - `<html lang>` tracks the selected language, set before first paint by the
   bootstrap in `client/index.html` and kept in sync by `LanguageContext.res`.

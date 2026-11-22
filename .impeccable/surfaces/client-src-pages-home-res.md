@@ -1,8 +1,8 @@
 ---
-version: 2
+version: 3
 slug: "client-src-pages-home-res"
 primary_target: "client/src/pages/Home.res"
-related_targets: ["client/src/index.css","scripts/generate-theme.mjs","client/src/lib/onebit.js"]
+related_targets: ["client/src/index.css","client/src/brand/brand.css","client/src/Astryx.res"]
 ---
 
 ## Scope & mode
@@ -20,63 +20,65 @@ seconds, while holding a dozen other candidates.
 
 ## Direction contract
 
-**SYSTEM.** One Bit Forest, the arda.tr family system (`../DESIGN-SYSTEM.md`),
-at the **most professional** end of its tone dial. The reference is section
-03 of `../design-previews/sketch-1bit.html`, approved 2026-09-23. It replaces
-"The Bound Notebook" (2026-07-27).
+**SYSTEM.** Kara Duman, the arda.tr family system (`../DESIGN-SYSTEM.md`,
+adopted 2026-11-23), at its most restrained. It replaces The Index
+(2026-11-22) and One Bit Forest (2026-09-23). `DESIGN.md` is the binding spec;
+the design is `../output/rebrand-kara-duman/14-resume.png`.
 
-**THESIS.** A calm, typographic document on photocopy paper. The family's
-signature is present but quiet: a 1-bit treeline drifting under the status
-bar, and one moss signal. Everything else is type, hairlines and white space.
-It refuses the modern CV arrangement: sidebar photo, skill bars, dotted
-timeline, tech-logo grid, gradient name.
+**THESIS.** Soot on bone paper, signed once. The name is the only blackletter;
+the emblem, top left, is the only artwork; everything else is Spectral between
+two weights of rule. It refuses the modern CV arrangement: sidebar photo, skill
+bars, dotted timeline, tech-logo grid, gradient name.
 
 **OWN-WORLD.**
-- **Colour:** Xerox paper `#efede6`, toner `#111210`, moss `#2d5a39`; Night,
-  Xerox HC and Night HC as the other renditions.
-- **Type:** Big Shoulders Display 900 for the name; IBM Plex Sans for body,
-  Plex Mono for every label, date and control, Plex Sans JP for Japanese.
-- **Geometry:** radius 0, no shadow, no gradient, 1px rules.
+- **Colour:** bone `#E8E0CE`, soot `#0D0C0A`, secondary `#5C574C`, Ember Deep
+  `#A33312` for links only. No ember in the page. Light only; prints in black.
+- **Type:** Grenze Gotisch 800 for the name; Spectral for everything else
+  (600 for the position, entry titles and labels; italic for the
+  organisation); JetBrains Mono for periods; Zen Antique for Japanese. Nothing
+  below 18px.
+- **Geometry:** 2px corners on controls, no shadow, no box; a 1px rule under
+  the head and above the colophon, hairlines between sections and entries.
 
-**STORY.** A recruiter reads one screen. They see the name, the position and
-the summary, and the files are already in the rail beside it. They scroll a
-plain, complete record, and take the file.
+**STORY.** A recruiter reads one screen. They see the name, the position, where
+Arda is and the four files. They scroll a plain, complete record, and take the
+PDF.
 
 **FIRST VIEWPORT.**
-- **Status bar:** site mark, section nav, EN · JA · TR, JST clock, rendition.
-- **Treeline** under it.
-- **Rail:** location, languages, links, the four downloads, the certificate of
-  issue, Ask.
-- **Main:** the name in two lines, the position, the summary, then the opening
-  of About.
+- **Top line:** the emblem (to arda.tr); the family's arda.tr, blog, ask; the
+  language switch, one segmented control, EN 日本語 TR.
+- **Head:** the name, the position, the place, the downloads (PDF the one
+  primary button), the build date and details, the section links.
 
-**FORM.** Two columns (`260px | 1fr`).
-- Every section is a mono label with a hairline.
-- Every entry is a `120px | 1fr` row: mono gutter on the left, entry on the
-  right.
-- On a phone the intro comes first, the rail stacks under it, and the bar
-  folds its nav into a `§ section ▾` menu.
+**FORM.** One column 60rem wide. Every section is two columns: its label in
+capitals at the left, its entries at the right.
+- An entry: the title in Spectral 600, the period in mono at the far right,
+  the organisation in italics, the details in small text.
+- On a phone the label sits above its entries and the language switch is full
+  width.
 
 ## Memorable moment
 
-The treeline. It is the only thing that moves, it pauses when unseen, and it
-stands still for readers who prefer reduced motion.
+The name, cut in blackletter, alone on bone paper under the seal.
 
-## Kept from the previous direction
+## Kept from the previous directions
 
-- The certificate of issue as machine provenance: the commit SHA, the build
-  timestamp, and each artifact attributed to its real generator script. No
-  human witness is invented.
+- The build details (formerly "certificate of issue") as machine provenance:
+  the commit SHA, the build timestamp, and each artifact attributed to its real
+  generator script. No human witness is invented.
 - The bilingual statement: About repeats the whole statement in the companion
   language.
 
 ## Hard constraints — do not break
 
-- `"Backend Systems Architect"` and `"Get In Touch"` must survive into the
+- The position (`header.subtitle`) and the contact labels must survive into the
   prerendered HTML (`tests/static-output.test.mjs`).
 - `header.contactViaEmail` must never appear in rendered HTML.
 - `abstract` is web-only and must stay out of every export.
 - Every content JSON field path read by the four generators must survive.
-- `client/src/theme.css` is generated by `scripts/generate-theme.mjs`.
-- `client/src/lib/onebit.js` is a verbatim copy of the shared engine.
+- `client/src/brand/` holds verbatim copies of arda.tr's `brand/`; never edit
+  them here (`scripts/check-brand-contract.mjs`).
+- `client/src/index.css` uses the theme's tokens only: no hex, no written-out type size.
+- Blackletter is the name's alone; no artwork but the emblem, once.
+- Light only: no scheme or rendition switch.
 - The OAuth line is gone from the résumé (2026-09-23). Do not reintroduce it.

@@ -11,20 +11,20 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Generated PDF/DOCX resumes in `public/resume-{en,ja,tr}.{pdf,docx}`
 - Generated [JSON Resume](https://jsonresume.org/schema) exports in `public/resume-{en,ja,tr}.json` and a vCard in `public/arda.vcf`
 - A web-only `abstract` per experience (the lead line of each Experience row) that the PDF/DOCX/JSON exports deliberately ignore
-- "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown, with the family's 1-bit orb and crackle cursor
+- "Ask about Arda" AI chat assistant — streams answers from the [ai.arda.tr](https://ai.arda.tr) bot and renders Markdown; the assistant is the family's ember
 - Cookieless Cloudflare Web Analytics (the email is kept out of the page — only in the downloads)
 - SEO: Open Graph / Twitter cards, JSON-LD `Person`, and a generated `sitemap.xml`
-- The "One Bit Forest" design system shared with arda.tr, blog.arda.tr and ai.arda.tr (see `DESIGN.md`): four renditions — Xerox (default), Xerox HC, Night, Night HC — generated from the `themePalettes` catalogue in `scripts/generate-theme.mjs`, the two HC renditions targeting WCAG AAA, and a 1-bit treeline drawn live by `client/src/lib/onebit.js`
-- `<html lang>` tracks the selected language, and a blocking bootstrap applies the stored rendition before first paint
+- "Kara Duman", the design system shared with arda.tr, blog.arda.tr and ai.arda.tr (see `DESIGN.md`): the résumé is its most restrained site, bone paper, light only, the name in blackletter once, the emblem once, no artwork; it prints in black. The Astryx `arda` theme and the family patterns are verbatim copies of arda.tr's `brand/` in `client/src/brand/`
+- `<html lang>` tracks the selected language, and a blocking bootstrap applies the stored language before first paint
 
 ## Tech Stack
 
-- ReScript 11 (compiled to JS, rendered by React 18)
-- React 18
+- ReScript 11 (compiled to JS, rendered by React 19)
+- React 19
 - Vite 8 (client build + SSR prerender)
-- Tailwind CSS (reset + token colours; the rest is plain CSS in `client/src/index.css`)
+- Astryx 0.7.17 (`@astryxdesign/core`, pinned) components for controls, with the family's built `arda` theme; the page's own rules are plain CSS in `client/src/index.css`
 - PDFKit (PDF resumes) and `docx` (DOCX resumes)
-- Big Shoulders Display + IBM Plex Sans / Mono / Sans JP (Google Fonts)
+- Grenze Gotisch (the name only) + Spectral + JetBrains Mono + Zen Antique for Japanese (Google Fonts)
 - GitHub Actions + GitHub Pages for deployment
 
 ## Repository Layout
@@ -32,14 +32,11 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 ```text
 .
 ├── client/               # React app and UI components
-├── config/               # Tooling and theme configuration
-│   ├── postcss.config.cjs
-│   ├── tailwind.config.cjs
-│   ├── theme.json
+├── config/               # Tooling configuration
 │   └── vite.config.ts
 ├── content/              # Resume content for each language
 ├── public/               # Static assets and generated PDFs
-├── scripts/              # Build helpers, theme generation, PDF generation
+├── scripts/              # Build helpers, the generators, the brand contract check
 ├── tests/                # Lightweight smoke tests for static output
 ├── DESIGN.md             # The design system — binding, not advisory
 ├── PRODUCT.md            # Product truth, audience, and what must never be fabricated
@@ -53,14 +50,14 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 
 The root is intentionally kept for:
 
-- tool conventions that truly require the root, such as `package.json`, `package-lock.json`, `.gitignore`, and `.gitattributes`
+- tool conventions that truly require the root, such as `package.json`, `package-lock.json`, `.gitignore`, `.gitattributes`, and `astryx.config.mjs`
 - repo-wide docs such as `README.md`, `DESIGN.md`, `PRODUCT.md`, `PROJECT.md`, `CLAUDE.md`, and `AGENTS.md`
 - top-level source directories such as `client/`, `content/`, `public/`, `scripts/`, and `tests/`
 
 Do not add new loose assets or ad-hoc notes to the root. Put them in one of these places instead:
 
 - `scripts/` for automation
-- `config/` for Vite, TypeScript, Tailwind, PostCSS, and theme configuration
+- `config/` for Vite configuration
 
 Do not commit exported resume artifacts such as ad-hoc `.txt` or `.docx` exports. They are not build inputs and should stay out of the repository.
 
@@ -83,7 +80,7 @@ npm ci
 npm run dev
 ```
 
-This generates theme CSS first, then starts Vite with `config/vite.config.ts`.
+This compiles ReScript, then starts the ReScript watcher and Vite with `config/vite.config.ts`.
 
 ### Build
 
@@ -93,16 +90,15 @@ npm run build
 
 The build pipeline:
 
-1. generates theme CSS via `scripts/generate-theme.mjs` (base settings from `config/theme.json`)
-2. compiles ReScript sources to `.res.mjs`
-3. builds the client bundle
-4. builds the SSR entry
-5. prerenders the homepage into static HTML
-6. regenerates the PDF and DOCX resumes
-7. regenerates the JSON Resume exports (`scripts/generate-json-resume.mjs`) and the vCard (`scripts/generate-vcard.mjs`)
-8. writes `artifact-status.json`
-9. copies public assets into `dist/client`
-10. writes `sitemap.xml`
+1. compiles ReScript sources to `.res.mjs`
+2. builds the client bundle
+3. builds the SSR entry
+4. prerenders the homepage into static HTML
+5. regenerates the PDF and DOCX resumes
+6. regenerates the JSON Resume exports (`scripts/generate-json-resume.mjs`) and the vCard (`scripts/generate-vcard.mjs`)
+7. writes `artifact-status.json`
+8. copies public assets into `dist/client`
+9. writes `sitemap.xml`
 
 ### Preview
 
@@ -117,7 +113,7 @@ npm run check
 npm run test:static
 ```
 
-`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX/JSON resumes and the vCard, `artifact-status.json` reports all generated artifacts, the JSON Resume exports carry the basics but none of the web-only abstracts, the vCard is well-formed, the generated theme CSS includes every theme, and the chat Markdown renderer produces correct, XSS-safe output. `tests/exports.test.mjs` reads the PDF and DOCX files themselves: no footer-only last page, no missing glyphs, hanging bullets, links, the structure tree, Turkish headings, the ISO issue date and the DOCX metadata.
+`npm run test:static` runs the smoke tests in `tests/*.test.mjs`. They verify the generated homepage contains real content (and that the email is *not* in the HTML), the sitemap includes the homepage plus all generated PDF/DOCX/JSON resumes and the vCard, `artifact-status.json` reports all generated artifacts, the JSON Resume exports carry the basics but none of the web-only abstracts, the vCard is well-formed, the page is built as the brand prescribes (layer order, tokens only, blackletter for the one h1 only, the top line, no artwork, the print rules) and stays light only, and the chat Markdown renderer produces correct, XSS-safe output. `tests/exports.test.mjs` reads the PDF and DOCX files themselves: no footer-only last page, no missing glyphs, hanging bullets, links, the structure tree, Turkish headings, the ISO issue date and the DOCX metadata.
 
 ## Content Workflow
 
@@ -133,11 +129,13 @@ When you update content:
 2. run `npm run build` to regenerate the PDF/DOCX files and static output
 3. run `npm run test:static` to verify the homepage, sitemap, and artifact status output
 
-## Theme Workflow
+## Brand Workflow
 
-The rendition catalogue lives in the `themePalettes` object in `scripts/generate-theme.mjs`, which generates `client/src/theme.css` — never edit the generated CSS directly. `config/theme.json` holds the base settings (appearance, radius) consumed by the generator, and rendition state lives in `client/src/contexts/ThemeContext.res`. A new token is a two-file change: the generator plus `config/tailwind.config.cjs`. Tooling config for the site build also lives in `config/` so the repository root stays lean.
+The colours, type and spacing are tokens of the Astryx `arda` theme; the emblem, the label, the buttons and chips, the ember and the chat thread are the family's patterns. Both live in `client/src/brand/` as **verbatim copies of the arda.tr repository's `brand/` folder** (`arda.css`, `arda.js` and its two `.d.ts`, `brand.css`, `scheme.js`, `art/emblem.webp`, `art/ember.webp`; `public/favicon.svg` is `brand/logo/favicon.svg`). Never edit them here: change them in arda.tr, then copy them out again. The page's own layout is `client/src/index.css`, which uses those tokens only (no hex colour, no px type size); `client/src/layers.css` declares the cascade-layer order and is imported first. See `DESIGN.md`.
 
-Each rendition defines the same tokens — `--bg`, `--surface`, `--fg`, `--fg-2`, `--rule`, `--signal` and the canvas palette `--ob-ink`, `--ob-ground`, `--ob-signal` — plus `--radius: 0` (see `DESIGN.md`). The ids (`xerox`, `xerox-hc`, `night`, `night-hc`) are shared by the whole arda.tr family; `scripts/check-theme-contract.mjs` compares the id set, roles and required tokens (never values) with arda.tr's `config/themes.json` v3 and soft-passes while an older contract is published. `.github/workflows/theme-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
+Controls and layout are Astryx components, bound for ReScript in `client/src/Astryx.res`. `npx astryx component <Name>` prints a component's props; `npx astryx doctor` checks the setup.
+
+arda.tr publishes the sha256 of the brand files in its `config/themes.json` (contract v4). `scripts/check-brand-contract.mjs` compares this site's copies with them and fails on a mismatch; it passes with a note while arda.tr's `main` still publishes an older contract. `.github/workflows/brand-contract.yml` runs it on every push to `main` as a separate, non-blocking workflow. Point `THEMES_CONTRACT_PATH` at a local `themes.json` to check against an unpublished contract.
 
 ## Deployment
 

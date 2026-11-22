@@ -1,291 +1,235 @@
 ---
 name: resume.arda.tr
-description: The résumé in One Bit Forest — paper, black toner, one moss signal, and a treeline. The most professional site in the arda.tr family.
+description: The résumé in Kara Duman, the arda.tr family's system, at its most restrained. Bone paper, the name in blackletter once, the emblem once, no artwork.
 ---
 
 # Design System: resume.arda.tr
 
 ## Overview
 
-**System: "One Bit Forest"** — the shared design system of arda.tr,
-blog.arda.tr, resume.arda.tr and ai.arda.tr (adopted 2026-09-23). The family
-contract is `../DESIGN-SYSTEM.md`; the approved reference for this site is
-section **03 · resume.arda.tr** of `../design-previews/sketch-1bit.html`. This
-file is binding for this repo and must not contradict either.
+**System: "Kara Duman"**, the shared design system of arda.tr, blog.arda.tr,
+resume.arda.tr and ai.arda.tr (adopted 2026-11-23). It replaced "The Index"
+(22 November 2026, rejected the next day as generic) and "One Bit Forest"
+(September 2026). The family contract is `../DESIGN-SYSTEM.md`; the design of
+this site is slide 14 of the Moda canvas, captured in
+`../output/rebrand-kara-duman/14-resume.png`. **Look at it before changing
+anything visual.** This file is binding for this repo and says how the family
+system is applied here.
 
-The family meets at **1-bit dithering**: photocopied black-metal covers and
-early Macs drawing everything in one bit, with one neon phosphor per site. On
-the tone dial the résumé is **most professional**: calm, typographic, almost no
-ornament. It is the surface `arda.tr` routes recruiters to, and restraint is
-what it trades on.
+The idea of the family: his surname means black smoke. Soot on paper, cut by
+hand, signed by one person. The résumé is where that idea is held back the
+most, because its reader is a recruiter with forty seconds:
 
-What that means here:
+- **Blackletter: the name, once.** Everything else is Spectral.
+- **No plume, no wisp, no forest.** The emblem signs the page once, top left.
+- **No ember in the page.** Links are Ember Deep (`--color-text-accent`),
+  buttons are soot. The ember appears only as the assistant, in the chat.
+- **Two rule weights, no boxes, no shadows.**
+- **Light only.** It prints in black.
 
-- **Xerox by default** — photocopy paper, black toner, moss ink.
-- **One moving thing**: a strip of pixel spruces under the status bar, drifting
-  slowly. Nothing else animates on the page.
-- **Two columns**: a mono-labelled meta rail and a main column that reads top
-  to bottom like a document.
-- **No other ornament.** No cards, no shadows, no gradients, no icons, no logos,
-  no skill bars, no hover lift.
+## Where the system lives
 
-The PDF, DOCX, JSON Resume and vCard exports are separate objects with their
-own fonts and layout; this system does not touch them.
+| What | Where | Notes |
+|---|---|---|
+| Built theme | `client/src/brand/arda.css`, `arda.js` (+ `arda.d.ts`, `arda.variants.d.ts`) | The Astryx `arda` theme. The stylesheet is scoped to `[data-astryx-theme="arda"]`; the module is what `App.res` passes to `<Theme>`. |
+| Family patterns | `client/src/brand/brand.css` | Classes prefixed `ix-`. Used here: `.ix-wrap`, `.ix-emblem`, `.ix-label`, `.ix-mono`, `.ix-note`, `.ix-small`, `.ix-muted`, `.ix-row__title`, `.ix-chip(s)`, `.ix-input`, `.ix-kv`, `.ix-prose`, `.ix-foot`, `.ix-sr`, and the assistant's `.ix-mark`, `.ix-thread`, `.ix-msg`. |
+| Scheme switch | `client/src/brand/scheme.js` | Carried for the contract; **not imported** (this site has no switch). |
+| Artwork | `client/src/brand/art/emblem.webp`, `ember.webp` | The only two pieces this site uses. |
+| Favicon | `public/favicon.svg` | The family's small glyph. |
+| Page layout | `client/src/index.css` | This site's own rules: tokens only. |
+| Layer order | `client/src/layers.css` | `@layer reset, astryx-base, astryx-theme, brand;`, imported first. |
+
+Everything under `client/src/brand/` and `public/favicon.svg` is a **verbatim
+copy of `../arda.tr/brand/`. Never edit a copy.** Change the file in arda.tr,
+copy it out again, and let the contract check confirm it (see the end of this
+file). A pattern brand.css lacks goes in `client/src/index.css` and in the
+list under "Patterns outside brand.css".
 
 ## Colors
 
-One bit plus one signal. Values live in `themePalettes` in
-`scripts/generate-theme.mjs`, which writes `client/src/theme.css` (generated —
-never hand-edit). Neutrals are the family's; the signal is the résumé's own.
+The light column of the family's table; nothing is redefined here.
 
-| token | xerox (default) | xerox-hc | night | night-hc |
-| --- | --- | --- | --- | --- |
-| `--bg` ground | `#efede6` | `#ffffff` | `#060708` | `#000000` |
-| `--surface` panels | `#f7f6f1` | `#ffffff` | `#0d0f10` | `#000000` |
-| `--fg` ink | `#111210` | `#000000` | `#e4e0d4` | `#ffffff` |
-| `--fg-2` muted | `#5d5b55` | `#2e2e2e` | `#9d998e` | `#d0cdc4` |
-| `--rule` hairline | `#cfccc2` | `#1a1a1a` | `#22252a` | `#8a8a8a` |
-| `--signal` moss | `#2d5a39` | `#1d4028` | `#8fd19e` | `#a8e6b6` |
-
-Canvas palette, read by `onebit.js` every frame: `--ob-ink` = `--fg`,
-`--ob-ground` = `--bg`, `--ob-signal` = `--signal`. Always hex. The chat panel
-sets `--ob-ground: var(--surface)` so its orb and cursor sit on the panel.
-
-Contrast on `--bg`: xerox fg 16.0, fg-2 5.8, signal 6.8; xerox-hc fg 21,
-fg-2 13.6, signal 11.6; night fg 15.3, fg-2 7.1, signal 11.3; night-hc fg 21,
-fg-2 13.2, signal 14.7. The HC renditions target WCAG AAA.
+| Role | Token | Value on bone paper |
+|---|---|---|
+| Page | `--color-background-body` | Bone `#E8E0CE` |
+| Surface (the visitor's chat message, inputs, the dialog) | `--color-background-surface` | `#F3EDDF` |
+| Text | `--color-text-primary` | Soot `#0D0C0A` |
+| Secondary text, labels | `--color-text-secondary` | `#5C574C` |
+| Section rule | `--color-border-emphasized` | `#5C574C` |
+| Row hairline | `--color-border` | `#BDB5A2` |
+| Link | `--color-text-accent` | Ember Deep `#A33312` |
+| Primary button | `--color-accent` / `--color-on-accent` | soot / bone |
+| Focus | `--focus-outline-color` | soot, 2px, 3px offset |
+| Error | `--ix-error` | `#9B1C1C`, always with a written message |
 
 ### Rules
 
-- **Signal is for meaning, not decoration**: links, the current section in the
-  bar, the site mark, the focus ring, the `ai ▸` label, the one solid button.
-- **No tints.** The tokens are raw hex and deliberately not channel-split for
-  Tailwind's alpha slot. Muted means `--fg-2`, not `--fg` at 60%. The only
-  `color-mix` uses are a link's underline (signal at 45%) and the dialog scrim.
-- Solid signal buttons set their label in `--bg`.
+- `client/src/index.css` writes no colour: no hex, no `rgb()`. A test enforces
+  it. (`white` and `black` appear in the print block only.)
+- Ember `#E2502A` and Ash are banned as text on bone. The only ember on this
+  site is the artwork of the assistant's mark.
+- One primary button on the page: the PDF.
+- `<meta name="theme-color">` repeats the page colour (`#E8E0CE`); a test keeps
+  it in step with `brand/arda.css`.
 
-## Renditions
+## Scheme
 
-| id | role | name |
-| --- | --- | --- |
-| `xerox` | light | Xerox |
-| `xerox-hc` | hc-light | Xerox HC |
-| `night` | dark | Night |
-| `night-hc` | hc-dark | Night HC |
-
-- The class goes on `<html>`, plus `.dark` for the two dark ids, and
-  `color-scheme` is set to match. The choice is stored in `localStorage`
-  under `resume-theme`.
-- A blocking bootstrap in `client/index.html` applies the stored rendition
-  before first paint. It migrates legacy ids by role and writes the new id
-  back:
-  - `ruled`, `alucard`, `light` → `xerox`
-  - `ruled-hc`, `paper`, `light-hc` → `xerox-hc`
-  - `carbon-copy`, `van-helsing`, `dracula`, `dark` → `night`
-  - `carbon-copy-hc`, `carbon`, `dark-hc` → `night-hc`
-- `ThemeContext.res` repeats that mapping.
-- The rendition switch in the bar is one button that cycles the four and shows
-  the current id.
-- `ThemeToggle.res` keeps its `{id: …, name: "…"}` list shape, because the
-  contract check parses it.
+Light only: `<html data-astryx-theme="arda" data-theme="light">`,
+`<meta name="color-scheme" content="light">`, `<Theme mode="light">`. No
+switch, nothing stored, no scheme script. A reader on a dark system gets the
+same page as everyone else and the same page that prints.
 
 ## Typography
 
-From Google Fonts (`client/index.html`):
+Google Fonts, `display=swap`, preconnected: Grenze Gotisch 800 · Spectral 400,
+400 italic, 600 · JetBrains Mono 400 · Zen Antique 400.
 
-- **Big Shoulders Display** 800/900, uppercase: the name, the chat title and the
-  dialog title. Nothing else.
-- **IBM Plex Sans** 400/500/600: body, the position, row titles.
-- **IBM Plex Mono** 400/500: the status bar, rail labels, section labels,
-  periods, indices, chips, downloads, chat labels, the colophon.
-- **IBM Plex Sans JP**: Japanese, both on `/` in Japanese and in the companion
-  statement. It is the fallback in the sans and mono stacks, so kana and kanji
-  never drop to a system face.
+| What | Face | Size |
+|---|---|---|
+| The name (the one `h1`) | Grenze Gotisch 800 | Heading 1: 64px, 44px on a phone |
+| The position (`.head__title`) | Spectral 600 | Heading 3: 26px |
+| An entry's title (`h3.ix-row__title`) | Spectral 600 | Body: 20px |
+| The About statement | Spectral 400 | Body: 20px |
+| Employer, school, stack (`.ix-note`) | Spectral 400 italic, secondary | Small: 18px |
+| Details, the colophon, the chat | Spectral 400 | Small: 18px |
+| Section and entry labels (`.ix-label`) | Spectral 600, capitals, 0.14em | 18px |
+| Periods, years (`.ix-mono`) | JetBrains Mono 400 | 18px |
 
-| role | spec |
-| --- | --- |
-| name | Big Shoulders 900, `clamp(56px, 6.2vw, 88px)`, line-height .84, one word per line |
-| position | Plex Sans 500 21px |
-| summary | Plex Sans 16.5px / 1.65, max 64ch |
-| section label | Plex Mono 500 11px, tracking .16em, uppercase, `--fg-2`, a 1px rule runs to the edge |
-| row title | Plex Sans 600 17px; the employer after it at 400 in `--fg-2` |
-| row body | 15.5px lead, 14.5px list, max 66ch |
-| gutter / meta | Plex Mono 12.5px, tabular figures, `--fg-2` |
-| rail label | Plex Mono 500 10.5px, tracking .14em, uppercase |
+- **Nothing on screen is set below 18px.** `index.css` writes no type size
+  (a test enforces it); sizes are the theme's tokens.
+- The theme sets `h1` *and* `h2` (and a dialog's title) in blackletter. Here
+  every section heading is an `h2.ix-label`, and the title of the build
+  details is set back to Heading 3 in Spectral by `index.css`. A test checks
+  both.
+- **Japanese sits under `lang="ja"`** and falls through to Zen Antique: the
+  whole Japanese page, the 日本語 cell of the language switch, the companion
+  statement in About on the English page. The name is Latin in every language
+  and stays in blackletter on the Japanese page too (`.head h1:lang(ja)`).
+- The theme sizes and colours every `<p>` itself, so a rule that should make a
+  paragraph small or secondary must name the `<p>` (or put `.ix-small` /
+  `.ix-muted` on it), not its container.
+- The PDF and DOCX keep their own embedded fonts and layout; they are not part
+  of this system.
 
 ## Layout
 
-```
-┌ status bar (34px, sticky) ───────────────────────────────────────────────┐
-│ ▮ resume.arda.tr  about experience …   EN · JA · TR  JST 18:19:42  xerox │
-├ treeline (52px, drifting) ───────────────────────────────────────────────┤
-│  rail (260px)        │  main                                             │
-│  LOCATION            │  ARDA                                             │
-│  LANGUAGES           │  KARADUMAN                                        │
-│  LINKS               │  position · summary                               │
-│  DOWNLOAD  [PDF][DOCX]  ABOUT ME ──────────────────────────────────────  │
-│            [JSON][vCard] English   │ paragraph                           │
-│  ASK                 │  日本語     │ companion statement                  │
-│                      │  WORK EXPERIENCE ─────────────────────────────── │
-│                      │  2024 – Present │ Role · Company · Place          │
-└──────────────────────┴───────────────────────────────────────────────────┘
-```
+One column, 960px wide (`--ix-max: 60rem`), inside the family's margins
+(`.ix-wrap`). Tight.
 
-- **Grid**: `260px | 1fr`, gap 64px, max 1180px, padding 54px 40px 80px.
-- **Rail**: sticks under the bar when the viewport is at least 700px tall.
-  - Groups: location (plus years in Tokyo), spoken languages (one per line,
-    any certificate on a muted mono line under it), links, and the four downloads as a 2×2 grid of plain `<a download>` links
-    that honour the `?flavor=` prefix.
-  - Then the issue date and the certificate of issue, and Ask, which opens the
-    chat.
-- **Main**: name, position, summary (About paragraph 1), then about,
-  experience, skills, projects, education, contact and the colophon.
-  - **Rows**: every entry is a `120px | 1fr` row closed by a hairline. The mono
-    gutter carries the period (experience, education), the language (about) or
-    a two-digit index (skills, projects).
-  - Nothing is hidden behind a click: every abstract, responsibility, skill and
-    paper is in the prerendered HTML.
-- **About** carries paragraph 2, then the whole statement in the companion
-  language (Japanese for an English reader, English otherwise), muted.
-- **Status bar**: marks the section being read with `aria-current="location"`,
-  taking over the old spine folio's running head.
-  - Below 1080px the nav folds into a `§ section ▾` button that opens the list.
-  - Below 600px the host name and the clock drop out, so the bar never scrolls
-    sideways.
-- **Breakpoints**:
-  - ≤900px: one column: the intro (name, position, summary) first, then the
-    rail as a 3-column block under a hairline, then the sections. The chat
-    launcher folds to a 44px `?` square (its label stays the accessible
-    name) and the page keeps 96px of bottom padding so the colophon scrolls
-    clear of it.
-  - ≤600px: single column; rows stack with the gutter as a line above the
-    entry.
-  - Tested at 390px with no horizontal overflow.
+1. **The top line** (`Bar.res`, `<header class="top">`): the emblem at the
+   left, 56px, linking to arda.tr. At the right the family's links in small
+   text (arda.tr, blog, ask) and the language switch: one segmented control,
+   EN | 日本語 | TR, the current one filled soot with bone text
+   (`aria-current="true"`).
+2. **The head** (`Head.res`): the name; the position; where Arda is, in small
+   secondary text; the four downloads (PDF primary, DOCX, JSON and vCard
+   outlined); the build date with the link to the build details; the section
+   links.
+3. **A 1px rule**, then **the sections** (`Section.res`), each two columns:
+   the label in capitals at the left (220px), the entries at the right.
+   A hairline separates sections and, across the content column, entries.
+   An entry is its title with the period in mono at the far right, the
+   organisation in italics under it, then the details in small text. Every
+   detail is on the page: nothing is behind a click.
+4. **A 1px rule**, then **the colophon** (`Footer.res`) in small secondary
+   text: copyright, how the page is made, the commit and build time, the
+   family's sites.
+
+On a phone (below 45rem): one column, labels above their content, the
+language switch full width under the emblem.
+
+## Landmarks
+
+`<header>` (the top line), `<main>` (the name, the downloads, every section),
+`<footer>` (the colophon). One `h1`; sections are `h2`; entries `h3`; the
+papers `h4`. Two `<nav>`s, named: the family (`arda.tr`) and the sections.
+Sections are not labelled regions: six more landmarks would bury the three
+that matter.
 
 ## Motion
 
-All motion comes from `client/src/lib/onebit.js`:
-
-- The engine pauses every animation off-screen and in hidden tabs.
-- Under `prefers-reduced-motion` it draws one still frame.
-- `OneBit.useRepaintOnTheme` redraws still canvases when the rendition changes.
-
-What moves:
-
-- **Treeline**: `treeline(canvas, {seed: 3, px: 2, speed: 4})`, the only motion
-  on the page itself.
-- **Chat orb**: `orb(canvas, {size: 40})` revolves while the panel is open and
-  `sizzle()`s on each streamed chunk, then with the voice's loudness while a
-  reply is spoken.
-- **Chat cursor**: a `crackle()` block cursor trails the reply while it streams
-  and while it is spoken.
-- **Hover**: colour transitions of 150ms; nothing lifts, scales or slides.
-
-`onebit.js` is a verbatim copy of `../design-previews/onebit/onebit.js`. Do not
-fork it: change the shared file first, then copy it to every site.
+None of the page's own. The assistant's ember glows while a reply is on its
+way and with the voice's loudness (brand.css); under
+`prefers-reduced-motion: reduce` it holds one brightness.
 
 ## Components
 
-- **Status bar** (`StatusBar.res`, `TokyoClock.res`, `ThemeToggle.res`): the
-  family's 34px mono strip.
-  - The site mark is an 8×14 signal block plus the host name.
-  - The language switch is `EN · JA · TR`; the active language is `--fg` with a
-    signal underline.
-  - The rendition button has a 1px border.
-  - The mark, the nav links, the menu button and the language buttons fill
-    the bar's height, widened by padding that an equal negative margin
-    cancels, so the hit areas grow (24×33 or more) and nothing moves.
-- **Treeline** (`Treeline.res`): decorative, `aria-hidden`.
-- **Rail** (`Rail.res`): a `<dl>` of labelled groups.
-  - Downloads are 1px `--fg` boxes that invert on hover.
-- **Rows** (`Section.res`): `Section` (label + rule) and `Section.Row` (gutter +
-  body).
-  - Project stacks are the page's only chips: 1px `--rule` border, mono
-    11.5px, `--fg-2`.
-- **Contact** (`ContactSection.res`): "Get In Touch", one solid signal button
-  that opens the chat, the public profiles.
-  - No email anywhere in the HTML; a test asserts this.
-- **Colophon** (`Footer.res`): copyright, how the page is built, source, commit,
-  issue time, certificate.
-  - Then a web-only family line (`no-print`), labelled with the rail's Links
-    label: arda.tr and blog.arda.tr (`rel="me"`), ai.arda.tr, lind.arda.tr.
-    It is not in `contact.socialLinks` (the JSON Resume profiles), and the
-    résumé links nowhere on coze.org.
-- **Certificate of issue** (`Certificate.res`, `Artifacts.res`, `Modal.res`):
-  the commit, the build time, the source, the `?flavor=` in effect, and each
-  artifact against the script that generates it.
-  - Behaviour: an accessible dialog with the root made `inert`, a focus trap,
-    Escape and focus restore.
-- **Chat** (`ChatWidget.res`, `Markdown.res`): styled like ai.arda.tr.
-  - Layout: orb and "Ask about Arda" in the header, `ai ▸` / `you ▸` label
-    columns, numbered mono quick prompts, and a terminal-line input with a `▸`
-    prompt.
-  - Voice: a mono `♪ on` / `♪ off` toggle paired with the close box (ink
-    border when on, hairline when muted; below 600px a 28px `♪` square, struck
-    through when muted, and the title steps down to 21px). A spoken reply is
-    revealed only as far as the voice has got.
-  - Behaviour is unchanged: SSE with the non-streaming fallback and timeouts,
-    Escape, focus into the input on open, focus back to whatever opened it,
-    safe element-only Markdown, and the `arda:open-chat` event.
-
-## Geometry
-
-- Radius 0 everywhere (`--radius: 0rem`, asserted by the static test).
-- No drop shadows. No gradients, except the dialog scrim.
-- 1px rules.
-- Focus ring: 2px solid `--signal`, offset 2px. The chat input draws it on the
-  whole terminal line.
+- **Astryx** (`client/src/Astryx.res`): `Theme`, the i18n provider, `Button`,
+  `Link`, `Dialog` + `DialogHeader` (the build details), `Switch` (read
+  replies aloud), `IconButton` + `Icon` (close the chat), `Text`, `HStack`.
+- **Buttons** are Astryx's `Button`: the theme's primary is bone on soot, its
+  secondary (the default) a 1px outline.
+- **The language switch**: `.ix-chip` buttons joined (`.lang`).
+- **The chat** (`ChatWidget.res`): a launcher (a secondary Button with the small ember,
+  `.ix-mark--sm`) that opens a panel on the page colour with a 1px border.
+  The assistant's messages sit left beside the ember with no bubble
+  (`.ix-msg`); the visitor's sit right on the surface colour
+  (`.ix-msg--you`); the suggested questions are `.ix-chip`s; the input is
+  `.ix-input` with a primary button. The ember is drawn by `.ix-mark` from
+  `--ix-ember-art`, which `index.css` sets on `:root`; `data-busy="true"`
+  while a reply is on its way; `--ix-level` from the voice. On a phone the
+  panel is a bottom sheet.
 
 ## Print
 
-- Black on white whatever the rendition: the print block overrides the tokens.
-- The bar, treeline, chat, launcher, switches, downloads, dialogs and the
-  colophon's family line are hidden.
-- The rail prints as a compact header row.
-- Rows do not break across pages.
-- External links print their URL, unless their text already is the URL
-  (`.url-text`); the `↗` new-tab mark (`.ext`) is not printed.
+- Ground white, all ink pure black (text, rules, links).
+- Hidden: the language switch and the family links, the downloads, the build
+  date line, the section links, the chat (`.no-print`).
+- Links lose their colour and print their address, unless the link's text is
+  already the address (`.url-text`).
+- The emblem prints as a solid black seal: a black disc, its lines the white
+  of the paper (`print-color-adjust: exact`).
+- A4 and Letter: no page size is set; the margin is 18mm.
+- Type is a step smaller on paper than on screen. A title stays with what
+  follows it; a paragraph or list item is not cut in two.
+
+## Patterns outside brand.css
+
+In `client/src/index.css`, tokens only. Candidates for brand.css if another
+site needs them:
+
+- **`.lang`**: the segmented control made of `.ix-chip`s (joined cells, 48px
+  tall, radius on the outer corners only).
+- **`.sec`, `.sec__body`, `.entry`, `.entry__head`**: the résumé's section
+  (label column + entries, hairlines) and its entry (title, mono period at the
+  far right, italic line, details). brand.css has `.ix-kv` for facts and
+  `.ix-row` for the landing page's numbered rows; neither carries an entry.
+- **`.links`**: a wrapping line of small bare links.
+- **`.plain`, `.rows`, `.entry__list`, `.papers`**: lists without bullets,
+  with hairlines, with a dash, as citations.
+- **`.colophon`**: a colophon of several lines (brand.css's `.ix-foot__in` is
+  one line).
+- **`.chat*`, `.md*`**: where the chat floats, its frame, and a reply's
+  Markdown.
+- **`.head h1:lang(ja)`**: names the blackletter face, because under
+  `lang="ja"` brand.css replaces `--font-family-heading` on every element and
+  the theme's value cannot be reached. A test keeps the name in step with
+  `brand/arda.css`.
+- **`dialog .astryx-heading[data-level="2"]`**: a dialog's title in Spectral.
+- **The print block**: black-ink token overrides, the black seal, link
+  addresses, `@page`.
 
 ## Do's and Don'ts
 
-**Do:**
+- Do keep blackletter to the name. A new heading is `.ix-label` or Spectral.
+- Do use the theme's tokens for every colour, size and space.
+- Do mark Japanese text `lang="ja"`, and English-only words inside a Turkish
+  or Japanese page `lang="en"` where capitals are applied.
+- Don't add artwork, the wordmark, a second emblem, or the ember outside the
+  chat.
+- Don't add a second primary button, a card, a box or a shadow.
+- Don't set anything below 18px on screen.
+- Don't add a scheme switch.
+- Don't render `header.contactViaEmail` (the email stays in the downloads), and
+  don't bring back the OAuth line (`PRODUCT.md`).
 
-- Keep copy in `content/{en,ja,tr}` and keep the three languages aligned.
-- Use `--fg-2` for anything secondary and `--signal` only for meaning.
-- Keep downloads as plain `<a download>` links. They must work without
-  JavaScript, paste into an ATS and be crawlable.
-- Add tokens in two places: `generate-theme.mjs` and
-  `config/tailwind.config.cjs`.
+## Cross-repo brand contract
 
-**Don't:**
-
-- Add a second moving thing, a pre-dithered image, an icon set or employer
-  logos to the page.
-- Hand-edit `client/src/theme.css`.
-- Use opacity modifiers on tokens (`text-fg/60`).
-- Fork `onebit.js`.
-- Reintroduce the OAuth line (removed 2026-09-23) anywhere.
-- Claim anything that isn't real. No invented taglines, metrics or blurbs.
-
-## Cross-repo theme contract
-
-arda.tr publishes `config/themes.json` **v3**: the four ids, their roles and
-names, the required tokens and its own values.
-
-`scripts/check-theme-contract.mjs` (run by
-`.github/workflows/theme-contract.yml`, non-blocking) checks:
-
-- the **id set**
-- each id's **role**
-- that every local rendition defines every **required token**
-
-Values are never compared. A name mismatch only warns.
-
-It soft-passes when:
-
-- the contract cannot be fetched;
-- the contract is older than v3. arda.tr main publishes v3, so the check
-  runs for real.
-
-`THEMES_CONTRACT_PATH=../arda.tr/config/themes.json` checks against a local
-checkout.
+`scripts/check-brand-contract.mjs` (run by
+`.github/workflows/brand-contract.yml` on pushes to `main`) fetches
+`https://raw.githubusercontent.com/c0ze/arda.tr/main/config/themes.json`. If
+its `version` is 4, the sha256 of this site's `arda.css`, `arda.js`,
+`brand.css` and `scheme.js` must equal `files[name].sha256`; a mismatch fails.
+While arda.tr's `main` still publishes an older contract, the check prints a
+note and passes. `THEMES_CONTRACT_PATH=../arda.tr/config/themes.json` checks
+against a local checkout.
