@@ -49,7 +49,7 @@ them out again. `scheme.js` is carried for the contract and not imported.
 - Astryx 0.7.17, pinned exactly (`@astryxdesign/core`, `@stylexjs/stylex` as its peer, `@astryxdesign/theme-neutral` because the built theme `brand/arda.js` imports it, `@astryxdesign/cli` as a dev dependency): the theme, buttons, links, the dialog, the switch, bound in `client/src/Astryx.res`. The agent skill is in `.agents/skills/astryx-project/` (`npx astryx init --to skills`; never run a bare `npx astryx init`, which would write an Astryx block into `CLAUDE.md`)
 - No Tailwind, no PostCSS: plain CSS in cascade layers (`client/src/layers.css` declares `reset, astryx-base, astryx-theme, brand`; `client/src/index.css` is the page's own unlayered rules, tokens only)
 - Grenze Gotisch 800 (the name only) + Spectral 400/400i/600 + JetBrains Mono 400 + Zen Antique 400 (Japanese, under `lang="ja"`) from Google Fonts (the PDF/DOCX embed their own fonts)
-- `client/src/lib/voice.js` — the assistant's spoken replies (robot voice, gated reveal, mute choice), a verbatim copy of `../design-previews/onebit/voice.js` (its header documents the protocol), bound in `client/src/Voice.res`
+- `client/src/lib/voice.js` — the assistant's spoken replies (spoken English replies with no effect, gated reveal, mute choice), a verbatim copy of `../design-previews/onebit/voice.js` (its header documents the protocol), bound in `client/src/Voice.res`
 - PDFKit + docx (PDF/DOCX resumes)
 - GitHub Actions + GitHub Pages (CI runs Node 24)
 

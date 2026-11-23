@@ -105,10 +105,19 @@ const spoken = (lang = 'en') => [
   { type: 'done', text: FINAL },
 ];
 
+// Only English is spoken (since 2026-11): the Japanese and Turkish résumé pages
+// ask for text only, so no audio is ever made for them.
+test('a reply in Japanese or Turkish asks for no voice', async () => {
+  for (const lang of ['ja', 'tr']) {
+    const { body } = await reply([{ type: 'thinking' }, { type: 'chunk', text: 'x' }, { type: 'done', text: 'x' }], lang);
+    assert.deepEqual(body, { message: 'hello', history: [] });
+  }
+});
+
 test('a spoken reply is revealed only as far as the voice has got', async () => {
   clock = 0;
-  const { state, body } = await reply(spoken(), 'ja');
-  assert.deepEqual(body, { message: 'hello', history: [], voice: true, lang: 'ja' });
+  const { state, body } = await reply(spoken(), 'en');
+  assert.deepEqual(body, { message: 'hello', history: [], voice: true, lang: 'en' });
   // The whole text (and done) arrived, but nothing plays yet: nothing shows.
   assert.equal(state.done, true);
   at(0);
