@@ -95,6 +95,22 @@ npm run res:build     # ReScript compile only
 npm run res:clean     # Clean ReScript build artifacts
 ```
 
+## Deploy
+
+Deploying is manual. Pushing to GitHub does **not** deploy (the workflow is only a build
+check), and nothing deploys on its own. To publish:
+
+1. Commit the change. The script builds the committed `HEAD` in a temporary clone (`npm ci`, `npm run build`, `npm run test:static`) and uploads `dist/client`, so uncommitted work is not deployed.
+2. Run `npm run deploy` on a machine with the owner's wrangler login (`npx wrangler whoami`
+   shows the personal account). Never create or store a Cloudflare API token for this.
+3. Check the live site: `curl -sI https://resume.arda.tr/` should return 200.
+
+`public/.assetsignore` keeps Vite's `.vite/` manifest out of the upload.
+
+The Worker is `resume-arda-tr` (personal Cloudflare account), custom domain `resume.arda.tr`, both in
+[wrangler.jsonc](wrangler.jsonc). README "Deployment" has the details. Until 2026-11-25
+this was GitHub Pages, which could not renew its certificate behind the Cloudflare proxy.
+
 ## Key Features
 
 - **AI chat widget** — `client/src/components/ChatWidget.res` ("Ask about Arda", styled with the family's patterns: the assistant is the ember, `.ix-mark`, drawn from `--ix-ember-art` (set on `:root` in `index.css`), which glows while a reply is on its way; its replies sit left with no bubble, the visitor's right on the surface colour; the suggested questions are `.ix-chip`s) POSTs to the ai.arda.tr bot's SSE `/api/chat/stream` (falls back to non-streaming `/api/chat`) and renders Markdown via `Markdown.res` + `markdownParse.mjs` (builds React elements only — XSS-safe). The bot holds the API key, so the static site ships no secrets. Other components open it via the `arda:open-chat` window event (`ChatWidget.openChat()`).
