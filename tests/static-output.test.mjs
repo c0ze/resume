@@ -327,3 +327,24 @@ test("the colophon links the arda.tr family in a web-only line", () => {
     );
   }
 });
+
+// Landmark navigation lists the sections by name: each is a region named by
+// its own heading, so a screen reader says "Experience, region", not "region".
+test("each section is named by its heading", () => {
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  for (const id of ["about", "experience", "skills", "projects", "education", "contact"]) {
+    const section = html.match(new RegExp(`<section [^>]*id="${id}"[^>]*>`))?.[0] ?? "";
+    assert.match(section, new RegExp(`aria-labelledby="${id}-title"`), `the ${id} section`);
+    assert.match(html, new RegExp(`<h2 [^>]*id="${id}-title"`), `the ${id} heading exists`);
+  }
+});
+
+// The content gives the papers' title a colon for the PDF and DOCX, where it
+// runs into its list. On the page it is a label in capitals, which takes none.
+test("the papers' label has no trailing colon on the page, and keeps it in the content", () => {
+  const html = fs.readFileSync(staticHtmlPath, "utf8");
+  const title = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "content/en/education.json"), "utf8"))
+    .entries.find((e) => e.additionalInfo).additionalInfo.title;
+  assert.match(title, /:$/, "the PDF and DOCX still get their colon");
+  assert.ok(html.includes(`<h4 class="ix-label">${escapeHtml(title.replace(/:$/, ""))}</h4>`));
+});

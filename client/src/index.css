@@ -450,14 +450,17 @@ dialog .astryx-heading[data-level="2"] {
     --color-accent: black;
     --color-border: black;
     --color-border-emphasized: black;
-    /* Paper sizes: the name at Heading 2 size, everything else a step down. */
+    /* Paper sizes, in points: the name at Heading 2 size, the text at 10pt
+       (the downloadable PDF sets 9.5pt), the small print at 8.5pt. The
+       screen's 18px floor is for screens. */
     --text-heading-1-size: var(--text-heading-2-size);
-    --text-heading-3-size: var(--font-size-lg);
-    --text-body-size: var(--font-size-sm);
-    --text-body-leading: var(--text-supporting-leading);
-    --text-supporting-size: var(--font-size-xs);
-    --text-label-size: var(--font-size-xs);
-    --text-code-size: var(--font-size-xs);
+    --text-heading-3-size: 12pt;
+    --text-body-size: 10pt;
+    --text-body-leading: 1.45;
+    --text-supporting-size: 8.5pt;
+    --text-supporting-leading: 1.45;
+    --text-label-size: 8.5pt;
+    --text-code-size: 8.5pt;
   }
   :root {
     --sec-label: calc(var(--spacing-12) * 3);
@@ -493,7 +496,12 @@ dialog .astryx-heading[data-level="2"] {
   .head {
     padding-block-end: var(--spacing-4);
   }
+  /* One column on paper, as on a phone: the label above its entries, so the
+     text has the page's full measure (two columns printed eight A4 pages,
+     this prints fewer). */
   .sec {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--spacing-2);
     padding-block: var(--spacing-4);
   }
   .sec__body > * + * {

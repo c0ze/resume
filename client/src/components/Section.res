@@ -41,7 +41,7 @@ let period = s => s->String.replaceAll(" - ", ` – `)
 
 @react.component
 let make = (~id, ~title, ~children) =>
-  <section id className="sec">
+  <section id className="sec" ariaLabelledby={`${id}-title`}>
     <h2 className="ix-label" id={`${id}-title`}> {React.string(title)} </h2>
     <div className="sec__body"> {children} </div>
   </section>

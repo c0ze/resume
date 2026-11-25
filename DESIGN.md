@@ -180,8 +180,13 @@ way and with the voice's loudness (brand.css); under
 - The emblem prints as a solid black seal: a black disc, its lines the white
   of the paper (`print-color-adjust: exact`).
 - A4 and Letter: no page size is set; the margin is 18mm.
-- Type is a step smaller on paper than on screen. A title stays with what
-  follows it; a paragraph or list item is not cut in two.
+- One column on paper, the label above its entries (as on a phone), so the
+  text has the page's full measure.
+- Type is set in points on paper: the text 10pt (the downloadable PDF sets
+  9.5pt), the small print and labels 8.5pt, entry titles 12pt. The screen's
+  18px floor is for screens. A title stays with what follows it; a paragraph
+  or list item is not cut in two. In English the page prints on six A4 pages
+  (it was eight in two columns at the screen's sizes); the PDF has five.
 
 ## Patterns outside brand.css
 

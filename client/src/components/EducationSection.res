@@ -34,7 +34,9 @@ let make = () => {
         {switch edu.additionalInfo->Nullable.toOption {
         | Some(info) =>
           <div className="papers">
-            <h4 className="ix-label"> {React.string(info.title)} </h4>
+            // The content carries a colon for the PDF and DOCX, where the title
+            // runs into its list; set as a label in capitals, it has none.
+            <h4 className="ix-label"> {React.string(info.title->String.replaceRegExp(%re("/\s*[:：]\s*$/"), ""))} </h4>
             <ul className="plain ix-small">
               {info.items
               ->Array.mapWithIndex((item, j) => {
