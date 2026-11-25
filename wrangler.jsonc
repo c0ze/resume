@@ -1,0 +1,18 @@
+// Cloudflare Worker serving the static site (assets only, no script).
+// Deploy by hand: tools/deploy_cloudflare.sh (npm run deploy).
+// Hosting moved here from GitHub Pages on 2026-11-25: GitHub could not renew
+// its certificates behind the Cloudflare proxy, and its sites broke (526).
+{
+  "name": "resume-arda-tr",
+  "account_id": "d0feb402fe8057e9050fce7450d85049", // personal
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "resume.arda.tr", "custom_domain": true }],
+  "assets": {
+    // public/.assetsignore (copied here by the build) leaves out .vite/.
+    "directory": "./dist/client",
+    // No 404.html: an unknown path gets a plain 404.
+    "html_handling": "auto-trailing-slash"
+  }
+}

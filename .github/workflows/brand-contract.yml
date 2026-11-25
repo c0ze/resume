@@ -15,7 +15,7 @@ on:
 permissions:
   contents: read
 
-# Run JavaScript actions on Node 24 (matches deploy.yml).
+# Run JavaScript actions on Node 24 (matches build.yml).
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 

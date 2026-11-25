@@ -23,3 +23,6 @@ public/arda.vcf
 # screenshots, decision-page payloads).
 .impeccable/review/
 .impeccable/questions/
+
+# wrangler state (local deploys)
+.wrangler/

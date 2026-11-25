@@ -1,0 +1,4 @@
+# Files wrangler does not upload from dist/client (gitignore syntax).
+# Vite's build manifest: GitHub Pages never served dot-directories, and the
+# page does not need it.
+.vite/

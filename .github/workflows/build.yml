@@ -1,0 +1,42 @@
+name: Build check
+
+# The site is deployed by hand to a Cloudflare Worker (tools/deploy_cloudflare.sh).
+# This only checks that it still builds and passes the static-output tests,
+# before anyone deploys.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Run JavaScript actions on Node 24, GitHub's default since June 2026. Kept
+# explicit so an action that still declares Node 20 runs on 24 as well.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+# A newer push to a pull request cancels its older build.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24' # Matches the arda.tr portfolio build
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Test static output and browser boundaries
+        run: npm run test:static

@@ -2,7 +2,7 @@
 
 Multi-language resume/portfolio site for Arda Karaduman. The site is built with Vite + React, prerendered into static HTML, and ships downloadable PDF, DOCX, and JSON Resume files for English, Japanese, and Turkish, plus a vCard.
 
-[![Deploy to GitHub Pages](https://github.com/c0ze/resume/actions/workflows/deploy.yml/badge.svg)](https://github.com/c0ze/resume/actions/workflows/deploy.yml)
+[![Build check](https://github.com/c0ze/resume/actions/workflows/build.yml/badge.svg)](https://github.com/c0ze/resume/actions/workflows/build.yml)
 
 ## Features
 
@@ -25,7 +25,7 @@ Multi-language resume/portfolio site for Arda Karaduman. The site is built with 
 - Astryx 0.7.17 (`@astryxdesign/core`, pinned) components for controls, with the family's built `arda` theme; the page's own rules are plain CSS in `client/src/index.css`
 - PDFKit (PDF resumes) and `docx` (DOCX resumes)
 - Grenze Gotisch (the name only) + Spectral + JetBrains Mono + Zen Antique for Japanese (Google Fonts)
-- GitHub Actions + GitHub Pages for deployment
+- A Cloudflare Worker (static assets) for hosting, deployed by hand; GitHub Actions for the build check
 
 ## Repository Layout
 
@@ -139,7 +139,22 @@ arda.tr publishes the sha256 of the brand files in its `config/themes.json` (con
 
 ## Deployment
 
-GitHub Actions builds the site and deploys `dist/client` to GitHub Pages using `.github/workflows/deploy.yml`.
+Hosted on a Cloudflare Worker with static assets (`resume-arda-tr`, personal account),
+deployed **by hand**:
+
+```bash
+npm run deploy   # tools/deploy_cloudflare.sh
+```
+
+It clones the **committed** `HEAD` (commit first) into a temporary directory, runs
+`npm ci`, `npm run build` and `npm run test:static` there, and uploads `dist/client`
+with `wrangler deploy`, using your local wrangler login ([`wrangler.jsonc`](wrangler.jsonc)
+holds the custom domain; `public/.assetsignore` keeps Vite's `.vite/` manifest out). The
+[build check](.github/workflows/build.yml) runs the same build and tests on every push
+and pull request.
+
+Until 2026-11-25 this was GitHub Pages; GitHub could not renew its certificates behind
+the Cloudflare proxy, and its sites broke (526).
 
 ## Notes
 

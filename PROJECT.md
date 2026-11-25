@@ -39,7 +39,7 @@ them out again. `scheme.js` is carried for the contract and not imported.
 
 ## Project Overview
 
-`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF, DOCX, and JSON Resume files plus a vCard, and deploys the final output to GitHub Pages.
+`resume.arda.tr` is a static, multilingual resume site for Arda Karaduman. The app renders the homepage with React, prerenders it to static HTML during build, generates language-specific PDF, DOCX, and JSON Resume files plus a vCard, and is deployed by hand to a Cloudflare Worker (static assets): `npm run deploy`.
 
 ## Current Stack
 
@@ -51,7 +51,7 @@ them out again. `scheme.js` is carried for the contract and not imported.
 - Grenze Gotisch 800 (the name only) + Spectral 400/400i/600 + JetBrains Mono 400 + Zen Antique 400 (Japanese, under `lang="ja"`) from Google Fonts (the PDF/DOCX embed their own fonts)
 - `client/src/lib/voice.js` — the assistant's spoken replies (spoken English replies with no effect, gated reveal, mute choice), a verbatim copy of `../design-previews/onebit/voice.js` (its header documents the protocol), bound in `client/src/Voice.res`
 - PDFKit + docx (PDF/DOCX resumes)
-- GitHub Actions + GitHub Pages (CI runs Node 24)
+- Cloudflare Worker static assets, deployed by hand (`tools/deploy_cloudflare.sh`); GitHub Actions build check (CI runs Node 24)
 
 ## Source of Truth
 

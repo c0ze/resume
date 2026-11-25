@@ -40,7 +40,7 @@ current work on AI platform architecture.
 ## Operating Context
 
 - Single-route static site (`/`) prerendered by a ReScript SSR pass, deployed
-  to GitHub Pages.
+  by hand to a Cloudflare Worker (static assets).
 - Sibling to `arda.tr` (index), `blog.arda.tr` (writing), `ai.arda.tr` (a chat
   bot that answers questions about this résumé; it bakes the résumé in at build
   time and **redeploys itself daily** to pick up changes, so this repo pushes
